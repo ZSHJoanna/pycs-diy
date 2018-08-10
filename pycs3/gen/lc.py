@@ -4,7 +4,6 @@ Module containing all we need to manipulate lightcurves. Could ideally be used b
 import sys
 import os
 import copy as pythoncopy
-import cPickle as pickle
 import numpy as np
 #import util
 
@@ -46,7 +45,7 @@ class LightCurve:
 		self.jds = np.array([1.1, 2.0, 3.2, 4.1, 4.9])  #
 		""" 
 		The "dates", as floats, in HJD, MHJD, ... these jds should always be in 
-		chronological order please (and of course always correspond to the other arrays).yyy"""
+		chronological order please (and of course always correspond to the other arrays)."""
 
 		self.mags = np.array([-10.0, -10.1, -10.2, -10.3, -10.2])
 		self.magerrs = np.array([0.1, 0.2, 0.1, 0.1, 0.1])
@@ -115,7 +114,3 @@ class LightCurve:
 		I do not exclude masked points -- this is the full length.
 		"""
 		return len(self.jds)
-
-	def coucou(self):
-		"Useless function, to test the doc"
-		pass
