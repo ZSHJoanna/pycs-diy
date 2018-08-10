@@ -1,12 +1,9 @@
-language: python
-python:
-  - "3.6"
+image: python:3.6
 
 install:
+  script:
   - pip install -r docs/requirements.txt
-
+  
 script:
-  - coverage run --source=. tests/test_lc.py
-
-after_success:
-  - coveralls
+  script:
+  - coverage run --source=. tests/test_lc.py 
