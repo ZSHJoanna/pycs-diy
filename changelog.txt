@@ -1,0 +1,27 @@
+From PyCS to PyCS3
+==================
+
+
+pycs
+----
+    gen
+    ---
+        lc.py
+        --------------
+        - rename class "lightcurve" as "LightCurve" (CapWords convention)
+        - In LightCurve constructor (__init__):
+            - simplify the docstrings
+            - remove the labels attribute
+            - remove the commentlist attribute
+            - remove the showlabels attribute
+        - Simplify LightCurve.__str__ docstring and remove unused bit of code
+
+
+tests
+-----
+- Add tests scripts for Continuous Integration
+
+
+docs
+----
+- Add a sphinx documentation source code
