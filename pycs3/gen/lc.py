@@ -115,3 +115,7 @@ class LightCurve:
 		I do not exclude masked points -- this is the full length.
 		"""
 		return len(self.jds)
+
+	def coucou(self):
+		"Useless function, to test the doc"
+		pass
