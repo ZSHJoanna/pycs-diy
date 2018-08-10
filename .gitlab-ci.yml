@@ -1,8 +1,9 @@
 image: python:3.6
 
-install:
-  script:
-  - pip install -r docs/requirements.txt
+services:
+  - numpy:1.15
+  - scipy:0.19
+  - coverage:4.5
   
 script:
   script:
