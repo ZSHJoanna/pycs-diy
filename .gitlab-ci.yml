@@ -1,5 +1,10 @@
 image: python:3.6
 
+
+before-script:
+  script:
+  - pip install docs/requirements.txt
+
 services:
   - numpy:1.15
   - scipy:0.19
