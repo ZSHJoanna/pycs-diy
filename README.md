@@ -7,3 +7,6 @@ Will be built for compatibility with v3.6, as of 08.2018 not all dependencies ar
 
 
 The future is now, old man.
+
+
+[![Documentation Status](https://readthedocs.org/projects/pycs3/badge/?version=latest)](https://pycs3.readthedocs.io/en/latest/?badge=latest)
