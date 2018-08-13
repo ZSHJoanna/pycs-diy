@@ -11,5 +11,6 @@ sys.path.append(path)
 
 import pycs3
 
+
 lc = pycs3.gen.lc.LightCurve()
 print(lc)
