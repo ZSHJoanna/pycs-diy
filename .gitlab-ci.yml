@@ -28,7 +28,7 @@ test:
   script:
   - pip install -r docs/requirements.txt
   - python -m coverage run tests/test_lc.py
-  - python -m coverage combine
+#  - python -m coverage combine
   - python -m coverage report
   - python -m coverage html
 #  - coverage run --source=. tests/test_lc.py
