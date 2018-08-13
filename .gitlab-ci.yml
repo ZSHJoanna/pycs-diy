@@ -27,7 +27,7 @@ before_script:
 test:
   script:
   - pip install -r docs/requirements.txt
-  - python -m pytest tests/test_lc.p
+  - python -m pytest tests/test_lc.py --cov
 #  - coverage run --source=. tests/test_lc.py
 #  - coverage report -m
 #  - python tests/test_lc.py
