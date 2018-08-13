@@ -28,9 +28,9 @@ test:
   stage: test
   script:
   - pip install -r docs/requirements.txt
-  - python -m coverage run --source=./ tests/test_lc.py
+  - python -m coverage run --source=. tests/test_lc.py
 #  - python -m coverage combine
-  - python -m coverage report
+  - python -m coverage report --omit=venv/
   - python -m coverage html
 
 
@@ -54,13 +54,16 @@ test:
 #    - dist/*.whl
 
 
-#pages:
-#  script:
-#  - pip install sphinx sphinx-rtd-theme
-#  - cd doc ; make html
-#  - mv build/html/ ../public/
-#  artifacts:
-#    paths:
-#    - public
-#  only:
-#  - master
+
+pages:
+  stage: deploy
+#  dependencies:
+#    - rspec
+  script:
+    - mv htmlcov/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
