@@ -21,12 +21,12 @@ cache:
 before_script:
   - python -V               # Print out python version for debugging
   - pip install virtualenv
-  - pip install -r docs/requirements.txt
   - virtualenv venv
   - source venv/bin/activate
 
 test:
   script:
+  - pip install -r docs/requirements.txt
   - python tests/test_lc.py
 #  - pip install tox flake8  # you can also use tox
 #  - tox -e py36,flake8
