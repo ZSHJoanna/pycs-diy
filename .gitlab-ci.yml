@@ -55,15 +55,15 @@ test:
 
 
 
-#pages:
-#  stage: deploy
+pages:
+  stage: deploy
 ##  dependencies:
 ##    - rspec
-#  script:
-#    - mv htmlcov/ public/
-#  artifacts:
-#    paths:
-#      - public
-#    expire_in: 30 days
-#  only:
-#    - master
+  script:
+    - mv htmlcov/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
