@@ -28,7 +28,7 @@ test:
   stage: test
   script:
   - pip install -r docs/requirements.txt
-  - python -m coverage run --source=. tests/test_lc.py
+  - python -m coverage run --source=pycs3 tests/test_lc.py
 #  - python -m coverage combine
   - python -m coverage report --omit=venv/
   - python -m coverage html
@@ -55,15 +55,15 @@ test:
 
 
 
-pages:
-  stage: deploy
-#  dependencies:
-#    - rspec
-  script:
-    - mv htmlcov/ public/
-  artifacts:
-    paths:
-      - public
-    expire_in: 30 days
-  only:
-    - master
+#pages:
+#  stage: deploy
+##  dependencies:
+##    - rspec
+#  script:
+#    - mv htmlcov/ public/
+#  artifacts:
+#    paths:
+#      - public
+#    expire_in: 30 days
+#  only:
+#    - master
