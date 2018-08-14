@@ -50,8 +50,9 @@ pages:
   stage: deploy
   script:
     - mv htmldoc/ public/
-    - mkdir public/coverage
-    - mv htmlcov/ public/coverage/
+    #- mkdir public/coverage
+    - mv htmlcov public/coverage
+    - ls
   artifacts:
     paths:
       - public
