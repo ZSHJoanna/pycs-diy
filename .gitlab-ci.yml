@@ -36,6 +36,7 @@ build-doc:
   stage: build
   script:
   - pip install sphinx
+  - pip install sphinx_rtd_theme
   - cd docs
   - make clean
   - make html
