@@ -79,7 +79,7 @@ pages:
     - mv doc_status.svg public/
     #- mkdir public/coverage
     - mv htmlcov public/coverage
-    - ls
+    - ls public
   artifacts:
     paths:
       - public
