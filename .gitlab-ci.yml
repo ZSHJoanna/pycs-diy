@@ -48,10 +48,8 @@ build-doc:
 pages:
   stage: deploy
   script:
-    - pwd
-    - ls
     #- mv htmlcov/ public/
-    - mv _build/html/ public/
+    - mv docs/_build/html/ public/
   artifacts:
     paths:
       - public
