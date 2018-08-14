@@ -45,7 +45,7 @@ build-doc:
     - pip install sphinx_rtd_theme
     - cd docs
     - make clean
-    - huehuehue
+    - huehue
     - make html
     - mv _build/html ../htmldoc
   artifacts:
@@ -76,9 +76,9 @@ build-doc-failure:
 pages:
   stage: deploy
   script:
+    - mv doc_status.svg public/
     - mv htmldoc/ public/
     - mv htmlcov public/coverage
-    - mv doc_status.svg public/
   when: always
   artifacts:
     paths:
