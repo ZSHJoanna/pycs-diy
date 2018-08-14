@@ -56,7 +56,7 @@ build-doc-success:
   stage: doc-status
   script:
     - cd docs
-    - ln -s _static/doc-passing-brightgreen.svg doc_status.svg
+    - ln -s _static/doc-passing-brightgreen.svg ../doc_status.svg
   when: on_success
   artifacts:
     paths:
@@ -66,7 +66,7 @@ build-doc-failure:
   stage: doc-status
   script:
     - cd docs
-    - ln -s _static/doc-failing-red.svg doc_status.svg
+    - ln -s _static/doc-failing-red.svg ../doc_status.svg
   when: on_failure
   artifacts:
     paths:
@@ -76,6 +76,7 @@ pages:
   stage: deploy
   script:
     - mv htmldoc/ public/
+    - mv doc_status.svg public/
     #- mkdir public/coverage
     - mv htmlcov public/coverage
     - ls
