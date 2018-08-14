@@ -23,6 +23,7 @@ before_script:
 stages:
   - test
   - build-doc
+  - doc-status
   - deploy
 
 test:
@@ -40,19 +41,35 @@ test:
 build-doc:
   stage: build-doc
   script:
-  - pip install sphinx
-  - pip install sphinx_rtd_theme
-  - cd docs
-  - make clean
-  - make html
-  - mv _build/html ../htmldoc
-  on_success:
-    - ln -s _static/doc-passing-brightgreen.svg doc_status.svg
-  on_failure:
-    - ln -s _static/doc-failing-red.svg doc_status.svg
+    - pip install sphinx
+    - pip install sphinx_rtd_theme
+    - cd docs
+    - make clean
+    - make html
+    - mv _build/html ../htmldoc
   artifacts:
     paths:
       - htmldoc/
+      - docs/doc_status.svg
+
+build-doc-success:
+  stage: doc-status
+  script:
+    - cd docs
+    - ln -s _static/doc-passing-brightgreen.svg doc_status.svg
+  when: on_success
+  artifacts:
+    paths:
+      - docs/doc_status.svg
+
+build-doc-failure:
+  stage: doc-status
+  script:
+    - cd docs
+    - ln -s _static/doc-failing-red.svg doc_status.svg
+  when: on_failure
+  artifacts:
+    paths:
       - docs/doc_status.svg
 
 pages:
