@@ -20,6 +20,11 @@ before_script:
   - virtualenv venv
   - source venv/bin/activate
 
+stages:
+  - test
+  - build-doc
+  - deploy
+
 test:
   stage: test
   script:
@@ -33,7 +38,7 @@ test:
       - htmlcov/
 
 build-doc:
-  stage: build
+  stage: build-doc
   script:
   - pip install sphinx
   - pip install sphinx_rtd_theme
@@ -41,10 +46,14 @@ build-doc:
   - make clean
   - make html
   - mv _build/html ../htmldoc
+  on_success:
+    - ln -s _static/doc-passing-brightgreen.svg doc_status.svg
+  on_failure:
+    - ln -s _static/doc-failing-red.svg doc_status.svg
   artifacts:
     paths:
       - htmldoc/
-
+      - docs/doc_status.svg
 
 pages:
   stage: deploy
