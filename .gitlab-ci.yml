@@ -25,7 +25,6 @@ stages:
   - build-doc
   - doc-status
   - deploy
-  - deploy-2
 
 test:
   stage: test
@@ -78,19 +77,7 @@ pages:
   script:
     - mv htmldoc/ public/
     - mv htmlcov public/coverage
-  when: on_success
-  artifacts:
-    paths:
-      - public
-  only:
-    - master
-
-pages:
-  stage: deploy-2
-  script:
-    - ls
-    - mv doc_status.svg public/doc_status.svg
-  when: always
+    - mv doc_status.svg public/
   artifacts:
     paths:
       - public
