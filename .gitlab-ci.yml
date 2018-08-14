@@ -60,7 +60,7 @@ build-doc-success:
   when: on_success
   artifacts:
     paths:
-      - docs/doc_status.svg
+      - doc_status.svg
 
 build-doc-failure:
   stage: doc-status
@@ -70,7 +70,7 @@ build-doc-failure:
   when: on_failure
   artifacts:
     paths:
-      - docs/doc_status.svg
+      - doc_status.svg
 
 pages:
   stage: deploy
