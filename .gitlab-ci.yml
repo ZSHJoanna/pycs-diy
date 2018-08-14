@@ -49,8 +49,9 @@ build-doc:
 pages:
   stage: deploy
   script:
-    - mv htmlcov/ public/coverage/
     - mv htmldoc/ public/
+    - mkdir public/coverage
+    - mv htmlcov/ public/coverage/
   artifacts:
     paths:
       - public
