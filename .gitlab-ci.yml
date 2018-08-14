@@ -40,25 +40,20 @@ build-doc:
   - cd docs
   - make clean
   - make html
-  - mv _build/html htmldoc
-  - ls
+  - mv _build/html ../htmldoc
   artifacts:
     paths:
-      - docs/htmldoc/
+      - htmldoc/
 
 
-#pages:
-#  stage: deploy
-#  script:
-#    #- mv htmlcov/ public/
-#    - pwd
-#    - ls
-#    - ls docs/
-#    - ls docs/_build
-#    - mv docs/_build/html/ public/
-#  artifacts:
-#    paths:
-#      - public
-#    expire_in: 30 days
-#  only:
-#    - master
+pages:
+  stage: deploy
+  script:
+    #- mv htmlcov/ public/
+    - mv htmldoc/ public/
+  artifacts:
+    paths:
+      - public
+    #expire_in: 30 days
+  only:
+    - master
