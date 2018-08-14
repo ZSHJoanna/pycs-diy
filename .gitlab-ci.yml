@@ -72,17 +72,25 @@ build-doc-failure:
     paths:
       - doc_status.svg
 
-pages:
+pages-success:
   stage: deploy
   script:
     - mv htmldoc/ public/
-    - mv doc_status.svg public/
-    #- mkdir public/coverage
     - mv htmlcov public/coverage
-    - ls public
+  when: on_success
   artifacts:
     paths:
       - public
-    #expire_in: 30 days
+  only:
+    - master
+
+pages-always:
+  stage: deploy
+  script:
+    - mv doc_status.svg public/
+  when: always
+  artifacts:
+    paths:
+      - public
   only:
     - master
