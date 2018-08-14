@@ -40,10 +40,10 @@ build-doc:
   - cd docs
   - make clean
   - make html
-  - ls
+  - mv _build/html htmldoc
   artifacts:
     paths:
-      - _build/
+      - htmldoc/
 
 
 #pages:
