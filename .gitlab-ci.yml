@@ -25,6 +25,7 @@ stages:
   - build-doc
   - doc-status
   - deploy
+  - deploy-2
 
 test:
   stage: test
@@ -72,7 +73,7 @@ build-doc-failure:
     paths:
       - doc_status.svg
 
-pages-success:
+pages:
   stage: deploy
   script:
     - mv htmldoc/ public/
@@ -84,8 +85,8 @@ pages-success:
   only:
     - master
 
-pages-always:
-  stage: deploy
+pages:
+  stage: deploy-2
   script:
     - ls
     - mv doc_status.svg public/doc_status.svg
