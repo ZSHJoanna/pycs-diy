@@ -87,7 +87,7 @@ pages-success:
 pages-always:
   stage: deploy
   script:
-    - mv doc_status.svg public/
+    - mv doc_status.svg public/doc_status.svg
   when: always
   artifacts:
     paths:
