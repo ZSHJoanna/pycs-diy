@@ -41,9 +41,10 @@ build-doc:
   - make clean
   - make html
   - mv _build/html htmldoc
+  - ls
   artifacts:
     paths:
-      - htmldoc/
+      - docs/htmldoc/
 
 
 #pages:
