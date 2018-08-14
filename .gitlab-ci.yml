@@ -47,6 +47,7 @@ build-doc:
     - make clean
     - make html
     - mv _build/html ../htmldoc
+    - huehuehue
   artifacts:
     paths:
       - htmldoc/
