@@ -45,7 +45,6 @@ build-doc:
     - pip install sphinx_rtd_theme
     - cd docs
     - make clean
-    - huehue
     - make html
     - mv _build/html ../htmldoc
   artifacts:
