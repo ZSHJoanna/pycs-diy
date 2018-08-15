@@ -76,9 +76,10 @@ build-doc-failure:
 pages:
   stage: deploy
   script:
+    - mkdir public
     - mv doc_status.svg public/
-    - mv htmldoc/ public/
     - mv htmlcov public/coverage
+    - mv htmldoc/ public/
   when: always
   artifacts:
     paths:
