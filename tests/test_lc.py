@@ -6,13 +6,14 @@ import os
 import sys
 
 # add the root directory to sys.path, so pycs3 can be imported without installation
-path = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), '../')
-sys.path.append(path)
+pycs3_path = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), '../')
+path = os.path.dirname(os.path.realpath(sys.argv[0]))
+sys.path.append(pycs3_path)
 
 from pycs3.gen.lc_func import rdbimport
 from pycs3.gen.mrg import colourise
 
-rdbfile = "data/trialcurves.txt"
+rdbfile = os.path.join(path, "data", "trialcurves.txt")
 lcs = [
     rdbimport(rdbfile, object='A', magcolname='mag_A', magerrcolname='magerr_A',
                                 telescopename="Trial"),
