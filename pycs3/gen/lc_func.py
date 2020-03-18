@@ -872,7 +872,7 @@ def getnicetimedelays(lcs, separator="\n", to_be_sorted=False):
     """
     Returns a formatted piece of text of the time delays between a list of lc objects.
 
-    :param lcs:
+    :param lcs:list of LightCurve object
     :param separator: try ``" | "`` to get all the delays in one line.
     :type separator: string
 
@@ -898,6 +898,26 @@ def getnicetimedelays(lcs, separator="\n", to_be_sorted=False):
     return separator.join(
         ["%s%s = %+7.2f" % (lc1.object, lc2.object, lc2.timeshift - lc1.timeshift) for (lc1, lc2) in couples])
 
+def getdelays(lcs, to_be_sorted=False):
+    """
+    Return a list containing the relative time delay between curve
+    :param lcs: list of LightCurve object
+    :param to_be_sorted: If True, I will sort my output according to l.object.
+        But of course I will **not** modify the order of your lcs !
+        By default this is False : if the curves are B, A, C and D in this order,
+        I would return BA, BC, BD, AC, AD, CD
+
+    :type to_be_sorted: boolean
+
+    :return: list of time delays.
+    """
+    n = len(lcs)
+    if to_be_sorted:
+        worklcs = objsort(lcs, ret=True, verbose=False)
+    else:
+        worklcs = lcs
+    couples = [(worklcs[i], worklcs[j]) for i in range(n) for j in range(n) if i < j]
+    return [lc2.timeshift - lc1.timeshift for (lc1, lc2) in couples]
 
 def getnicetimeshifts(lcs, separator="\n"):
     """

@@ -91,6 +91,9 @@ class LightCurve:
         self.labels = [""] * len(self)
         """String if you want to associate a label to each data point"""
 
+        self.showlabels = False
+        """boolean to plot a label for each datapoint"""
+
     # I explicitly define how str(mylightcurve) will look. This allows a nice "print(mylightcurve)" for instance !
     def __str__(self):
         """

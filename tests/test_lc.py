@@ -12,6 +12,7 @@ sys.path.append(pycs3_path)
 
 from pycs3.gen.lc_func import rdbimport
 from pycs3.gen.mrg import colourise
+from pycs3.gen.util import writepickle
 
 rdbfile = os.path.join(path, "data", "trialcurves.txt")
 lcs = [
@@ -31,9 +32,11 @@ assert (len(lcs[0]) == 192)
 
 lc = lcs[0]
 print(lc)
+print(lc.printinfo())
 stats=lc.samplingstats()
 properties = lc.commonproperties()
 properties_all = lc.commonproperties(notonlycommon=True)
 print(stats)
 
+writepickle(lcs, "data/trialcurves.pkl")
 
