@@ -38,5 +38,5 @@ properties = lc.commonproperties()
 properties_all = lc.commonproperties(notonlycommon=True)
 print(stats)
 
-writepickle(lcs, "data/trialcurves.pkl")
+writepickle(lcs, os.path.join(path,"data","trialcurves.pkl"))
 
