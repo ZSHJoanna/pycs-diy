@@ -147,7 +147,7 @@ class DataPoints:
             a = self.jds[i]
             b = self.jds[i + 1]
 
-            newgapjds = np.linspace(a, b, float(b - a) / float(self.stabstep))[1:-1]
+            newgapjds = np.linspace(a, b, int(float(b - a) / float(self.stabstep)))[1:-1]
             newgapindices = i + 1 + np.zeros(len(newgapjds))
             newgapmags = np.interp(newgapjds, [a, b], [self.mags[i], self.mags[i + 1]])
             newgapmagerrs = absstabmagerr * np.ones(newgapmags.shape)

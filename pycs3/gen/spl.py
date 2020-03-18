@@ -234,7 +234,7 @@ class Spline:
         if n:
             intt = np.linspace(a, b, nint + 1)[1:-1]
         else:
-            intt = np.linspace(a, b, float(b - a) / float(nint))[1:-1]
+            intt = np.linspace(a, b, int(float(b - a) / float(nint)))[1:-1]
 
         if len(intt) == 0:
             raise RuntimeError("I am uniknots, and I have only 0 (zero) internal knots ! Increase this number !")

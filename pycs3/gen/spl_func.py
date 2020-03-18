@@ -109,10 +109,10 @@ def seasonknots(lcs, knotstep, ingap, seasongap=60.0):
     for gapi in gapindices:
         b = dp.jds[gapi]
         # print (a, b)
-        knots.append(np.linspace(a, b, float(b - a) / float(knotstep)))
+        knots.append(np.linspace(a, b, int(float(b - a) / float(knotstep))))
         a = dp.jds[gapi + 1]
     b = dp.jds[-1]
-    knots.append(np.linspace(a, b, float(b - a) / float(knotstep)))
+    knots.append(np.linspace(a, b, int(float(b - a) / float(knotstep))))
 
     # knots inside of gaps
     for gapi in gapindices:
