@@ -418,7 +418,7 @@ def opt_ts_brute(lcs, sourcespline, movefirst=True, optml=False, r=2, step=1.0, 
     else:
         origshifts = np.array([l.timeshift for l in lcs[1:]])
 
-    relrange = np.linspace(-1.0 * r * step, 1.0 * r * step, 2 * r + 1)
+    relrange = np.linspace(-1.0 * r * step, 1.0 * r * step, int(2 * r + 1))
     absrangelist = [list(relrange + origshift) for origshift in origshifts]
 
     # We want a list of combinations to explore. Its length is (2*r + 1)**len(lcs)
@@ -525,7 +525,7 @@ def opt_ts_indi(lcs, sourcespline, method="fmin", crit="r2", optml=False, mlsplf
             opttimeshift = float(out[0][0])
         elif method == "brute":
 
-            testvals = np.linspace(-1.0 * bruter * brutestep, 1.0 * bruter * brutestep, 2 * bruter + 1) + initimeshift
+            testvals = np.linspace(-1.0 * bruter * brutestep, 1.0 * bruter * brutestep, int(2 * bruter + 1)) + initimeshift
             r2vals = np.array(list(map(errorfct, testvals)))
             minindex = np.argmin(r2vals)
             opttimeshift = float(testvals[minindex])

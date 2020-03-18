@@ -664,7 +664,7 @@ def display(lclist=[], splist=[],
                     print("#   %s -> %s" % (str(spline), str(spline.plotcolour)))
 
                 npts = (spline.datapoints.jds[-1] - spline.datapoints.jds[0]) * 2.0
-                xs = np.linspace(spline.datapoints.jds[0], spline.datapoints.jds[-1], npts)
+                xs = np.linspace(spline.datapoints.jds[0], spline.datapoints.jds[-1], int(npts))
                 ys = spline.eval(jds=xs)
                 axes.plot(xs, ys, "-", color=spline.plotcolour, zorder=+20, label=str(spline))
                 # For the knots, we might not want to show them (by default we do show them) :

@@ -334,7 +334,6 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
             plt.hist(np.concatenate([rlc.mags for rlc in curve["optmockrlclist"]]), 50, range=(-r, r),
                      facecolor='black', alpha=0.4, normed=1, histtype="stepfilled")
             # Gaussian for the mock hist :
-            # plt.plot(np.linspace(-r, r, 100), normal(np.linspace(-r, r, 100), curve["origresistats"]["mean"], curve["origresistats"]["std"]), color="green")
             plt.hist(curve["optorigrlc"].mags, 50, facecolor=curve["optorigrlc"].plotcolour, alpha=0.5, range=(-r, r),
                      normed=1, histtype="stepfilled")
             plt.xlabel("Spline fit residuals [mag]")

@@ -145,7 +145,7 @@ class SplineML:
 
         n is the number of points you want. the more the smoother.
         """
-        smoothtime = np.linspace(self.spline.datapoints.jds[0], self.spline.datapoints.jds[-1], n)
+        smoothtime = np.linspace(self.spline.datapoints.jds[0], self.spline.datapoints.jds[-1], int(n))
         smoothml = self.spline.eval(jds=smoothtime)
         refmag = np.median(lightcurve.getmags())
 

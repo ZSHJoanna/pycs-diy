@@ -228,11 +228,10 @@ class Spline:
 
         """
 
-        # intt = np.linspace(self.datapoints.jds[0], self.datapoints.jds[-1], step+1)[1:-1] # we remove the extremas
         a = self.datapoints.jds[0]
         b = self.datapoints.jds[-1]
         if n:
-            intt = np.linspace(a, b, nint + 1)[1:-1]
+            intt = np.linspace(a, b, int(nint + 1))[1:-1]
         else:
             intt = np.linspace(a, b, int(float(b - a) / float(nint)))[1:-1]
 
@@ -382,7 +381,7 @@ class Spline:
                     break
                 i = np.random.randint(0, nintknots)  # (inclusive, exclusive)
 
-                testknots = np.linspace(self.l[i + 1], self.u[i + 1], self.boktests)
+                testknots = np.linspace(self.l[i + 1], self.u[i + 1], int(self.boktests))
                 # +1, as u and l include extremal knots...
                 # So we include the extremas in our range to test.
 
@@ -410,7 +409,7 @@ class Spline:
             # intknotindices = np.concatenate([intknotindices[mid:], intknotindices[:mid][::-1]])
 
             for i in intknotindices:
-                testknots = np.linspace(self.l[i + 1], self.u[i + 1], self.boktests)
+                testknots = np.linspace(self.l[i + 1], self.u[i + 1], int(self.boktests))
                 # +1, as u and l include extremal knots...
                 # So we include the extremas in our range to test.
 
