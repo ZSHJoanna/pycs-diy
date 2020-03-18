@@ -10,8 +10,6 @@ pycs3_path = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), '../')
 path = os.path.dirname(os.path.realpath(sys.argv[0]))
 sys.path.append(pycs3_path)
 
-rdbfile = os.path.join(path, "data", "trialcurves.txt")
-
 from pycs3.gen.util import readpickle
 from pycs3.gen.lc_func import display, getnicetimedelays, getdelays
 from pycs3.gen.polyml import addtolc
@@ -27,7 +25,7 @@ def spl(lcs):
 	spline = opt_fine(lcs, nit=10, knotstep=20)
 	return spline
 
-lcs = readpickle("data/trialcurves.pkl")
+lcs = readpickle(os.path.join(path, "data" , "trialcurves.pkl"))
 
 # Let's try some curve shifting, without correcting for extrinsic variability...
 # With the freek-knot spline technique :
