@@ -21,6 +21,6 @@ setup(
     description='Python Curve Shifting for python 3',
     packages=["pycs3", "pycs3.gen", "pycs3.spl"],
     requires=['numpy', 'matplotlib', 'scipy'],
-    test_requires=['pytest>=2.3'],
+    tests_requires=['pytest>=2.3'],
     cmdclass={'test': PyTest}
 )

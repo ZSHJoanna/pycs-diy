@@ -148,7 +148,7 @@ class DataPoints:
             b = self.jds[i + 1]
 
             newgapjds = np.linspace(a, b, int(float(b - a) / float(self.stabstep)))[1:-1]
-            newgapindices = i + 1 + np.zeros(len(newgapjds))
+            newgapindices = i + 1 + np.zeros(len(newgapjds),dtype = int)
             newgapmags = np.interp(newgapjds, [a, b], [self.mags[i], self.mags[i + 1]])
             newgapmagerrs = absstabmagerr * np.ones(newgapmags.shape)
             newgapmask = np.zeros(len(newgapjds), dtype=np.bool)
@@ -177,7 +177,7 @@ class DataPoints:
         extmagerrs = absstabmagerr * np.ones(extjds.shape)
         for i in range(1, self.stabrampsize + 1):
             extmagerrs[-i] += (self.stabrampsize + 1 - i) * absstabmagerr * self.stabrampfact
-        extindices = np.zeros(extjds.shape)
+        extindices = np.zeros(extjds.shape, dtype=int)
         mask = np.zeros(len(extjds), dtype=np.bool)
         self.jds = np.insert(self.jds, extindices, extjds)
         self.mags = np.insert(self.mags, extindices, extmags)
@@ -191,7 +191,7 @@ class DataPoints:
         extmagerrs = absstabmagerr * np.ones(extjds.shape)
         for i in range(0, self.stabrampsize):
             extmagerrs[i] += (self.stabrampsize - i) * absstabmagerr * self.stabrampfact
-        extindices = len(self.jds) + np.zeros(extjds.shape)
+        extindices = len(self.jds) + np.zeros(extjds.shape, dtype=int)
         mask = np.zeros(len(extjds), dtype=np.bool)
         self.jds = np.insert(self.jds, extindices, extjds)
         self.mags = np.insert(self.mags, extindices, extmags)
