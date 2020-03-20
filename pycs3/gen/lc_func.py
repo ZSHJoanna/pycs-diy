@@ -258,7 +258,8 @@ def display(lclist=[], splist=[],
     :param title: Adds a title to the plot, center top of the axes, usually used for lens names.
         To nicely write a lens name, remember to use raw strings and LaTeX mathrm, e.g. :
         ``title = r"$\mathrm{RX\,J1131-1231}$"``
-    :type title: string
+    :type title: string If you want to use a preset of parameter. Choose between "homepagepdf", "homepagepdfnologo",
+    "2m2", "posterpdf", "cosmograil_dr1", "cosmograil_dr1_microlensing", I overwrite other keyword arguments.
 
     :param titlexpos: Specify where you want your to anchor the center of your title in the x axis. the value is in the x-axis fraction.  Default is center. (x = 0.5)
     :type titlexpos: float
