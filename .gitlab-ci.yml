@@ -30,8 +30,7 @@ test:
   stage: test
   script:
   - pip install -r docs/requirements.txt
-  - python -m coverage run --source=pycs3 tests/test_lc.py
-  - python -m coverage run --source=pycs3 tests/test_lc_microlensing.py
+  - python -m coverage run --source=pycs3 setup.py test
 #  - python -m coverage combine
   - python -m coverage report
   - python -m coverage html
