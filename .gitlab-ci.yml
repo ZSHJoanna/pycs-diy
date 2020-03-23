@@ -1,4 +1,4 @@
-image: python:3.6
+image: python:3.7
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -15,6 +15,14 @@ cache:
     - .cache/pip
     - venv/
 
+addons:
+  apt:
+    packages:
+    - libatlas-dev
+    - libatlas-base-dev
+    - liblapack-dev
+    - gfortran
+
 before_script:
   - pip install virtualenv
   - virtualenv venv
@@ -29,7 +37,7 @@ stages:
 test:
   stage: test
   script:
-  - pip install git+https://github.com/pymc-devs/pymc
+  - pip install git+https://github.com/pymc-devs/pymc@2.3.7
   - pip install -r docs/requirements.txt
   - python -m coverage run --source=pycs3 setup.py test
 #  - python -m coverage combine
