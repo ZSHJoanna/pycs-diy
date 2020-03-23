@@ -16,7 +16,7 @@ cache:
     - venv/
 
 before_script:
-  - sudo apt-get update
+  - apt-get update
   - apt-get install gfortran
   - pip install virtualenv
   - virtualenv venv
