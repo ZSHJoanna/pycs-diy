@@ -16,6 +16,7 @@ cache:
     - venv/
 
 before_script:
+  - apt-get install gfortran
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
@@ -29,7 +30,6 @@ stages:
 test:
   stage: test
   script:
-  - sudo apt-get install gfortran
   - pip install git+https://github.com/pymc-devs/pymc@2.3.7
   - pip install -r docs/requirements.txt
   - python -m coverage run --source=pycs3 setup.py test
