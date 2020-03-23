@@ -49,19 +49,20 @@ class TestLightCurve(unittest.TestCase):
 
 
     def test_opt_spline(self):
-        addtolc(self.lcs[1], nparams=2, autoseasonsgap=60.0)  # add affine microlensing to each season
-        addtolc(self.lcs[2], nparams=3, autoseasonsgap=600.0)  # add polynomial of degree 2 on the entire light curve
-        addtolc(self.lcs[3], nparams=3, autoseasonsgap=600.0)
-        spline = spl(self.lcs)
-        delays = lc_func.getdelays(self.lcs, to_be_sorted=True)
-        lc_func.getnicetimedelays(self.lcs)
-        lc_func.display(self.lcs, [spline],style="homepagepdf", filename=os.path.join(self.outpath, 'spline_wi_ml1.png'))
-        lc_func.display(self.lcs, [spline],style="homepagepdfnologo", filename=os.path.join(self.outpath, 'spline_wi_ml2.png'))
-        lc_func.display(self.lcs, [spline],style="2m2", filename=os.path.join(self.outpath, 'spline_wi_ml3.png'))
-        lc_func.display(self.lcs, [spline],style="posterpdf", filename=os.path.join(self.outpath, 'spline_wi_ml4.png'))
-        lc_func.display(self.lcs, [spline],style="internal", filename=os.path.join(self.outpath, 'spline_wi_ml5.png'))
-        lc_func.display(self.lcs, [spline],style="cosmograil_dr1", filename=os.path.join(self.outpath, 'spline_wi_ml6.png'))
-        lc_func.display(self.lcs, [spline],style="cosmograil_dr1_microlensing", filename=os.path.join(self.outpath, 'spline_wi_ml7.png'))
+        lc_copy =[lc.copy() for lc in self.lcs]
+        addtolc(lc_copy[1], nparams=2, autoseasonsgap=60.0)  # add affine microlensing to each season
+        addtolc(lc_copy[2], nparams=3, autoseasonsgap=600.0)  # add polynomial of degree 2 on the entire light curve
+        addtolc(lc_copy[3], nparams=3, autoseasonsgap=600.0)
+        spline = spl(lc_copy)
+        delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
+        lc_func.getnicetimedelays(lc_copy)
+        lc_func.display(lc_copy, [spline],style="homepagepdf", filename=os.path.join(self.outpath, 'spline_wi_ml1.png'))
+        lc_func.display(lc_copy, [spline],style="homepagepdfnologo", filename=os.path.join(self.outpath, 'spline_wi_ml2.png'))
+        lc_func.display(lc_copy, [spline],style="2m2", filename=os.path.join(self.outpath, 'spline_wi_ml3.png'))
+        lc_func.display(lc_copy, [spline],style="posterpdf", filename=os.path.join(self.outpath, 'spline_wi_ml4.png'))
+        lc_func.display(lc_copy, [spline],style="internal", filename=os.path.join(self.outpath, 'spline_wi_ml5.png'))
+        lc_func.display(lc_copy, [spline],style="cosmograil_dr1", filename=os.path.join(self.outpath, 'spline_wi_ml6.png'))
+        lc_func.display(lc_copy, [spline],style="cosmograil_dr1_microlensing", filename=os.path.join(self.outpath, 'spline_wi_ml7.png'))
         delays_th = [-6.44376707514413, -26.199323016152675, -70.92455333399347, -19.755555941008545,
                      -64.48078625884935, -44.7252303178408]
 
