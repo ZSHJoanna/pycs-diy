@@ -31,7 +31,7 @@ stages:
 test:
   stage: test
   script:
-  - pip install git+https://github.com/pymc-devs/pymc@2.3.7
+  - pip install git+https://github.com/pymc-devs/pymc@2.3.7rc1
   - pip install -r docs/requirements.txt
   - python -m coverage run --source=pycs3 setup.py test
 #  - python -m coverage combine
