@@ -17,7 +17,7 @@ cache:
 
 before_script:
   - apt-get update
-  - apt-get install gfortran
+  - apt-get install -y gfortran
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
