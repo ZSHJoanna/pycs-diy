@@ -3,7 +3,6 @@ Defines a class that represents a regularly sampled lightcurve
 
 """
 import numpy as np
-import pycs3.regdiff.pymc3gp as pymc3gp
 import pycs3.regdiff.scikitgp as scikitgp
 import copy as pythoncopy
 import scipy.optimize as spopt
