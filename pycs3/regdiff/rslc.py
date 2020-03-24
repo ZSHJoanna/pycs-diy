@@ -3,10 +3,11 @@ Defines a class that represents a regularly sampled lightcurve
 
 """
 import numpy as np
-from . import pymcgp
+import pycs3.regdiff.pymc3gp as pymc3gp
+import pycs3.regdiff.scikitgp as scikitgp
 import copy as pythoncopy
 import scipy.optimize as spopt
-
+import time
 
 class Rslc:
     """
@@ -109,15 +110,22 @@ def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=
     # The regression itself
 
     mean_mag = np.mean(mags)
+    start = time.time()
+    # def meanprior(query):
+    #     return 0.0 * query + mean_mag
 
-    def meanprior(query):
-        return 0.0 * query + mean_mag
+    # regfct = pymcgp.regression(jds, mags, magerrs, meanprior, covkernel=covkernel, pow=pow, amp=amp, scale=scale,
+    #                            errscale=errscale)
 
-    regfct = pymcgp.regression(jds, mags, magerrs, meanprior, covkernel=covkernel, pow=pow, amp=amp, scale=scale,
+    regfct = scikitgp.regression(jds, mags, magerrs, mean_mag, covkernel=covkernel, pow=pow, amp=amp, scale=scale,
                                errscale=errscale)
-
+    #
+    #
     (rsmags, rsmagerrs) = regfct(rsjds)  # that fucker does not want to be executed in a multiprocessing loop. Why ?
-
+    # (rsmags, rsmagerrs) = pymc3gp.regression(jds, mags, magerrs, mean_mag, rsjds, covkernel=covkernel, pow=pow,
+    #                                          amp=amp, scale=scale,errscale=errscale)
+    stop = time.time()
+    print("Took : %2.2f"%(stop-start))
     return Rslc(rsjds, rsmags, rsmagerrs, pad, pd, timeshift=timeshift, name=name, plotcolour=plotcolour)
 
 

@@ -993,3 +993,8 @@ def objsort(lcs, ret=False, verbose=True):
         return
     if ret:
         return sorted(lcs, key=operator.attrgetter('object'))
+
+def resetlcs(lcs):
+    for i, lc in enumerate(lcs):
+        lc.resetml()
+        lc.resetshifts(keeptimeshift=False)

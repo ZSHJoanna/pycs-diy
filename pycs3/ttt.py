@@ -22,8 +22,22 @@ mrg.colourise(lcs)
 for lc in lcs :
     print(lc.timeshift)
 
-myrslcs, error_fct = multiopt.opt_ts(lcs, pd=2, covkernel='matern',
-        pow=1.7, amp=0.5, scale=200.0, errscale=20, verbose=True, method="weights")
+lc_func.settimeshifts(lcs,shifts=[0, -5, -20, -60],includefirst=True)
+
+# myrslcs, error_fct = multiopt.opt_ts(lcs, pd=2, covkernel='matern',
+#         pow=1.5, amp=1., scale=200., errscale=1., verbose=True, method="weights") # good set for mattern
+
+# myrslcs, error_fct = multiopt.opt_ts(lcs, pd=2, covkernel='matern',
+#         pow=2.5, amp=1.0, scale=200., errscale=1., verbose=True, method="weights") # good set for mattern
+#
+
+myrslcs, error_fct = multiopt.opt_ts(lcs, pd=2, covkernel='RBF',
+                pow=1.5, amp=0.5, scale=200., errscale=1., verbose=True, method="weights") # good set for Radial-Basis Function
+# myrslcs, error_fct = multiopt.opt_ts(lcs, pd=2, covkernel='RBF',
+#         pow=1.5, amp=0.5, scale=200., errscale=1., verbose=True, method="weights") # good set for RBF , pow is not used
+#
+# myrslcs, error_fct = multiopt.opt_ts(lcs, pd=2, covkernel='RatQuad',
+#         pow=1., amp=0.5, scale=200., errscale=1., verbose=True, method="weights") # good set for mattern
 
 lc_func.display(lcs, myrslcs, filename='screen')
 for lc in myrslcs:
