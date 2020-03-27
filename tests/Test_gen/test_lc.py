@@ -5,15 +5,10 @@ import unittest
 
 from tests import TEST_PATH
 from pycs3.gen.polyml import addtolc
-import pycs3.spl.topopt as toopt
+from tests import utils
 import pycs3.gen.mrg as mrg
 import pycs3.gen.lc_func as lc_func
 from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equal
-
-def spl(lcs):
-	spline = toopt.opt_rough(lcs, nit=5, knotstep=30)
-	spline = toopt.opt_fine(lcs, nit=10, knotstep=20)
-	return spline
 
 class TestLightCurve(unittest.TestCase):
     def setUp(self):
@@ -53,7 +48,7 @@ class TestLightCurve(unittest.TestCase):
         addtolc(lc_copy[1], nparams=2, autoseasonsgap=60.0)  # add affine microlensing to each season
         addtolc(lc_copy[2], nparams=3, autoseasonsgap=600.0)  # add polynomial of degree 2 on the entire light curve
         addtolc(lc_copy[3], nparams=3, autoseasonsgap=600.0)
-        spline = spl(lc_copy)
+        spline = utils.spl(lc_copy)
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         lc_func.getnicetimedelays(lc_copy)
         lc_func.display(lc_copy, [spline],style="homepagepdf", filename=os.path.join(self.outpath, 'spline_wi_ml1.png'))

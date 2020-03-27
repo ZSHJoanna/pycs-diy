@@ -109,6 +109,7 @@ def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=
     # The regression itself
 
     mean_mag = np.mean(mags)
+    #todo : remove time checks
     start = time.time()
     # def meanprior(query):
     #     return 0.0 * query + mean_mag

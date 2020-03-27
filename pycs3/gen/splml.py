@@ -126,10 +126,11 @@ class SplineML:
         """
         self.spline.reset()
 
-    def calcmlmags(self):
+    def calcmlmags(self, lightcurve):
         """
         Required by lc (for getmags, applyml, etc...)
         Returns a mags-like vector containing the mags to be added to the lightcurve.
+        :param lightcurve: lightCurve object, not used, this is to match the polyml.Microlensing.calcmlmags()
         """
 
         return self.spline.eval(nostab=True)  # Of course, we do not want to evaluate the stab points !
