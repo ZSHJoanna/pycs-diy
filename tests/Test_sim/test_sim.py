@@ -57,8 +57,10 @@ class TestSimuf(unittest.TestCase):
         pycs3.sim.plot.hists(dataresults, r=5.0, nbins=100, showqs=False,
                             filename=os.path.join(self.outpath,"fig_intrinsicvariance.png"), dataout=True)
     def clear_sim(self):
-        shutil.rmtree(os.path.join(self.outpath, "sims_copies_opt_spl"))
-        shutil.rmtree(os.path.join(self.outpath, "sims_copies"))
+        if os.path.exists(os.path.join(self.outpath, "sims_copies_opt_spl")):
+            shutil.rmtree(os.path.join(self.outpath, "sims_copies_opt_spl"))
+        if os.path.exists(os.path.join(self.outpath, "sims_copies")):
+            shutil.rmtree(os.path.join(self.outpath, "sims_copies"))
 
 if __name__ == '__main__':
     pytest.main()
