@@ -53,7 +53,7 @@ class TestSimuf(unittest.TestCase):
         print(result_dic)
         print(success_dic)
         result_th_center =np.asarray([  -5.07276501,  -9.78323028, -25.77944057, -73.49879065])
-        assert_allclose(result_dic['center'], result_th_center, atol=1.)
+        assert_allclose(result_dic['center'], result_th_center, atol=2.)
         pycs3.sim.plot.hists(dataresults, r=5.0, nbins=100, showqs=False,
                             filename=os.path.join(self.outpath,"fig_intrinsicvariance.png"), dataout=True)
     def clear_sim(self):
