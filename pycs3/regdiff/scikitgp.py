@@ -18,7 +18,7 @@ def regression(x, y, yerr, mean, covkernel='matern', pow=1.5, amp=2.0, scale=200
     I return a function : you pass an array of new x, the func returns (newy, newyerr)
 
     pow, amp and scale are params for the covariance function.
-
+    @todo : remove the optimsied parameters scale, amp, and pow.
     """
     obs_mesh = x.reshape(-1, 1)
     obs_vals = y

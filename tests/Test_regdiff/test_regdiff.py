@@ -4,7 +4,6 @@ import unittest
 from tests import TEST_PATH
 import pycs3.gen.mrg as mrg
 import pycs3.gen.lc_func as lc_func
-import pycs3.regdiff.multiopt as multiopt
 from tests import utils
 from numpy.testing import assert_allclose
 
