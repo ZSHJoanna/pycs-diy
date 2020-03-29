@@ -7,7 +7,7 @@ Submodules
 Module contents
 ---------------
 
-.. automodule:: gen.lc
+.. automodule:: pycs3.gen.lc
     :members:
     :undoc-members:
     :show-inheritance:
