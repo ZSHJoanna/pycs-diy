@@ -40,7 +40,7 @@ class TestCopies(unittest.TestCase):
     def test_draw_run_sims(self):
         # self.clear_sims()
         pycs3.sim.draw.saveresiduals(self.lcs, self.spline)
-        pycs3.sim.draw.multidraw(self.lcs, self.spline, n=20, npkl=1, simset="mocks", destpath=self.outpath,
+        pycs3.sim.draw.multidraw(self.lcs, self.spline, n=10, npkl=1, simset="mocks", destpath=self.outpath,
                                  truetsr=8.0, tweakml=[utils.Atweakml, utils.Btweakml, utils.Ctweakml, utils.Dtweakml])
 
         kwargs_optim = {}

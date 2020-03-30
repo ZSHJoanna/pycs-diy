@@ -44,6 +44,7 @@ pycs
         ------------
         - renamed Class RunResults
         - added method get_delays_from_ts()
+        - reintroduced multi-cpu processing in the applyopt() function.
 
         twk.py
         ------

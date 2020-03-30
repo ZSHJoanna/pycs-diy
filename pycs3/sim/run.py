@@ -11,9 +11,10 @@ import time
 import copy as pythoncopy
 from glob import glob
 import os
+import multiprocess
 
 
-def applyopt(optfct, lcslist, **kwargs):
+def applyopt(optfct, lcslist, ncpu, **kwargs):
     """
     Applies optfct (an optimizing function that takes a list of lightcurves as single argument)
     to all the elements (list of lightcurves)
@@ -22,19 +23,20 @@ def applyopt(optfct, lcslist, **kwargs):
     Optimizes the lightcurves themselves, in place, and returns a list of the outputs of the optimizers, corresponding to the lcslist.
     For instance, if the optfct output is a spline, it also contains the final r2s, that I will later save into the pkls !
 
-    About multi cpu :
-    First try using the multiprocessing module -> failed, as the optfct cannot be pickled. Perhaps need to rethink the
-    strategy.
-    Second try using good old forkmap... it works !
+    This now works with multi-threading. Consider using ncpu=1 if you use higher level of parallelisation.
+    If one thread is failing, this should not impact the others, but the optfctouts won't have the same length as the lcslist.
+    Call clean_simlist if you want to remove the failed attempts from the lcslist.
 
-    ncpu : None = I will use all CPUs, -1 = I will use all - 1 CPUs, and otherwise I will use ncpu CPUs.
-    @todo : reimplement multiCPU
+    :param optfct : function to apply to the LightCurves
+    :param lcslist : list of LightCurves
+    :param kwargs: dictionnary of kwargs to be transmitted to the optfct
+    :param ncpu : integer or None, None = I will use all CPUs, -1 = I will use all - 1 CPUs, and otherwise I will use ncpu CPUs.
+    :return optfctouts: a list of the optimised LightCurves and a dictionnary containing the failed attempt to shift the curves.
     """
-    ncpu = 1
-    verbose = True
+    ncpuava = multiprocess.cpu_count()
     if ncpu == 1:
-        if verbose:
-            print("Starting the curve shifting on a single CPU, no multiprocessing...")
+        #curves are optimised one after the other :
+        print("Starting the curve shifting on a single CPU, no multiprocessing...")
         start = time.time()
         kwargs_vec = [kwargs for k in lcslist]
         optfctouts = []
@@ -51,36 +53,50 @@ def applyopt(optfct, lcslist, **kwargs):
             else:
                 optfctouts.append(optout)
 
-        print("Shifted %i simulations, using 1 CPU, time : %s" % (
-            len(lcslist), pycs3.gen.util.strtd(time.time() - start)))
 
-    '''
     else:
-        ncpuava = pycs3.sim.frk.nprocessors()
+        #auxilliary function for using map_async() with arguments and keyword arguments :
+        def optfct_aux(argument):
+            arg, id, kwargs = argument
+            try:
+                out = optfct(arg, **kwargs)
+            except Exception as e:
+                print("WARNING : I have a problem with the curve number %i." % id)
+                print(e)
+                dic = {'success': False, 'failed_id': [id], 'error_list': [e]}
+                out = None
+            else:
+                dic = {'success': True, 'failed_id': [], 'error_list': []}
+            return out, dic
+
         if ncpu == None:
             ncpu = ncpuava
         if ncpu == -1:
             ncpu = ncpuava - 1
-        if verbose:
-            print "Starting the curve shifting on %i/%i CPUs." % (ncpu, ncpuava)
+        print("Starting the curve shifting on %i/%i CPUs." % (ncpu, ncpuava))
         start = time.time()
-        # Bug :
-        #optfctouts = pycs3.sim.frk.map(optfct, lcslist, n=ncpu)
-        
-        retfctouts = pycs3.sim.frk.map(retfct, lcslist, n=ncpu)
-        optfctouts = [retfctout[0] for retfctout in retfctouts]
-        optlcslist = [retfctout[1] for retfctout in retfctouts]
-        # And now we use the fact that lcslist is mutable ...
-        assert len(lcslist) == len(optlcslist)
-        for lcs, optlcs in zip(lcslist, optlcslist):
-            lcs = optlcs
-        
-        print "Shifted %i simulations on %i/%i CPUs, time : %s" % (len(lcslist), ncpu, ncpuava, pycs3.gen.util.strtd(time.time() - start))
-    '''
+        job_args = [(k, id, kwargs) for id, k in enumerate(lcslist)]
+        sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
+
+        pool = multiprocess.Pool(ncpu)
+        results = pool.map_async(optfct_aux, job_args) # order should be conserved with map_async
+        outputs = results.get()
+        optfctouts = []
+        for output in outputs:
+            if output[0] is not None:
+                optfctouts.append(output[0])
+            if output[1]['success'] is False:
+                sucess_dic['success'] = False
+                sucess_dic['failed_id'] = sucess_dic['failed_id'] + output[1]['failed_id']
+                sucess_dic['error_list'] = sucess_dic['error_list'] + output[1]['error_list']
 
     if len(optfctouts) == 0:
         print("### WARNING : it seems that your optfct does not return anything ! ###")
-
+    else:
+        print("Shifted %i/%i simulations on %i/%i CPUs, time : %s" % (len(optfctouts),
+                                                                      len(lcslist), ncpu, ncpuava,
+                                                                      pycs3.gen.util.strtd(time.time() - start)))
+        print("I failed for %i curves." % (len(lcslist) - len(optfctouts)))
     return optfctouts, sucess_dic
 
 
@@ -197,15 +213,14 @@ class RunResults:
         :return: dictionary containing the median, max, and min delays + delay labels
         """
         n = len(self.labels)
-        couples = [(self.tsarray[:,i], self.tsarray[:,j]) for i in range(n) for j in range(n) if i < j]
-        label_couple = [ self.labels[i] + self.labels[j] for i in range(n) for j in range(n) if i < j]
-        ret = {"center":[np.median(lcs2 - lcs1) for (lcs1, lcs2) in couples]}
+        couples = [(self.tsarray[:, i], self.tsarray[:, j]) for i in range(n) for j in range(n) if i < j]
+        label_couple = [self.labels[i] + self.labels[j] for i in range(n) for j in range(n) if i < j]
+        ret = {"center": [np.median(lcs2 - lcs1) for (lcs1, lcs2) in couples]}
         ret["max"] = [np.max(lcs2 - lcs1) for (lcs1, lcs2) in couples]
         ret["min"] = [np.min(lcs2 - lcs1) for (lcs1, lcs2) in couples]
         ret["delay_label"] = label_couple
         ret["type"] = "delay distribution"
         return ret
-
 
     def getts(self):
         """
@@ -222,7 +237,7 @@ class RunResults:
         :return:
         """
         labeltxt = "%s (%s, %i) " % (
-        getattr(self, 'name', 'NoName'), "Truth" if self.plottrue else "Measured", self.tsarray.shape[0])
+            getattr(self, 'name', 'NoName'), "Truth" if self.plottrue else "Measured", self.tsarray.shape[0])
         print('Plotting "%s"' % labeltxt)
         print("     Labels : %s" % (", ".join(self.labels)))
         print("     Median shifts : %s" % (
@@ -278,7 +293,7 @@ def collect(directory="./test", plotcolour="#008800", name=None):
 
 
 def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, analyse=True, shuffle=True,
-             keepopt=False, trace=False, verbose=True, destpath="./", use_test_seed=False):
+             keepopt=False, trace=False, verbose=True, destpath="./", ncpu=None, use_test_seed=False):
     """
     Top level wrapper to get delay "histograms" : I will apply the optfct to optimize the shifts
     between curves that you got from :py:func:`pycs3.sim.draw.multidraw`, and save the results in
@@ -318,11 +333,12 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
     :param verbose: boolean. Verbosity.
     :param destpath: string. Path to write the optimised curves and results.
     :param use_test_seed: boolean. Used for testing purposes. If you want to impose the random seed.
+    :param ncpu: integer. Number of CPU tu use, if None I will use all available CPUs. Turn this to one if you use higher level of parallelisation
     :return dictionary containing information about which curves optimisation failed.
     """
 
     # We look for the sims directory
-    simdir = os.path.join(destpath,"sims_%s" % simset)
+    simdir = os.path.join(destpath, "sims_%s" % simset)
     if not os.path.isdir(simdir):
         raise RuntimeError("Sorry, I cannot find the directory %s" % simset)
 
@@ -388,7 +404,7 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
             if shuffle:
                 for simlcs in simlcslist:
                     pycs3.gen.lc_func.shuffle(simlcs)
-            optfctouts, success_dic = applyopt(optfct, simlcslist, **kwargs_optim)
+            optfctouts, success_dic = applyopt(optfct, simlcslist, ncpu, **kwargs_optim)
             if shuffle:  # We sort them, as they will be passed the constructor of runresuts.
                 for simlcs in simlcslist:
                     pycs3.gen.lc_func.objsort(simlcs, verbose=False)
