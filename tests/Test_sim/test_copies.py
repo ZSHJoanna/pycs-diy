@@ -38,7 +38,7 @@ class TestCopies(unittest.TestCase):
         lc_copy_disp = [lc.copy() for lc in self.lcs]
         lc_copy_regdiff = [lc.copy() for lc in self.lcs]
         # draw the copy :
-        pycs3.sim.draw.multidraw(lc_copy, onlycopy=True, n=5, npkl=1, simset="copies", destpath=self.outpath)
+        pycs3.sim.draw.multidraw(lc_copy, onlycopy=True, n=10, npkl=1, simset="copies", destpath=self.outpath)
 
         # Set the initial shift and microlensing model
         lc_func.settimeshifts(lc_copy, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess
