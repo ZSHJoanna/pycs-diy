@@ -117,10 +117,10 @@ class Source:
         n2 = 2 * n  # This is even more even.
 
         # The positive FFT frequencies, in relative units :
-        freqs2 = np.linspace(0, 0.5, n2 / 2 + 1)  # The 0 frequency is included, but we will leave it's power at 0.
+        freqs2 = np.linspace(0, 0.5, int(n2 / 2 + 1))  # The 0 frequency is included, but we will leave it's power at 0.
 
         # To help representing what we do, here are the same in days^-1 :
-        freqs = np.linspace(0, 0.5 / self.sampling, n2 / 2 + 1)  # Our associated frequencies, in units of days^-1
+        freqs = np.linspace(0, 0.5 / self.sampling, int(n2 / 2 + 1))  # Our associated frequencies, in units of days^-1
 
         # Now we generate the random coefficents for those freqs.
         rs = np.random.RandomState(seed)  # we create a random state object, to control the seed.
