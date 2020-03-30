@@ -21,7 +21,7 @@
 # sys.path.insert(0, os.path.abspath('.'))
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../pycs3'))
+sys.path.insert(0, os.path.abspath('../'))
 
 # -- General configuration ------------------------------------------------
 
@@ -58,8 +58,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PyCS3'
-copyright = u'2018, Vivien Bonvin'
-author = u'Vivien Bonvin'
+copyright = u'2016-2020, Martin Millon, Vivien Bonvin, Malte Tewes'
+author = u'Martin Millon, Vivien Bonvin, Malte Tewes'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -151,7 +151,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'PyCS3.tex', u'PyCS3 Documentation',
-     u'Vivien Bonvin, Martin Millon', 'manual'),
+     u'Martin Millon, Vivien Bonvin, Malte Tewes', 'manual'),
 ]
 
 
