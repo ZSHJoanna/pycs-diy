@@ -275,7 +275,7 @@ def draw(lcs, spline, shotnoise=None, shotnoisefrac=1.0, tweakml=None, scaletwea
         telescopename = l.telescopename
         object = l.object
 
-        fakel = pycs3.gen.lc.factory(jds, mags, magerrs, telescopename=telescopename, object=object, verbose=False)
+        fakel = pycs3.gen.lc_func.factory(jds, mags, magerrs, telescopename=telescopename, object=object, verbose=False)
 
         fakel.plotcolour = l.plotcolour
 

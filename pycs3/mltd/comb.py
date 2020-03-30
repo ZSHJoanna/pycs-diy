@@ -21,12 +21,14 @@ class CScontainer:
     You can also give directly the result file without the extension '_errorbars.pkl' or 'delays.pkl'.
     """
 
-    def __init__(self, data, knots, ml, name, drawopt, runopt, ncopy, nmocks, truetsr, colour, result_file_delays=None,
+    def __init__(self, name, knots=None, ml=None, data=None, drawopt=None, runopt=None, ncopy=None, nmocks=None, truetsr=None, colour='royalblue', result_file_delays=None,
                  result_file_errorbars=None):
+        #mandatory
+        self.name = name
+        #optional
         self.data = data
         self.knots = knots
         self.ml = ml
-        self.name = name
         self.drawopt = drawopt
         self.runopt = runopt
         self.ncopy = ncopy
@@ -119,19 +121,6 @@ class Group:
 
         self.lins = lins
 
-    def sort(self, sortlabels):
-        """
-        Sort all my list according to sortlabel
-
-        """
-
-        assert len(sortlabels) == len(
-            self.labels), "There are more sorting labels than actual labels in your object %s" % self.name
-
-        pass
-
-    # @todo: to be written!!!
-
     def niceprint(self):
         """
         Nicely print in the terminal the median and 1sigma values of the current group.
@@ -206,15 +195,10 @@ def getresults(csc, useintrinsic=False):
 
     # get the correct results path
     if csc.result_file_delays is None and csc.result_file_errorbars is None:
-        cp = "%s_ks%i_%s/sims_copies_%s_n%i_opt_%s_delays.pkl" % (
-            csc.drawopt, csc.knots, csc.ml, csc.data, csc.ncopy, csc.runopt)
-        mp = "%s_ks%i_%s/sims_mocks_%s_n%it%i_opt_%s_errorbars.pkl" % (
-            csc.drawopt, csc.knots, csc.ml, csc.data, csc.nmocks, csc.truetsr, csc.runopt)
-    # TODO : clear this
+        raise RuntimeError("Your CScontainer do not contains the '_errorbar.pkl' or '_delays.pkl'. Run pycs3.sim.plot.hists and pycs3.sim.plot.measvstrue first !")
     else:
         cp = csc.result_file_delays
         mp = csc.result_file_errorbars
-        print(cp, mp)
 
     # collect the results
     result = (pycs3.gen.util.readpickle(cp), pycs3.gen.util.readpickle(mp))
@@ -239,9 +223,12 @@ def getresults(csc, useintrinsic=False):
         syserrors.append([d["sys"] for d in result[1].data if d["label"] == label][0])
 
     # create a Group out of them
-    return Group(labels=labels, medians=means, errors_up=errors, errors_down=errors, ran_errors=ranerrors,
+    group = Group(labels=labels, medians=means, errors_up=errors, errors_down=errors, ran_errors=ranerrors,
                  sys_errors=syserrors, int_errors=interrors, name=csc.name)
+    if csc.colour is not None :
+        group.plotcolor = csc.colour
 
+    return group
 
 def asgetresults(weightslist, testmode=True):
     """

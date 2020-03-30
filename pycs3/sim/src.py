@@ -8,6 +8,7 @@ import copy as pythoncopy
 import matplotlib.pyplot as plt
 import scipy.interpolate as si
 import pycs3.gen.spl
+import pycs3.gen.datapoints
 
 
 class Source:
@@ -125,9 +126,9 @@ class Source:
         rs = np.random.RandomState(seed)  # we create a random state object, to control the seed.
 
         # Complex and imaginary part
-        rspecs = rs.standard_normal(n2 / 2 + 1)  # same length as freqs2, associated
+        rspecs = rs.standard_normal(int(n2 / 2 + 1))  # same length as freqs2, associated
         rspecs[1:] *= freqs2[1:] ** (beta / 2.0)
-        ispecs = rs.standard_normal(n2 / 2 + 1)
+        ispecs = rs.standard_normal(int(n2 / 2 + 1))
         ispecs[1:] *= freqs2[1:] ** (beta / 2.0)
         rspecs[0] = 0.0  # To get 0 power for the 0 frequency.
         ispecs[0] = 0.0  # To get 0 power for the 0 frequency.
@@ -157,11 +158,11 @@ class Source:
             print("Hmm, change sigma somehow, can't be the same as for mags !")
 
             iflux = 10.0 ** (-0.4 * self.imags)  # The fluxes
-            iflux += sigma * np.fft.irfft(specs)[:n2 / 2]  # We add our "noise"
+            iflux += sigma * np.fft.irfft(specs)[:int(n2 / 2)]  # We add our "noise"
             # print np.min(iflux)
             self.imags = -2.5 * np.log10(iflux)  # and get back to fluxes
         else:
-            self.imags -= sigma * np.fft.irfft(specs)[:n2 / 2]  # -, to make it coherent with the fluxes.
+            self.imags -= sigma * np.fft.irfft(specs)[:int(n2 / 2)]  # -, to make it coherent with the fluxes.
 
     def eval(self, jds):
         """
@@ -197,7 +198,7 @@ class Source:
         tck = out[0]
 
         # From this we want to build a real Spline object.
-        datapoints = pycs3.gen.spl.DataPoints(x, y, magerrs, splitup=False, sort=False, stab=False)
+        datapoints = pycs3.gen.datapoints.DataPoints(x, y, magerrs, splitup=False, sort=False, stab=False)
         outspline = pycs3.gen.spl.Spline(datapoints, t=tck[0], c=tck[1], k=tck[2], plotcolour=self.plotcolour)
 
         outspline.knottype = "MadeBySource"

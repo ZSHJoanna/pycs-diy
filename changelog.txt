@@ -49,11 +49,22 @@ pycs
         ------
         -suppressed addspl function.
 
+        src.py
+        -------------
+        -renamed spline() method in generate_spline() to avoid name conflict
+
     comb
     ---
         plot.py
         -------
         -moved the function delayplot from sim.plot
+
+        comb.py
+        -------
+        - getresults() now required that the CSContainer have the _errobars.pkl and _dalys.pkl files
+        - In CSContainer constructor (__init__):
+            - only the name of the CSCOntainer is now mandatory
+        - bug fix in the colour transmission between CSContainer and Group
 
 
 tests

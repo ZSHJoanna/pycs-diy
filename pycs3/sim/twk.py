@@ -33,7 +33,7 @@ def tweakml(lcs, spline, beta=-2.0, sigma=0.05, fmin=1 / 500.0, fmax=None, psplo
 
         source.addplaw2(beta=beta, sigma=sigma, fmin=fmin, fmax=fmax, flux=False, seed=None)
         source.name += "_twk"
-        newspline = source.spline()
+        newspline = source.generate_spline()
         l.ml.replacespline(newspline)
 
         if psplot:

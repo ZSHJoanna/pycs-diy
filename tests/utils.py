@@ -26,17 +26,17 @@ def disp(lcs):
 
 
 # The small scale extrinsic variability, used to generated the synthetic curves:
-def Atweakml(lcs):
-    return pycs3.sim.twk.tweakml(lcs, beta=-1.5, sigma=0.25, fmin=1 / 500.0, fmax=None, psplot=False)
+def Atweakml(lcs, spline):
+    return pycs3.sim.twk.tweakml(lcs,spline, beta=-1.5, sigma=0.25, fmin=1 / 500.0, fmax=None, psplot=False)
 
 
-def Btweakml(lcs):
-    return pycs3.sim.twk.tweakml(lcs, beta=-1.0, sigma=0.9, fmin=1 / 500.0, fmax=None, psplot=False)
+def Btweakml(lcs, spline):
+    return pycs3.sim.twk.tweakml(lcs,spline, beta=-1.0, sigma=0.9, fmin=1 / 500.0, fmax=None, psplot=False)
 
 
-def Ctweakml(lcs):
-    return pycs3.sim.twk.tweakml(lcs, beta=-1.0, sigma=1.5, fmin=1 / 500.0, fmax=None, psplot=False)
+def Ctweakml(lcs,spline):
+    return pycs3.sim.twk.tweakml(lcs,spline, beta=-1.0, sigma=1.5, fmin=1 / 500.0, fmax=None, psplot=False)
 
 
-def Dtweakml(lcs):
-    return pycs3.sim.twk.tweakml(lcs, beta=-0.0, sigma=4.5, fmin=1 / 500.0, fmax=None, psplot=False)
+def Dtweakml(lcs,spline):
+    return pycs3.sim.twk.tweakml(lcs,spline, beta=-0.0, sigma=4.5, fmin=1 / 500.0, fmax=None, psplot=False)

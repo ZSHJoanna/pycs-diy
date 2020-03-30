@@ -9,6 +9,7 @@ import pycs3.gen.splml
 import pycs3.sim.run
 import pycs3.sim.plot
 import pycs3.mltd.plot
+import pycs3.mltd.comb
 
 from tests import utils
 import numpy as np
@@ -38,38 +39,33 @@ class TestCopies(unittest.TestCase):
         self.spline = utils.spl(self.lcs)
 
     def test_draw_run_sims(self):
-
+        # self.clear_sims()
         pycs3.sim.draw.saveresiduals(self.lcs, self.spline)
-        pycs3.sim.draw.multidraw(self.lcs, self.spline, n=10, npkl=1, simset="mocks", destpath=self.outpath,
-    	truetsr=8.0, tweakml=[utils.Atweakml, utils.Btweakml, utils.Ctweakml, utils.Dtweakml])
+        pycs3.sim.draw.multidraw(self.lcs, self.spline, n=20, npkl=1, simset="mocks", destpath=self.outpath,
+                                 truetsr=8.0, tweakml=[utils.Atweakml, utils.Btweakml, utils.Ctweakml, utils.Dtweakml])
 
         kwargs_optim = {}
         kwargs_optim_regdiff = {'pd': 2, 'covkernel': 'matern', 'pow': 1.5, 'amp': 1., 'scale': 200., 'errscale': 1.,
                                 'verbose': True, 'method': "weights"}
-        success_dic_spline = pycs3.sim.run.multirun("mocks", self.lcs, utils.spl, kwargs_optim, optset="spl", tsrand=10.0, keepopt=True)
-        success_dic_regdiff = pycs3.sim.run.multirun("mocks", self.lcs, utils.regdiff, kwargs_optim_regdiff, optset="regdiff", tsrand=10.0, keepopt=True)
+        success_dic_spline = pycs3.sim.run.multirun("mocks", self.lcs, utils.spl, kwargs_optim, optset="spl",destpath=self.outpath,
+                                                    tsrand=10.0, keepopt=True, use_test_seed=True)
+        success_dic_regdiff = pycs3.sim.run.multirun("mocks", self.lcs, utils.regdiff, kwargs_optim_regdiff,destpath=self.outpath,
+                                                     optset="regdiff", tsrand=10.0, keepopt=True, use_test_seed=True)
         assert success_dic_spline['success'] is True
         assert success_dic_regdiff['success'] is True
 
-        simresults = [pycs3.sim.run.collect(directory=os.path.join(self.outpath, "sims_mocks_opt_spl"), plotcolour="blue",
+        simresults = [
+            pycs3.sim.run.collect(directory=os.path.join(self.outpath, "sims_mocks_opt_spl"), plotcolour="blue",
                                   name="Free-knot spline technique"),
-                      pycs3.sim.run.collect(directory=os.path.join(self.outpath, "sims_mocks_opt_regdiff"),
-                                            plotcolour="green",
-                                            name="Regression difference technique")
-                      ]
+            pycs3.sim.run.collect(directory=os.path.join(self.outpath, "sims_mocks_opt_regdiff"),
+                                  plotcolour="red",
+                                  name="Regression difference technique")
+            ]
 
         pycs3.sim.plot.measvstrue(simresults, errorrange=3.5, r=5.0, nbins=10, binclip=True, binclipr=20.0,
-                                 plotpoints=True, filename=os.path.join(self.outpath, "fig_measvstrue.png"), dataout=True)
-        pycs3.sim.plot.newcovplot(simresults, filepath=self.outpath, showplots=False)
-
-        regdiffres = (pycs3.gen.util.readpickle(os.path.join(self.outpath, "sims_copies_opt_regdiff_delays.pkl")),
-                      pycs3.gen.util.readpickle(os.path.join(self.outpath,"sims_mocks_opt_regdiff_errorbars.pkl")))
-
-        splres = (pycs3.gen.util.readpickle(os.path.join(self.outpath,"sims_copies_opt_spl_delays.pkl")),
-                  pycs3.gen.util.readpickle(os.path.join(self.outpath,"sims_mocks_opt_spl_errorbars.pkl")))
-
-        pycs3.mltd.plot.delayplot([regdiffres, splres], rplot=6.0, displaytext=True,
-                                   filename=os.path.join(self.outpath,"fig_delays.png"))
+                                  plotpoints=True, filename=os.path.join(self.outpath, "fig_measvstrue.png"),
+                                  dataout=True, outdir=self.outpath)
+        pycs3.sim.plot.newcovplot(simresults, filepath=self.outpath, showplots=False, printcovmat=True)
 
     def clear_sims(self):
         if os.path.exists(os.path.join(self.outpath, "sims_mocks_opt_spl")):

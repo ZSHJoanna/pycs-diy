@@ -321,7 +321,7 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
     :return dictionary containing information about which curves optimisation failed.
     """
 
-    # We look for the sims directory OH GOD THIS IS SO UGLY !
+    # We look for the sims directory
     simdir = os.path.join(destpath,"sims_%s" % simset)
     if not os.path.isdir(simdir):
         raise RuntimeError("Sorry, I cannot find the directory %s" % simset)

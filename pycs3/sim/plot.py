@@ -76,13 +76,13 @@ def hists(rrlist, r=10.0, nbins=100, showqs=True, showallqs=False, qsrange=None,
 
     :param showqs: If True, I overplot the qs as scatter points.
 
-    :param dataout: True means that I'll write the pkl file needed to make the delayplot.
+    :param dataout: True means that I'll write the pkl file, containing a DelayContainer object needed to make the delayplot.
 
     :param usemedian: if True, use the median and median absolute deviation instead of mean and std. Default is False.
 
     .. warning:: To avoid rewriting newdelayplot, if usemedian is True then I write the median and mad in the mean and std fields of the pickles. This is dangerous (and a bit stupid and lazy), but since hists() and newdelayplot() are usually called one after the other it should not create too much confusion.
 
-
+    @todo : test the impact of a change to default use_median
     """
 
     n = rrlist[0].nimages()
@@ -233,7 +233,7 @@ def hists(rrlist, r=10.0, nbins=100, showqs=True, showallqs=False, qsrange=None,
     if dataout:
         for rr in rrlist:
             dc = DelayContainer(data=rr.tmpdata, name=rr.name, plotcolour=rr.plotcolour, objects=labels[:])
-            pycs3.gen.util.writepickle(dc, outdir + "%s_delays.pkl" % rr.autoname)
+            pycs3.gen.util.writepickle(dc, os.path.join(outdir, "%s_delays.pkl" % rr.autoname))
             rr.tmpdata = None
 
     labelspacetop = 0.0
@@ -633,7 +633,7 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
 
                 levels = [np.max(z) * 0.45]
                 cset = ax1.contour(grid[0], grid[1], z, levels=levels, origin="lower", colors=rrlist[0].plotcolour,
-                                   extent=extent, linewidth=0.5)
+                                   extent=extent)
 
             if figsize[0] > 8:
                 ax1.annotate(xdelaylabel, xy=(0.9, 0.05), xycoords='axes fraction', ha="center")  # x axis
@@ -983,7 +983,7 @@ def measvstrue(rrlist, r=10.0, nbins=10, plotpoints=True, alphapoints=1.0, plotr
     if dataout:
         for rr in rrlist:
             dc = DelayContainer(data=rr.tmpdata, name=rr.name, plotcolour=rr.plotcolour, objects=labels[:])
-            pycs3.gen.util.writepickle(dc, outdir + "%s_errorbars.pkl" % rr.autoname)
+            pycs3.gen.util.writepickle(dc, os.path.join(outdir, "%s_errorbars.pkl" % rr.autoname))
             rr.tmpdata = None
 
     labelspacetop = 0.0
