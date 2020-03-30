@@ -16,6 +16,45 @@ pycs
             - remove the showlabels attribute
         - Simplify LightCurve.__str__ docstring and remove unused bit of code
 
+        lc_func.py
+        --------------
+        - moved all functions related to list of LigthCurve to this module
+
+        spl_func.py
+        --------------
+        - moved all functions related to Splines manipulation to this module
+
+        datapoints.py
+        --------------
+        - moved the DataPoints class to this module
+
+    regdiff
+    ---
+        scikitgp.py
+        -------------
+        - replaced the module pymcgp.py tp scikitgp.py. New implementation of the Gaussian Process based on scikit-learn
+
+        rslc.py
+        -------------
+        - renamed class Rslc (Capwords convention)
+
+    sim
+    ---
+        run.py
+        ------------
+        - renamed Class RunResults
+        - added method get_delays_from_ts()
+
+        twk.py
+        ------
+        -suppressed addspl function.
+
+    comb
+    ---
+        plot.py
+        -------
+        -moved the function delayplot from sim.plot
+
 
 tests
 -----

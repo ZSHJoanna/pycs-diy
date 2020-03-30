@@ -15,7 +15,7 @@ import shutil
 from numpy.testing import assert_allclose
 
 
-class TestSimuf(unittest.TestCase):
+class TestCopies(unittest.TestCase):
     def setUp(self):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")
@@ -91,6 +91,7 @@ class TestSimuf(unittest.TestCase):
         assert_allclose(result_dic_regdiff['center'], result_th_center_regdiff, atol=0.5)
         pycs3.sim.plot.hists(dataresults, r=5.0, nbins=100, showqs=False,
                              filename=os.path.join(self.outpath, "fig_intrinsicvariance.png"), dataout=True)
+
 
     def clear_copies(self):
         if os.path.exists(os.path.join(self.outpath, "sims_copies_opt_spl")):

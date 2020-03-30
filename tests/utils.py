@@ -2,19 +2,41 @@ import pycs3.spl.topopt
 import pycs3.regdiff.multiopt as multiopt
 import pycs3.disp.disps
 import pycs3.disp.topopt
+import pycs3.sim.twk
+
 
 def spl(lcs):
-	spline = pycs3.spl.topopt.opt_rough(lcs, nit=5, knotstep=30)
-	spline = pycs3.spl.topopt.opt_fine(lcs, nit=10, knotstep=20)
-	return spline
+    spline = pycs3.spl.topopt.opt_rough(lcs, nit=5, knotstep=30)
+    spline = pycs3.spl.topopt.opt_fine(lcs, nit=10, knotstep=20)
+    return spline
+
 
 def regdiff(lcs, **kwargs):
-	return multiopt.opt_ts(lcs, pd=kwargs['pd'], covkernel=kwargs['covkernel'], pow=kwargs['pow'],
-										amp=kwargs['amp'], scale=kwargs['scale'], errscale=kwargs['errscale'], verbose=True, method="weights")
+    return multiopt.opt_ts(lcs, pd=kwargs['pd'], covkernel=kwargs['covkernel'], pow=kwargs['pow'],
+                           amp=kwargs['amp'], scale=kwargs['scale'], errscale=kwargs['errscale'], verbose=True,
+                           method="weights")
 
 
 rawdispersionmethod = lambda lc1, lc2: pycs3.disp.disps.linintnp(lc1, lc2, interpdist=30.0)
 dispersionmethod = lambda lc1, lc2: pycs3.disp.disps.symmetrize(lc1, lc2, rawdispersionmethod)
 
+
 def disp(lcs):
-	return pycs3.disp.topopt.opt_full(lcs, rawdispersionmethod, nit=5, verbose=True)
+    return pycs3.disp.topopt.opt_full(lcs, rawdispersionmethod, nit=5, verbose=True)
+
+
+# The small scale extrinsic variability, used to generated the synthetic curves:
+def Atweakml(lcs):
+    return pycs3.sim.twk.tweakml(lcs, beta=-1.5, sigma=0.25, fmin=1 / 500.0, fmax=None, psplot=False)
+
+
+def Btweakml(lcs):
+    return pycs3.sim.twk.tweakml(lcs, beta=-1.0, sigma=0.9, fmin=1 / 500.0, fmax=None, psplot=False)
+
+
+def Ctweakml(lcs):
+    return pycs3.sim.twk.tweakml(lcs, beta=-1.0, sigma=1.5, fmin=1 / 500.0, fmax=None, psplot=False)
+
+
+def Dtweakml(lcs):
+    return pycs3.sim.twk.tweakml(lcs, beta=-0.0, sigma=4.5, fmin=1 / 500.0, fmax=None, psplot=False)

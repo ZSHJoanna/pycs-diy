@@ -28,7 +28,7 @@ def applyopt(optfct, lcslist, **kwargs):
     Second try using good old forkmap... it works !
 
     ncpu : None = I will use all CPUs, -1 = I will use all - 1 CPUs, and otherwise I will use ncpu CPUs.
-
+    @todo : reimplement multiCPU
     """
     ncpu = 1
     verbose = True

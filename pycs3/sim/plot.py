@@ -815,7 +815,6 @@ def measvstrue(rrlist, r=10.0, nbins=10, plotpoints=True, alphapoints=1.0, plotr
 
     # To get some fixed ranges for the histograms, we will use the first element of rrlist.
     reftrueshifts = np.round(rrlist[0].gettruets()["center"])
-    # @todo: WAAARNING ! Depending on the shape your rrlist (is it a 1x1000 runresults or 50x20 runresults), reftrueshift will have different values, impacting the final determination of the systematic and random error you compute. This can lead to a variation >10% on the final error !!!! DO SOMETHING !!!
 
     for rr in rrlist:
         if rr.labels != labels:
