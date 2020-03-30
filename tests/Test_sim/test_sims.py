@@ -14,7 +14,6 @@ import pycs3.mltd.comb
 from tests import utils
 import numpy as np
 import shutil
-from numpy.testing import assert_allclose
 
 
 class TestCopies(unittest.TestCase):

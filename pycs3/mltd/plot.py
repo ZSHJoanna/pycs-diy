@@ -183,11 +183,14 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
                     plt.plot([median], [ypos], marker=group.marker, markersize=group.markersize,
                              markeredgecolor=group.plotcolor, color=group.plotcolor)
 
-                if hidedetails or (group.ran_errors[labelindex] < 0.001 and group.sys_errors[labelindex] < 0.001):
+                if hidedetails :
                     delaytext = r"$%+.1f^{+%.1f}_{-%.1f}$" % (median, error_up, error_down)
                 else:
-                    delaytext = r"$%+.1f^{+%.1f}_{-%.1f}\,(%.1f, %.1f)$" % (
-                        median, error_up, error_down, group.ran_errors[labelindex], group.sys_errors[labelindex])
+                    if group.ran_errors is None or  group.sys_errors is None :
+                        delaytext = r"$%+.1f^{+%.1f}_{-%.1f}$" % (median, error_up, error_down)
+                    else :
+                        delaytext = r"$%+.1f^{+%.1f}_{-%.1f}\,(%.1f, %.1f)$" % (
+                            median, error_up, error_down, group.ran_errors[labelindex], group.sys_errors[labelindex])
 
                 # if you want to hide the error...
                 if not showerr:
