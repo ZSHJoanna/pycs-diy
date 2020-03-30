@@ -3,5 +3,5 @@ scipy>=0.19
 coverage>=4.5
 matplotlib>=3.0
 pytest>=2.3
-sklearn>=0.21.3
+sklearn
 multiprocess >=0.70.8
