@@ -24,22 +24,22 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
     For instance, if the optfct output is a spline, it also contains the final r2s, that I will later save into the pkls !
 
     This now works with multi-threading. Consider using ncpu=1 if you use higher level of parallelisation.
-    If one thread is failing, this should not impact the others, but the optfctouts won't have the same length as the lcslist.
+    If one thread is failing, this should not impact the others, but the optfct_outs won't have the same length as the lcslist.
     Call clean_simlist if you want to remove the failed attempts from the lcslist.
 
     :param optfct : function to apply to the LightCurves
     :param lcslist : list of LightCurves
     :param kwargs: dictionnary of kwargs to be transmitted to the optfct
     :param ncpu : integer or None, None = I will use all CPUs, -1 = I will use all - 1 CPUs, and otherwise I will use ncpu CPUs.
-    :return optfctouts: a list of the optimised LightCurves and a dictionnary containing the failed attempt to shift the curves.
+    :return optfct_outs: a list of the optimised LightCurves and a dictionnary containing the failed attempt to shift the curves.
     """
     ncpuava = multiprocess.cpu_count()
     if ncpu == 1:
-        #curves are optimised one after the other :
+        # curves are optimised one after the other :
         print("Starting the curve shifting on a single CPU, no multiprocessing...")
         start = time.time()
         kwargs_vec = [kwargs for k in lcslist]
-        optfctouts = []
+        optfct_outs = []
         sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
         for i, lcs in enumerate(lcslist):
             try:
@@ -51,11 +51,11 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
                 sucess_dic['success'] = False
                 sucess_dic['error_list'].append(e)
             else:
-                optfctouts.append(optout)
+                optfct_outs.append(optout)
 
 
     else:
-        #auxilliary function for using map_async() with arguments and keyword arguments :
+        # auxilliary function for using map_async() with arguments and keyword arguments :
         def optfct_aux(argument):
             arg, id, kwargs = argument
             try:
@@ -79,25 +79,25 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
         sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
 
         pool = multiprocess.Pool(ncpu)
-        results = pool.map_async(optfct_aux, job_args) # order should be conserved with map_async
+        results = pool.map_async(optfct_aux, job_args)  # order should be conserved with map_async
         outputs = results.get()
-        optfctouts = []
+        optfct_outs = []
         for output in outputs:
             if output[0] is not None:
-                optfctouts.append(output[0])
+                optfct_outs.append(output[0])
             if output[1]['success'] is False:
                 sucess_dic['success'] = False
                 sucess_dic['failed_id'] = sucess_dic['failed_id'] + output[1]['failed_id']
                 sucess_dic['error_list'] = sucess_dic['error_list'] + output[1]['error_list']
 
-    if len(optfctouts) == 0:
+    if len(optfct_outs) == 0:
         print("### WARNING : it seems that your optfct does not return anything ! ###")
     else:
-        print("Shifted %i/%i simulations on %i/%i CPUs, time : %s" % (len(optfctouts),
+        print("Shifted %i/%i simulations on %i/%i CPUs, time : %s" % (len(optfct_outs),
                                                                       len(lcslist), ncpu, ncpuava,
                                                                       pycs3.gen.util.strtd(time.time() - start)))
-        print("I failed for %i curves." % (len(lcslist) - len(optfctouts)))
-    return optfctouts, sucess_dic
+        print("I failed for %i curves." % (len(lcslist) - len(optfct_outs)))
+    return optfct_outs, sucess_dic
 
 
 class RunResults:
@@ -292,7 +292,7 @@ def collect(directory="./test", plotcolour="#008800", name=None):
     return jrr
 
 
-def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, analyse=True, shuffle=True,
+def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, shuffle=True,
              keepopt=False, trace=False, verbose=True, destpath="./", ncpu=None, use_test_seed=False):
     """
     Top level wrapper to get delay "histograms" : I will apply the optfct to optimize the shifts
@@ -317,7 +317,6 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
 
     :param optfct: The optimizing function that takes lcs as single argument, fully optimizes the curves,
         and returns a spline, or a d2 value.
-        Can be None if argument analyse is False (used for tests).
     :type optfct: function
 
     :param tsrand: I will randomly shift the simulated curves before running the optfct
@@ -327,8 +326,7 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
     :param shuffle: if True, I will shuffle the curves before running optc on them, and then sort them immediatly afterwards.
 
     :param keepopt: a bit similar to Trace, but simpler : we write the optimized lightcurves as well as the output of the optimizers into one pickle file per input pickle file.
-        {"optfctoutlist":optfctouts, "optlcslist":simlcslist}
-    :param analyse: boolean. If you want to perform the optimisation. Let it to True except if you know what you are doing.
+        {"optfctoutlist":optfct_outs, "optlcslist":simlcslist}
     :param trace: boolean. To keep trace of the operation applied to tle LightCurves
     :param verbose: boolean. Verbosity.
     :param destpath: string. Path to write the optimised curves and results.
@@ -400,41 +398,35 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
                 print("I do NOT randomize initial contidions for the time shifts !")
 
         # And to the actual shifting, that will take most of the time
-        if analyse:
-            if shuffle:
-                for simlcs in simlcslist:
-                    pycs3.gen.lc_func.shuffle(simlcs)
-            optfctouts, success_dic = applyopt(optfct, simlcslist, ncpu, **kwargs_optim)
-            if shuffle:  # We sort them, as they will be passed the constructor of runresuts.
-                for simlcs in simlcslist:
-                    pycs3.gen.lc_func.objsort(simlcs, verbose=False)
-        else:
-            # Else, we just skip this step, and save the results anyway.
-            if verbose:
-                print("I do NOT analyse the curves !")
-            optfctouts = [None] * len(simlcslist)
-
-        # And now we want to save the results.
+        optfctouts = [None] * len(simlcslist)  # reset variabl eof the loop to avoid weird error.
+        clean_simlcslist = []
+        sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
+        if shuffle:
+            for simlcs in simlcslist:
+                pycs3.gen.lc_func.shuffle(simlcs)
+        optfctouts, success_dic = applyopt(optfct, simlcslist, ncpu, **kwargs_optim)
+        if shuffle:  # We sort them, as they will be passed the constructor of runresuts.
+            for simlcs in simlcslist:
+                pycs3.gen.lc_func.objsort(simlcs, verbose=False)
 
         # If the optfct was a spline optmization, this optfctouts is a list of splines.
         # Else it might be something different, we deal with this now.
-        if hasattr(optfctouts[0], "lastr2nostab"):  # then it's a spline, and we will collect these lastr2nostab values.
+        # todo : rewrite that properly with instance comparison Rslc for regdiff and Spline for the spl
+
+        if isinstance(optfctouts[0],
+                      pycs3.gen.spl.Spline):  # then it's a spline, and we will collect these lastr2nostab values.
             tracesplinelists = [[optfctout] for optfctout in optfctouts]  # just for the trace
             qs = np.array([s.lastr2nostab for s in optfctouts])
             if np.all(qs < 1.0):
                 print("### WARNING : qs values are very small, did you fit that spline ? ###")
 
+        elif isinstance(optfctouts[0], tuple):
+            qs = np.array([s[1] for s in optfctouts])  # then it's regdiff which returns a tuple, I'll take the second element which corresponds to minwtv
+            tracesplinelists = [[]] * len(simlcslist)  # just for the trace
+
         else:
-            try:
-                qs = np.array(list(map(float, optfctouts)))  # Then it's some kind of chi2, or a d2 : easy !
-                tracesplinelists = [[]] * len(simlcslist)  # just for the trace
-            except Exception as e:
-                print(e)
-                tracesplinelists = [[]] * len(simlcslist)  # just for the trace
-                qs = None
-                if analyse:
-                    print(type(optfctouts[0]), optfctouts)
-                    print("Oh no, I don't know what to do with the optfctouts !")
+            print("Object : ", type(optfctouts[0]), "is unknown.")
+            raise RuntimeError("Invalid instance, please optimise your curves with regdiff or spline.")
 
         # Trace after shifting
         if trace:

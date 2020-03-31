@@ -38,9 +38,10 @@ class TestCopies(unittest.TestCase):
         lc_copy_disp = [lc.copy() for lc in self.lcs]
         lc_copy_regdiff = [lc.copy() for lc in self.lcs]
         # draw the copy :
-        pycs3.sim.draw.multidraw(lc_copy, onlycopy=True, n=10, npkl=1, simset="copies", destpath=self.outpath)
+        pycs3.sim.draw.multidraw(lc_copy, onlycopy=True, n=5, npkl=1, simset="copies", destpath=self.outpath)
 
         # Set the initial shift and microlensing model
+        ncpu = 1
         lc_func.settimeshifts(lc_copy, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess
         lc_func.settimeshifts(lc_copy_disp, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess
         lc_func.settimeshifts(lc_copy_regdiff, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess
@@ -55,11 +56,11 @@ class TestCopies(unittest.TestCase):
         kwargs_optim_disp = {}
         success_dic_spline = pycs3.sim.run.multirun("copies", lc_copy, utils.spl, kwargs_optim, optset="spl",
                                                     tsrand=10.0, keepopt=True, destpath=self.outpath,
-                                                    use_test_seed=True)
+                                                    use_test_seed=True, ncpu=ncpu)
         success_dic_regdiff = pycs3.sim.run.multirun("copies", lc_copy_regdiff, utils.regdiff, kwargs_optim_regdiff,
                                                      optset="regdiff",
                                                      tsrand=10.0, keepopt=True, destpath=self.outpath,
-                                                     use_test_seed=True)
+                                                     use_test_seed=True, ncpu=ncpu)
         # success_dic_disp =  pycs3.sim.run.multirun("copies", lc_copy_disp, utils.disp, kwargs_optim_disp,
         #                                              optset="disp",
         #                                              tsrand=10.0, keepopt=True, destpath=self.outpath,

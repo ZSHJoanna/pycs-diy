@@ -296,7 +296,7 @@ class LightCurve:
                 shifts = 2.5 * np.log10((-self.fluxshift * np.ones(len(self)) / (10.0 ** (self.mags / -2.5))) + 1.0)
             else:
                 shifts = -2.5 * np.log10((self.fluxshift * np.ones(len(self)) / (10.0 ** (self.mags / -2.5))) + 1.0)
-            if not np.all(np.isnan(shifts) is False):  # If there is a nan in this...
+            if np.all(np.isnan(shifts) is False) is False:  # If there is a nan in this...
                 print("Ouch, negative flux !")
                 return np.zeros(len(self))
             else:
@@ -485,7 +485,7 @@ class LightCurve:
 
         if verbose:
             if self.hasmask():
-                print("Note : %i epochs are already masked." % (np.sum(self.mask is False)))
+                print("Note : %i epochs are already masked." % (np.sum(self.mask == False)))
 
         for skippoint in skippoints:
             skipjd = float(skippoint[0])
@@ -514,7 +514,7 @@ class LightCurve:
                     self.mask[index] = False
 
         if verbose:
-            print("Done with maskskiplist, %i epochs are now masked." % (np.sum(self.mask is False)))
+            print("Done with maskskiplist, %i epochs are now masked." % (np.sum(self.mask == False)))
 
     # noinspection PyStringFormat
     def maskinfo(self):
@@ -525,14 +525,14 @@ class LightCurve:
 
         cps = self.commonproperties()
         lines = []
-        maskindices = np.argwhere(self.mask is False)
+        maskindices = np.argwhere(self.mask == False)
         for maskindex in maskindices:
             comment = ", ".join(["%s : %s" % (cp, self.properties[maskindex][cp]) for cp in cps])
             txt = "%.1f    %s" % (self.jds[maskindex], comment)
             lines.append(txt)
 
         txt = "\n".join(lines)
-        txt = "# %i Masked points of %s :\n" % (np.sum(self.mask is False), str(self)) + txt
+        txt = "# %i Masked points of %s :\n" % (np.sum(self.mask == False), str(self)) + txt
         return txt
 
     def clearlabels(self):
@@ -851,7 +851,7 @@ class LightCurve:
 
         underline = ["=" * n for n in map(len, colnames)]
 
-        outfile = open(filename, "wb")  # b needed for csv
+        outfile = open(filename, "w")
         writer = csv.writer(outfile, delimiter=separator)
 
         if writeheader:

@@ -92,7 +92,7 @@ class DataPoints:
         first = self.jds[:-1]
         second = self.jds[1:]
         if not np.alltrue(np.less(first, second)):  # Not less_equal ! Strictly increasing !
-            raise RuntimeError("These datapoints don't have strcitly increasing jds !")
+            raise RuntimeError("These datapoints don't have strictly increasing jds !")
 
     def rmstab(self):
         """
@@ -175,7 +175,7 @@ class DataPoints:
         extjds = np.arange(self.jds[0], self.jds[0] - self.stabext, -1 * self.stabstep)[::-1][:-1]
         extmags = self.mags[0] * np.ones(extjds.shape)
         extmagerrs = absstabmagerr * np.ones(extjds.shape)
-        for i in range(1, self.stabrampsize + 1):
+        for i in range(1, int(self.stabrampsize) + 1):
             extmagerrs[-i] += (self.stabrampsize + 1 - i) * absstabmagerr * self.stabrampfact
         extindices = np.zeros(extjds.shape, dtype=int)
         mask = np.zeros(len(extjds), dtype=np.bool)
@@ -189,7 +189,7 @@ class DataPoints:
         extjds = np.arange(self.jds[-1], self.jds[-1] + self.stabext, self.stabstep)[1:]
         extmags = self.mags[-1] * np.ones(extjds.shape)
         extmagerrs = absstabmagerr * np.ones(extjds.shape)
-        for i in range(0, self.stabrampsize):
+        for i in range(0, int(self.stabrampsize)):
             extmagerrs[i] += (self.stabrampsize - i) * absstabmagerr * self.stabrampfact
         extindices = len(self.jds) + np.zeros(extjds.shape, dtype=int)
         mask = np.zeros(len(extjds), dtype=np.bool)
@@ -207,8 +207,8 @@ class DataPoints:
         Crazy stuff...
         """
 
-        maskindices = np.where(self.mask is False)[0]
-        # print maskindices
+        maskindices = np.where(self.mask == False)[0]
+        print(maskindices)
 
         if len(maskindices) < 3:
             print("Hmm, not much masked here ...")

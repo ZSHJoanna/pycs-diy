@@ -15,6 +15,7 @@ class TestLightCurve(unittest.TestCase):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")
         self.rdbfile = os.path.join(self.path, "data", "trialcurves.txt")
+        self.skiplist = os.path.join(self.path, "data", "skiplist.txt")
         self.lcs = [
             lc_func.rdbimport(self.rdbfile, object='A', magcolname='mag_A', magerrcolname='magerr_A',
                       telescopename="Trial"),
@@ -64,20 +65,32 @@ class TestLightCurve(unittest.TestCase):
         assert_allclose(delays, delays_th, atol=0.2)
 
     def test_fluxshift(self):
-        print("Fluxshift test")
+        shifts = [-0.1, -0.2, -0.3, -0.4]
         lc_copy = [lc.copy() for lc in self.lcs]
-        shifts = [10, 20, 30, 40]
+        lc0 = lc_copy[0].copy()
+        lc0.getrawfluxes()
         min_flux = lc_copy[0].getminfluxshift()
+        assert_almost_equal(min_flux, -64108.55676508218)
+
         for i,lc in enumerate(lc_copy) :
             lc.resetml()
             lc.resetshifts()
             lc.setfluxshift(shifts[i], consmag=True)
-            print(lc.magshift)
+
+        magshifts = [lc.magshift for lc in lc_copy]
+        assert_allclose(magshifts, [-9.467925255575702e-07, -3.6197204037074295e-06,-1.3700547842369769e-05,-3.143986495236058e-05], rtol=1e-3)
+
+        new_mags = lc_copy[0].getmags()
+        assert_almost_equal(new_mags[0], -12.38173974)
+
+        fluxvector = shifts[0] * np.ones(len(lc0.mags))
+        lc0.addfluxes(fluxvector)
+        assert_allclose(lc0.getmags(),lc_copy[0].getmags(), rtol=0.0000001)
+        lc_copy[0].calcfluxshiftmags(inverse = True)
 
         lc_func.shuffle(lc_copy)
         lcs_sorted = lc_func.objsort(lc_copy, ret = True)
         lc_func.objsort(lc_copy, ret=False)
-
 
 
     def test_timeshifts(self):
@@ -90,6 +103,35 @@ class TestLightCurve(unittest.TestCase):
         test_shift2 = lc_func.gettimeshifts(lc_copy2, includefirst=False)
         assert_array_equal(test_shift1, shifts)
         assert_array_equal(test_shift2, shifts[1:4])
+
+
+    def test_mask(self):
+        lc_copy = [lc.copy() for lc in self.lcs]
+        for i,lc in enumerate(lc_copy) :
+            lc.maskskiplist(self.skiplist,searchrange=4, accept_multiple_matches=True, verbose=True)
+
+        print(lc_copy[0].maskinfo())
+        assert np.sum(lc_copy[0].mask == False) == 14
+        assert lc_copy[0].hasmask()
+        lc_copy[0].cutmask()
+        assert not lc_copy[0].hasmask()
+
+        lc_copy[1].clearmask()
+        assert not lc_copy[1].hasmask()
+
+        lc_copy[1].pseudobootstrap()
+        print("Bootstrap masked %i datapoints" % np.sum(lc_copy[1].mask == False))
+
+
+    def test_montecarlo(self):
+        lc0 = self.lcs[0].copy()
+        lc0_copy = self.lcs[0].copy()
+        addtolc(lc0, nparams=2, autoseasonsgap=60.0)
+        lc0.montecarlomags()
+        lc0.montecarlojds(amplitude=0.5, seed=1, keepml=True)
+
+        lc0_copy.merge(lc0)
+        lc0.rdbexport(filename=os.path.join(self.outpath, "merged_A+A.txt"))
 
 
 if __name__ == '__main__':

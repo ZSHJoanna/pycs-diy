@@ -15,6 +15,7 @@ pycs
             - remove the commentlist attribute
             - remove the showlabels attribute
         - Simplify LightCurve.__str__ docstring and remove unused bit of code
+        - corrected logical bug in calcfluxshiftmags()
 
         lc_func.py
         --------------
@@ -45,6 +46,7 @@ pycs
         - renamed Class RunResults
         - added method get_delays_from_ts()
         - reintroduced multi-cpu processing in the applyopt() function.
+        - remove the analyze argument, it is now done by default
 
         twk.py
         ------
