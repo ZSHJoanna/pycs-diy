@@ -73,6 +73,10 @@ class TestLightCurve(unittest.TestCase):
         pycs3.gen.splml.addtolc(lc_copy[2], knotstep=mlknotstep, bokeps=mlbokeps_ad)
         pycs3.gen.splml.addtolc(lc_copy[3], knotstep=mlknotstep, bokeps=mlbokeps_ad)
         spline = utils.spl(lc_copy)
+        tv, dist = pycs3.gen.spl_func.mltv(lc_copy, spline) # some metric of the fit
+        assert tv < 900
+        assert dist<5710
+
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         print(delays)
         delays_th = [-5.93916576886539, -20.7304134782579, -31.155687183119934, -14.791247709392511, -25.216521414254544, -10.425273704862033]

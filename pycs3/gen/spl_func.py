@@ -91,10 +91,10 @@ def fit(lcs, knotstep=20.0, n=None, knots=None, stab=True,
 def seasonknots(lcs, knotstep, ingap, seasongap=60.0):
     """
     A little helper to get some knot locations inside of seasons only
-
-    knotstep is for inside seasons
-    ingap is the number of knots inside gaps.
-
+    :param lcs, list of LightCurves
+    :param knotstep is for inside seasons
+    :param ingap is the number of knots inside gaps.
+    :return 1D array containing the knots
     """
     knots = []
 
@@ -191,38 +191,3 @@ def mltv(lcs, spline, weight=True):
             dist += np.sum(np.fabs(res) / np.fabs(magerrs))
 
     return tv, dist
-
-
-def optcmltv(lcs, spline, verbose=True):
-    """
-    I will optimize the coefficients of the spline so to minimize the mltv.
-    I do not use the microlensing of the lcs at all !
-
-    Simple powell optimization, slow. A pity.
-
-    Add BOK and time shifts in there and it might be bingo !
-
-    Would be more efficient if we add knots on the fly
-    """
-
-    inic = spline.getc(m=2)
-
-    def setc(c):
-        spline.setc(c, m=2)
-
-    def errorfct(c):
-        setc(c)
-        (tv, dist) = mltv(lcs, spline, weight=False)
-        print("put weight")
-        return tv + 0.1 * spline.tv()
-
-    minout = spopt.fmin_powell(errorfct, inic, full_output=True, disp=verbose)
-    copt = minout[0]
-
-    # We find a common shift to all coeffs so that the level matches
-
-    meanc = np.mean(spline.getc(m=2))
-    meanmag = np.mean(np.concatenate([l.getmags(noml=True) for l in lcs]))
-
-    setc(copt)
-    spline.c += meanmag - meanc

@@ -4,6 +4,8 @@ Martin :
 - find what is usefull in the tdc module
 - discard spl_diff
 - complete the coverage
+- repair multiCPU
+- code the Power Spectrum class
 
 
 Vivien :

@@ -24,6 +24,7 @@ pycs
         spl_func.py
         --------------
         - moved all functions related to Splines manipulation to this module
+        - removed optcmlt() as this was not used for optimisation
 
         datapoints.py
         --------------

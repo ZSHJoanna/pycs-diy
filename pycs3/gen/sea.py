@@ -159,9 +159,10 @@ def autofactory(l, seasongap=60, tpe='seas'):
 
 def manfactory(lc, jdranges):
     """
-    A factory function that returns a LIST of season objects.
+    A manual factory function that returns a LIST of season objects.
     As input, you give a lightcurve object as well as a list of JD ranges.
     Note that if the lightcurve is shifted, shifted jds are used !
+    If you want to extract automatically the seasons, use autofactory instead.
 
     Example:
         >>> seas1 = sea.manfactory(lc1, [[2800, 3500], [3500, 4260]])

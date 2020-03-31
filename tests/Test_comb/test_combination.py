@@ -57,8 +57,14 @@ class TestComb(unittest.TestCase):
 
         combined = copy.deepcopy(pycs3.mltd.comb.combine_estimates(groups, sigmathresh=0., testmode=True))
         combined.linearize(testmode=True)
-        combined.name = 'combined'
+        combined.name = 'PyCS-Sum'
+        combined.nicename = 'PyCS-Sum'
         combined.plotcolor = 'black'
+
+        mult = pycs3.mltd.comb.mult_estimates(groups)
+        mult.name = "PyCS-Mult"
+        mult.nicename = "PyCS-Mult"
+        mult.plotcolor = "gray"
 
         print ("Final combination for marginalisation :")
         combined.niceprint()
@@ -70,7 +76,7 @@ class TestComb(unittest.TestCase):
         assert_allclose(combined.errors_up, errors_up_th, atol=0.2)
         assert_allclose(combined.errors_down, errors_down_th, atol=0.2)
 
-        pycs3.mltd.plot.delayplot(groups + [combined], rplot=6.0, refgroup=combined, displaytext=True, text=self.text,
+        pycs3.mltd.plot.delayplot(groups + [combined] + [mult], rplot=6.0, refgroup=combined, displaytext=True, text=self.text,
                                   filename=os.path.join(self.outpath, "fig_delays_comb.png"), figsize=(15, 10),
                                   hidedetails=False, showbias=False, showran=False, showlegend=True,
                                   auto_radius=True, horizontaldisplay=False, legendfromrefgroup=False,
