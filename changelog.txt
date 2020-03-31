@@ -56,6 +56,10 @@ pycs
         -------------
         -renamed spline() method in generate_spline() to avoid name conflict
 
+        plot.py
+        -------------
+        -removed the mad function as it is implemented in pycs3.gen.stat
+
     comb
     ---
         plot.py

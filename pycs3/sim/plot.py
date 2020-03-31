@@ -11,21 +11,7 @@ import matplotlib.colors as colors
 from matplotlib.ticker import MultipleLocator, MaxNLocator
 import scipy.ndimage
 import pycs3.gen.util
-
-
-def mad(xs):
-    """
-    Return the median absolute deviation. Write it myself here instead of importing it from astropy, since it will add another dependency. Work with 1d array only
-
-    :param xs: list of values
-    :return: median absolute deviation
-    """
-
-    median = np.median(xs)
-    med_abs = np.median([np.abs(x - median) for x in xs])
-
-    return med_abs
-
+from pycs3.gen.stat import mad
 
 class DelayContainer:
     """
