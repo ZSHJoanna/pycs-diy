@@ -328,7 +328,7 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
         for (i, curve) in enumerate(curves):
             plt.subplot(2, len(curves), i + 1)
             plt.hist(np.concatenate([rlc.mags for rlc in curve["optmockrlclist"]]), 50, range=(-r, r),
-                     facecolor='black', alpha=0.4, normed=1, histtype="stepfilled")
+                     facecolor='black', alpha=0.4, density=1, histtype="stepfilled")
             # Gaussian for the mock hist :
             plt.hist(curve["optorigrlc"].mags, 50, facecolor=curve["optorigrlc"].plotcolour, alpha=0.5, range=(-r, r),
                      density=1, histtype="stepfilled")
