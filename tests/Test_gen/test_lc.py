@@ -4,7 +4,8 @@ import pytest
 import unittest
 
 from tests import TEST_PATH
-from pycs3.gen.polyml import addtolc
+import pycs3.gen.polyml
+import pycs3.gen.splml
 from tests import utils
 import pycs3.gen.mrg as mrg
 import pycs3.gen.lc_func as lc_func
@@ -18,13 +19,13 @@ class TestLightCurve(unittest.TestCase):
         self.skiplist = os.path.join(self.path, "data", "skiplist.txt")
         self.lcs = [
             lc_func.rdbimport(self.rdbfile, object='A', magcolname='mag_A', magerrcolname='magerr_A',
-                      telescopename="Trial"),
+                              telescopename="Trial"),
             lc_func.rdbimport(self.rdbfile, object='B', magcolname='mag_B', magerrcolname='magerr_B',
-                      telescopename="Trial"),
+                              telescopename="Trial"),
             lc_func.rdbimport(self.rdbfile, object='C', magcolname='mag_C', magerrcolname='magerr_C',
-                      telescopename="Trial"),
+                              telescopename="Trial"),
             lc_func.rdbimport(self.rdbfile, object='D', magcolname='mag_D', magerrcolname='magerr_D',
-                      telescopename="Trial")
+                              telescopename="Trial")
         ]
         mrg.colourise(self.lcs)
 
@@ -44,11 +45,11 @@ class TestLightCurve(unittest.TestCase):
         assert_almost_equal(test_mag_ranges,mag_ranges, decimal=3)
 
 
-    def test_opt_spline(self):
+    def test_opt_spline_polyml(self):
         lc_copy =[lc.copy() for lc in self.lcs]
-        addtolc(lc_copy[1], nparams=2, autoseasonsgap=60.0)  # add affine microlensing to each season
-        addtolc(lc_copy[2], nparams=3, autoseasonsgap=600.0)  # add polynomial of degree 2 on the entire light curve
-        addtolc(lc_copy[3], nparams=3, autoseasonsgap=600.0)
+        pycs3.gen.polyml.addtolc(lc_copy[1], nparams=2, autoseasonsgap=60.0)  # add affine microlensing to each season
+        pycs3.gen.polyml.addtolc(lc_copy[2], nparams=3, autoseasonsgap=600.0)  # add polynomial of degree 2 on the entire light curve
+        pycs3.gen.polyml.addtolc(lc_copy[3], nparams=3, autoseasonsgap=600.0)
         spline = utils.spl(lc_copy)
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         lc_func.getnicetimedelays(lc_copy)
@@ -63,6 +64,20 @@ class TestLightCurve(unittest.TestCase):
                      -64.48078625884935, -44.7252303178408]
 
         assert_allclose(delays, delays_th, atol=0.2)
+
+    def test_opt_spline_splml(self):
+        lc_copy = [lc.copy() for lc in self.lcs]
+        mlknotstep = 200
+        mlbokeps_ad = mlknotstep / 3.0  # maybe change this
+        pycs3.gen.splml.addtolc(lc_copy[1], knotstep=mlknotstep, bokeps=mlbokeps_ad)
+        pycs3.gen.splml.addtolc(lc_copy[2], knotstep=mlknotstep, bokeps=mlbokeps_ad)
+        pycs3.gen.splml.addtolc(lc_copy[3], knotstep=mlknotstep, bokeps=mlbokeps_ad)
+        spline = utils.spl(lc_copy)
+        delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
+        print(delays)
+        delays_th = [-5.93916576886539, -20.7304134782579, -31.155687183119934, -14.791247709392511, -25.216521414254544, -10.425273704862033]
+        assert_allclose(delays, delays_th, atol=0.2)
+        lc_func.display(lc_copy, [spline], style="homepagepdf",filename=os.path.join(self.outpath, 'spline_wi_splml.png'))
 
     def test_fluxshift(self):
         shifts = [-0.1, -0.2, -0.3, -0.4]
@@ -126,7 +141,7 @@ class TestLightCurve(unittest.TestCase):
     def test_montecarlo(self):
         lc0 = self.lcs[0].copy()
         lc0_copy = self.lcs[0].copy()
-        addtolc(lc0, nparams=2, autoseasonsgap=60.0)
+        pycs3.gen.polyml.addtolc(lc0, nparams=2, autoseasonsgap=60.0)
         lc0.montecarlomags()
         lc0.montecarlojds(amplitude=0.5, seed=1, keepml=True)
 
