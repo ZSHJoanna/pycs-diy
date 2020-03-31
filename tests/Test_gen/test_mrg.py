@@ -1,5 +1,4 @@
 import os
-import numpy as np
 import pytest
 import unittest
 
@@ -9,7 +8,6 @@ import pycs3.gen.splml
 import pycs3.disp.disps
 import pycs3.gen.mrg as mrg
 import pycs3.gen.lc_func as lc_func
-from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equal
 
 
 class TestMrg(unittest.TestCase):

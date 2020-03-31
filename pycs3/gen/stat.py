@@ -5,7 +5,7 @@ Statistics related functions.
 import numpy as np
 import math
 import pycs3.gen.util as ut
-
+import matplotlib.pyplot as plt
 
 def normal(x, mu, sigma):
     return (1.0 / np.sqrt(2.0 * np.pi * sigma * sigma)) * np.exp(- (x - mu) ** 2 / (2 * sigma * sigma))
@@ -15,21 +15,16 @@ def sf(l, binsize=200, ssf=False):
     """
     Structure function of a lightcurve
 
-    ssf gives a 2D density plot, otherwise binned.
-
     For definition see for instance :
     De Vries, W.H. de, Becker, R., White, R., Loomis, C., 2005. Structure Function Analysis of Long-Term Quasar Variability. The Astronomical Journal 129, 615-615-629-629.
-
+    :param l: LightCurve object
+    :param binsize: float, binsize if ssf is False
+    :param ssf: boolean,  ssf gives a 2D density plot, otherwise binned.
     """
-    import matplotlib.pyplot as plt
 
     mags = l.getmags()
     jds = l.getjds()
     n = len(l)
-
-    # n = 1000
-    # jds = np.arange(n)
-    # mags = np.random.randn(n)*3.0
 
     ja = np.ones((n, n)) * jds
     jam = ja - ja.transpose()
