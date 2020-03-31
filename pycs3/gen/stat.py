@@ -4,6 +4,8 @@ Statistics related functions.
 
 import numpy as np
 import math
+import glob
+import os
 import pycs3.gen.util as ut
 import matplotlib.pyplot as plt
 
@@ -220,7 +222,7 @@ def mapresistats(rls):
 
 
 def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npkl=1000, plots=True, nplots=3, r=0.11,
-                plotjdrange=None, plotcurveindexes=None, showplot=False, directory="./", resihist_figsize=None):
+                plotjdrange=None, plotcurveindexes=None, showplot=False, directory="./", plotpath="./", resihist_figsize=None):
     """
     Not flexible but very high level function to analyse the spline-fit-residuals of drawn curves and comparing them to the
     real observations.
@@ -238,13 +240,12 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
     :param r: radius around the mean to plot for the residuals histograms
     :param plotjdrange : list, containing the two extremity of the period to plot
     :param showplot: False to save the figure in png, True to show it on the screen
-    :param directory: path to save the plots
+    :param plotpath: string, directory to save the pngs, used if showplot is False
+    :param directory: path to look for the simulation
     :param resihist_figsize: tuple, containing the dimension of the residuals histograms
+    :return dictionnary containing the statistics about your run
 
     """
-    import matplotlib.pyplot as plt
-    import glob
-
     print("Analysing the residuals of simset %s" % simset)
 
     # For each light curve we make a dict that we will use to store stuff
@@ -256,8 +257,8 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
         curve["optorigrlc"] = optorigrlc
 
     # We read all the optimized mock curves :
-    pkls = sorted(glob.glob(directory + "sims_%s_opt_%s/*_opt.pkl" % (simset, optset)))
-    print(directory + "sims_%s_opt_%s/*_opt.pkl" % (simset, optset))
+    pkls = sorted(glob.glob(os.path.join(directory, "sims_%s_opt_%s/*_opt.pkl" % (simset, optset))))
+    print(os.path.join(directory, "sims_%s_opt_%s/*_opt.pkl" % (simset, optset)))
 
     optmocksplinelist = []
     optmocklcslist = []
@@ -350,7 +351,8 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
 
         if showplot:
             plt.show()
-        plt.savefig("fig_anaoptdrawn_%s_%s_resihists.png" % (simset, optset))
+        else :
+            plt.savefig(os.path.join(plotpath, "fig_anaoptdrawn_%s_%s_resihists.png" % (simset, optset)))
 
     # A detailed plot of some residuals, just for a few drawn curves
 
@@ -368,7 +370,7 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
                 optmockrlcs = [optmockrlcs[index] for index in plotcurveindexes]
             plotresiduals([optorigrlcs, optmockrlcs], jdrange=plotjdrange, nicelabel=False, showlegend=False,
                           showsigmalines=False, errorbarcolour="#999999",
-                          filename="fig_anaoptdrawn_%s_%s_resi_%i.png" % (simset, optset, i + 1))
+                          filename=os.path.join(plotpath, "fig_anaoptdrawn_%s_%s_resi_%i.png" % (simset, optset, i + 1)))
 
     return stats
 
@@ -405,11 +407,6 @@ def plotresiduals(rlslist, jdrange=None, magrad=0.1, errorbarcolour="#BBBBBB",
         ihaveax = False
     else:
         ihaveax = True
-
-    # fig = plt.figure(figsize=(12,1.6*npanels))
-    # fig.subplots_adjust(left = 0.07, right=0.99, top=0.95, bottom=0.14, hspace=0.05)
-
-    # plt.rc('font', family = 'serif', serif = 'STIXGeneral')
 
     for i in range(npanels):  # i is the panel index
 

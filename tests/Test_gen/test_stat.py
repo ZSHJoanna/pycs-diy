@@ -56,7 +56,14 @@ class TestStat(unittest.TestCase):
         rls = pycs3.gen.stat.subtract(wfi_copy, spline)
         pycs3.gen.stat.plotresiduals([rls],filename=os.path.join(self.outpath, "residuals_0408_WFI.png"))
 
-        print(pycs3.gen.stat.runstest(rls[0].mags))
+        resistat = stat.mapresistats(rls)
+        resistat_th = [{'mean': 0.0008286510218475188, 'std': 0.007764122554957176, 'zruns': -0.5794322853835916, 'pruns': 0.5622974446166266, 'nruns': 46}, {'mean': 0.0003049159858952155, 'std': 0.004410927637093387, 'zruns': -1.6274111536712763, 'pruns': 0.10364978682168813, 'nruns': 41}, {'mean': -0.00378797569187167, 'std': 0.010562779490206786, 'zruns': -1.0222084377857539, 'pruns': 0.30668229473751496, 'nruns': 44}]
+
+        print(resistat)
+        for i,r in enumerate(resistat) :
+            for key in r.keys():
+                assert_almost_equal(r[key], resistat_th[i][key], decimal=4)
+
 
 if __name__ == '__main__':
     pytest.main()

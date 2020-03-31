@@ -10,6 +10,7 @@ import pycs3.sim.run
 import pycs3.sim.plot
 import pycs3.mltd.plot
 import pycs3.mltd.comb
+import pycs3.gen.stat
 
 from tests import utils
 import numpy as np
@@ -65,6 +66,11 @@ class TestCopies(unittest.TestCase):
                                   plotpoints=True, filename=os.path.join(self.outpath, "fig_measvstrue.png"),
                                   dataout=True, outdir=self.outpath)
         pycs3.sim.plot.newcovplot(simresults, filepath=self.outpath, showplots=False, printcovmat=True)
+
+        #test anaoptdrawn
+        stat = pycs3.gen.stat.anaoptdrawn(self.lcs, self.spline, simset="mocks", optset="spl", npkl=1, plots=True, nplots=1, r=0.11,
+                plotjdrange=None, plotcurveindexes=None, showplot=False, directory=self.outpath, plotpath=self.outpath, resihist_figsize=None)
+
 
     def clear_sims(self):
         if os.path.exists(os.path.join(self.outpath, "sims_mocks_opt_spl")):

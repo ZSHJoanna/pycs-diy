@@ -29,6 +29,10 @@ pycs
         --------------
         - moved the DataPoints class to this module
 
+        stat.py
+        --------------
+        - in anaoptdrawn(), added a keyword argument to provide the path to save the plots.
+
     regdiff
     ---
         scikitgp.py
