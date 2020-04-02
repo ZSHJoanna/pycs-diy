@@ -66,6 +66,19 @@ class TestLightCurve(unittest.TestCase):
 
         assert_allclose(delays, delays_th, atol=0.2)
 
+        #play a bit with the microlensing object:
+        microlensing = lc_copy[2].ml
+        microlensing.printinfo()
+        stat = microlensing.stats(lc_copy[2])
+        stat_th = {'mean': -0.17782270209855014, 'std': 0.2211515237812574}
+        for key in stat.keys():
+            assert_almost_equal(stat[key], stat_th[key], decimal=2)
+
+        #play a bit with the params.
+        params = pycs3.gen.polyml.multigetfreeparams(lc_copy)
+        pycs3.gen.polyml.multisetfreeparams(lc_copy, params)
+        microlensing.reset()
+
     def test_opt_spline_splml(self):
         lc_copy = [lc.copy() for lc in self.lcs]
         mlknotstep = 200
