@@ -19,11 +19,11 @@ class TestMrg(unittest.TestCase):
 
         self.lcs_ECAM = [
             lc_func.rdbimport(self.rdbfile_ECAM, object='A', magcolname='mag_A', magerrcolname='magerr_A_5',
-                              telescopename="ECAM"),
+                              telescopename="ECAM",propertycolnames="lcmanip"),
             lc_func.rdbimport(self.rdbfile_ECAM, object='B', magcolname='mag_B', magerrcolname='magerr_B_5',
-                              telescopename="ECAM"),
+                              telescopename="ECAM",propertycolnames="lcmanip"),
             lc_func.rdbimport(self.rdbfile_ECAM, object='D', magcolname='mag_D', magerrcolname='magerr_D_5',
-                              telescopename="ECAM")
+                              telescopename="ECAM",propertycolnames="lcmanip")
         ]
         self.lcs_WFI = [
             lc_func.rdbimport(self.rdbfile_WFI, object='A', magcolname='mag_A', magerrcolname='magerr_A_5',
@@ -51,6 +51,9 @@ class TestMrg(unittest.TestCase):
         print("Datapoints WFI+ECAM: ", n_merged)
         assert n_merged == n_wfi + n_ecam
         lc_func.display(merged_lcs, style="homepagepdf",filename=os.path.join(self.outpath, 'merged_0408_ECAM-WFI.png'), jdrange=[57550, 57900])
+
+    def test_export(self):
+        pycs3.gen.util.multilcsexport(self.lcs_ECAM, os.path.join(self.outpath,"lcs_export.rdb"), properties=["fwhm", "ellipticity", "airmass"])
 
 if __name__ == '__main__':
     pytest.main()

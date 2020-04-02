@@ -82,6 +82,14 @@ class TestComb(unittest.TestCase):
                                   auto_radius=True, horizontaldisplay=False, legendfromrefgroup=False,
                                   tick_step_auto=True )
 
+        pycs3.mltd.plot.delayplot(groups, rplot=6.0, refgroup=combined, displaytext=True, text=self.text,
+                                  filename=os.path.join(self.outpath, "fig_delays_comb_blind.png"), figsize=(15, 10),
+                                  hidedetails=False, showbias=True, showran=False, showlegend=True,
+                                  auto_radius=True, horizontaldisplay=True, legendfromrefgroup=False,
+                                  tick_step_auto=True, blindness=True)
+
+        pycs3.mltd.plot.write_delays(combined, write_dir=self.outpath)
+
 
 if __name__ == '__main__':
     pytest.main()

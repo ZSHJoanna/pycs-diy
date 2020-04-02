@@ -10,6 +10,7 @@ import math
 import datetime
 import gzip
 import pycs3
+import csv
 
 tracei = 1  # global variable, filename to write trace pkl.
 
@@ -123,20 +124,9 @@ def plottrace(tracedir="trace", reset=False, showspl=True, **kwargs):
 
         shiftstxt = "(%s)" % "/".join(["%+.1f" % (getattr(l, "truetimeshift", 0.0)) for l in pkl["lclist"]])
         titletxt = "%s %s %s" % (tracedir, "", shiftstxt)
-        pycs3.gen.lc.display(pkl["lclist"], pkl["splist"], title=titletxt, filename=tracepkl + ".png", **kwargs)
+        pycs3.gen.lc.display(pkl["lclist"], pkl["splist"], title=titletxt, filename=tracepkl[:-3] + ".png", **kwargs)
 
     map(plot, tracepkls)
-
-    """
-	if ncpu == 1:
-		map(plot, tracepkls)
-	else:
-		if ncpu == None:
-			ncpu = multiprocessing.cpu_count()
-		print "I will use %i CPUs." % (ncpu)
-		pool = multiprocessing.Pool(processes=ncpu)
-		answers = pool.map(plot, tracepkls)
-	"""
 
 
 def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=True, properties=None):
@@ -160,7 +150,6 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
     :param verbose: verbosity
     :type verbose: boolean
     """
-    import csv
 
     # We start with a few tests to see if it is possible to write these lcs into a single file ...
     commonjds = lclist[0].getjds()

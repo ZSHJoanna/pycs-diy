@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pytest
 import unittest
+import glob
 
 from tests import TEST_PATH
 import pycs3.gen.polyml
@@ -83,6 +84,11 @@ class TestLightCurve(unittest.TestCase):
         assert_allclose(delays, delays_th, atol=0.2)
         lc_func.display(lc_copy, [spline], style="homepagepdf",filename=os.path.join(self.outpath, 'spline_wi_splml.png'))
 
+        #trace function :
+        self.clean_trace()
+        pycs3.gen.util.trace(lc_copy, spline, tracedir=self.outpath)
+        pycs3.gen.util.plottrace(tracedir=self.outpath)
+
     def test_fluxshift(self):
         shifts = [-0.1, -0.2, -0.3, -0.4]
         lc_copy = [lc.copy() for lc in self.lcs]
@@ -151,6 +157,11 @@ class TestLightCurve(unittest.TestCase):
 
         lc0_copy.merge(lc0)
         lc0.rdbexport(filename=os.path.join(self.outpath, "merged_A+A.txt"))
+
+    def clean_trace(self):
+        pkls = glob.glob(os.path.join(self.outpath,  "??????.pkl"))
+        for pkl in pkls :
+            os.remove(pkl)
 
 
 if __name__ == '__main__':
