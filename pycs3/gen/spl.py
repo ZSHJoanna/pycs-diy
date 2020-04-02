@@ -68,7 +68,7 @@ class Spline:
         try:
             if self.t is None:
                 self.uniknots(2)  # This also puts self.c to 0s
-        except :
+        except:
             if len(self.t) == 0:
                 self.uniknots(2)  # This also puts self.c to 0s
 
@@ -330,7 +330,7 @@ class Spline:
         if verbose:
             print("Buildbounds done.")
 
-    def bok(self, bokmethod="BF", verbose=True, trace=False):
+    def bok(self, bokmethod="BF", verbose=True):
         """
         We optimize the positions of knots by some various techniques.
         We use fixed bounds for the exploration, run buildbounds (with low epsilon) first.
@@ -351,7 +351,6 @@ class Spline:
             - fminind : fminbound on one knot after the other.
             - fmin :global fminbound
         :param verbose: verbosity
-        :param trace: boolean to save a trace of the operation modifying the lightcurves
 
         Exit is automatic, if result does not improve anymore...
         """
@@ -396,17 +395,10 @@ class Spline:
                 lastchange += 1
                 iterations += 1
 
-                if trace:
-                    self.optc()
-                    ut.trace([], [self])
-
         if bokmethod == "BF":
 
             intknotindices = list(
                 range(nintknots))  # We could potentially change the order, just to see if that makes sense.
-            # No, it doesn't really help
-            # mid = int(len(intknotindices)/2.0)
-            # intknotindices = np.concatenate([intknotindices[mid:], intknotindices[:mid][::-1]])
 
             for i in intknotindices:
                 testknots = np.linspace(self.l[i + 1], self.u[i + 1], int(self.boktests))
@@ -420,9 +412,6 @@ class Spline:
                 intknots[i] = testknots[bestone]  # WE UPDATE the intknots array !
                 iterations += 1
 
-                if trace:
-                    self.optc()
-                    ut.trace([], [self])
 
         if bokmethod == "fminind":
             intknotindices = list(range(nintknots))
@@ -430,9 +419,6 @@ class Spline:
 
                 def target(value):
                     return score(intknots, i, value)
-
-                # inival = intknots[i]
-                # bounds = (self.l[i+1], self.u[i+1])
 
                 out = spopt.fminbound(target, self.l[i + 1], self.u[i + 1], xtol=0.01, maxfun=100, full_output=1,
                                       disp=1)
@@ -442,10 +428,6 @@ class Spline:
 
                 intknots[i] = optval  # WE UPDATE the intknots array !
                 iterations += 1
-
-                if trace:
-                    self.optc()
-                    ut.trace([], [self])
 
         if bokmethod == "fmin":
             def target(modifknots):
@@ -457,8 +439,6 @@ class Spline:
 
             out = spopt.fmin_l_bfgs_b(target, intknots, approx_grad=True, bounds=bounds, m=10, factr=1e7, pgtol=1.e-05,
                                       epsilon=1e-04, iprint=-1, maxfun=15000)
-            # out = spopt.fminbound(target, self.l[1:-1], self.u[1:-1], xtol=0.01, maxfun=1000, full_output=1, disp=3)
-            # print out
             intknots = out[0]
             bestscore = out[1]
 
@@ -467,8 +447,6 @@ class Spline:
         self.knottype += "b"
         self.setintt(intknots)
 
-        # pycs.gen.lc.display([],[self])
-        # self.display()
         self.optc()  # Yes, not yet done !
         finalr2 = self.r2(nostab=True)
         if verbose:
@@ -507,8 +485,6 @@ class Spline:
         Give me some internal knots (not even containing the datapoints extrema),
         and I build the correct total knot vector t for you.
         I add the extremas, with appropriate multiplicity.
-
-        @TODO: check consistency of intt with datapoints !
         """
 
         # Ok a quick test for consisency :
@@ -642,12 +618,8 @@ class Spline:
         x = np.linspace(a, b, int((b - a) * ptd))
         y = self.eval(jds=x)
         tv1 = np.sum(np.fabs(y[1:] - y[:-1]))
-        # print "TV1 : %f" % (tv1)
 
         return tv1
-
-    # Method 2 : integrating the absolute value of the derivative ... hmm, splint does not integrate derivatives ..
-    # si.splev(jds, (self.t, self.c, self.k))
 
     def optc(self):
         """
@@ -727,7 +699,7 @@ class Spline:
         # By default ext=0 : we do return extrapolated values
         return fitmags
 
-    def display(self, showbounds=True, showdatapoints=True, showerrorbars=True, figsize=(16, 8)):
+    def display(self, showbounds=True, showdatapoints=True, showerrorbars=True, figsize=(16, 8), filename=None):
         """
         A display of the spline object, with knots, jds, stab points, etc.
         For debugging and checks.
@@ -769,4 +741,7 @@ class Spline:
         axes = plt.gca()
         axes.set_ylim(axes.get_ylim()[::-1])
 
-        plt.show()
+        if filename is None:
+            plt.show()
+        else:
+            plt.savefig(filename)

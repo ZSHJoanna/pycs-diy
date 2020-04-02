@@ -1,5 +1,4 @@
 import os
-import numpy as np
 import pytest
 import unittest
 
@@ -10,7 +9,6 @@ import pycs3.gen.spl_func
 import pycs3.gen.sea
 import pycs3.gen.mrg as mrg
 import pycs3.gen.lc_func as lc_func
-from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equal
 
 class TestLightCurve(unittest.TestCase):
     def setUp(self):
@@ -54,7 +52,5 @@ class TestLightCurve(unittest.TestCase):
         seas1 = pycs3.gen.sea.manfactory(lc_copy[0], [[54000, 54300], [54400, 54600]])
 
 
-
 if __name__ == '__main__':
     pytest.main()
-

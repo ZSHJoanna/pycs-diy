@@ -25,6 +25,12 @@ pycs
         --------------
         - moved all functions related to Splines manipulation to this module
         - removed optcmlt() as this was not used for optimisation
+        - in fit(), added keyword argument for the Bok method
+
+        spl.py
+        -------------
+        - removed trace option in bok() method, it was unused.
+        - added filename argument to the display() method
 
         datapoints.py
         --------------

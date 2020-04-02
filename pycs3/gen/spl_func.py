@@ -39,7 +39,7 @@ def merge(lcs, olddp=None, splitup=True, deltat=0.000001, sort=True, stab=False,
 
 def fit(lcs, knotstep=20.0, n=None, knots=None, stab=True,
         stabext=300.0, stabgap=20.0, stabstep=5.0, stabmagerr=-2.0, stabrampsize=0, stabrampfact=1.0,
-        bokit=1, bokeps=2.0, boktests=5, bokwindow=None, k=3, verbose=True):
+        bokit=1, bokeps=2.0, boktests=5, bokwindow=None, bokmethod = 'BF', k=3, verbose=True):
     """
     The highlevel function to make a spline fit.
 
@@ -62,6 +62,7 @@ def fit(lcs, knotstep=20.0, n=None, knots=None, stab=True,
     bokit : number of BOK iterations (put to 0 to not move knots)
     bokeps : epsilon of BOK
     boktests : number of test positions for each knot
+    bokmethod : string, choose from "BF", "MCBF", "fmin", "fminind". Recommanded default : "BF"
 
 
     """
@@ -80,7 +81,7 @@ def fit(lcs, knotstep=20.0, n=None, knots=None, stab=True,
 
     for n in range(bokit):
         s.buildbounds(verbose=verbose)
-        s.bok(bokmethod="BF", verbose=verbose)
+        s.bok(bokmethod=bokmethod, verbose=verbose)
 
     s.optc()
     s.r2(nostab=True)  # This is to set s.lastr2nostab

@@ -208,7 +208,6 @@ class DataPoints:
         """
 
         maskindices = np.where(self.mask == False)[0]
-        print(maskindices)
 
         if len(maskindices) < 3:
             print("Hmm, not much masked here ...")
