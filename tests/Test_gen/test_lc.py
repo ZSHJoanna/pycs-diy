@@ -102,16 +102,6 @@ class TestLightCurve(unittest.TestCase):
         pycs3.gen.util.trace(lc_copy, spline, tracedir=self.outpath)
         pycs3.gen.util.plottrace(tracedir=self.outpath)
 
-    def test_opt_spline_legml(self):
-        lc_copy =[lc.copy() for lc in self.lcs]
-        pycs3.gen.polyml.addtolc(lc_copy[1], nparams=20, autoseasonsgap=60.0, mltype='leg')
-        pycs3.gen.polyml.addtolc(lc_copy[2], nparams=20, autoseasonsgap=60.0, mltype='leg')
-        pycs3.gen.polyml.addtolc(lc_copy[3], nparams=20, autoseasonsgap=60.0, mltype='leg')
-        spline = utils.spl(lc_copy)
-        delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
-        print(lc_func.getnicetimedelays(lc_copy))
-        lc_func.display(lc_copy, [spline],style="homepagepdf", filename=os.path.join(self.outpath, 'spline_legml.png'))
-
     def test_fluxshift(self):
         shifts = [-0.1, -0.2, -0.3, -0.4]
         lc_copy = [lc.copy() for lc in self.lcs]
