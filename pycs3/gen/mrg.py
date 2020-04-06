@@ -6,7 +6,6 @@ Of course we need overlapping curves to do this.
 """
 
 import numpy as np
-
 from scipy.optimize import fmin_powell
 
 

@@ -1,21 +1,8 @@
 """
-
 One season -- one microlensing
 This potentially allows to optimize one season after the other, thus reducing the number of simultaneous parameters,
 but of course you can still choose to optimize evrything at once (when using dispersion).
 When using a spline fit, optimizing a polynom corresponds to weighted to linear least squares -- fast !
-
-
-
-Idea for the future : "mutable" objects should be used here, with pointers in tables to pass the positions of each ml parameter very quickly.
-The present implementation is not that elegant... we make to many copies.
-
-We still need a more sophisticated factory function, so that you can set masks on individual params.
-This is not possible for now, only because of the lack of such a factory.
-(edit : not sure if really needed, I never use these...)
-Let's forget about these "free params" and masks.
-
-
 """
 
 from pycs3.gen.sea import autofactory
@@ -95,17 +82,13 @@ class SeasonFct:
 
     One idea of the relatively simple get and set methods is that one day we might want to use something else
     than polynomials, and at that time all this might be handy.
-
-    for the mltype argument, see discussion of ml.factory function.
-
     """
 
-    def __init__(self, season, mltype="poly", params=np.array([0.0]), mask=np.array([True])):
+    def __init__(self, season, params=np.array([0.0]), mask=np.array([True])):
         """
         Also see the factory functions below ... they will be much easier to use for your task.
         Default values shown above : 1 parameter, i.e. a simple additive constant for the given season, which is free to be optimized.
         :param season: Season object
-        :param mltype: string to define the microlensing type. Choose between "poly" for polynomial mircrolensing and "leg" for Legendre polynomial
         :param params: A 1D numpy array of params (floats)
         :param mask : boolean array, True if the parameter is "free".
         """
@@ -115,9 +98,7 @@ class SeasonFct:
             raise RuntimeError("I want params and mask to be of the same length !")
 
         self.season = season
-        if mltype not in ["poly", "leg"]:
-            raise RuntimeError("Sorry I do not know this microlensing mltype.")
-        self.mltype = mltype
+        self.mltype = "poly"
 
         self.params = np.asarray(params)
 
@@ -143,24 +124,12 @@ class SeasonFct:
         Returns a longer description of the object.
         """
         if self.mltype == "poly":
-
             strlist = ["Plain poly with %s params on %s :" % (str(self), str(self.season))]
             for (i, p, m) in zip(list(range(len(self.params) - 1, -1, -1)), self.params, self.mask):
                 if m:
                     paramstr = "\n deg %2i : %g (free)" % (i, p)
                 else:
                     paramstr = "\n deg %2i : %g" % (i, p)
-                strlist.append(paramstr)
-            return "".join(strlist)
-
-        if self.mltype == "leg":
-
-            strlist = ["Legendre poly with %s params on %s :" % (str(self), str(self.season))]
-            for (n, p, m) in zip(list(range(len(self.params))), self.params, self.mask):
-                if m:
-                    paramstr = "\n deg %2i : %g (free)" % (n, p)
-                else:
-                    paramstr = "\n deg %2i : %g" % (n, p)
                 strlist.append(paramstr)
             return "".join(strlist)
 
@@ -231,28 +200,12 @@ class SeasonFct:
             allmags[self.season.indices] = np.polyval(self.params, jds)  # probably faster then +=
             return allmags
 
-        # Legendre polynomials :
-        if self.mltype == "leg":
-
-            rjd = (np.max(jds) - np.min(jds)) / 2.0
-            cjd = (np.max(jds) + np.min(jds)) / 2.0
-            jds = (jds - cjd) / rjd
-
-            allmags = np.zeros(len(lightcurve.jds))
-
-            for (n, p) in enumerate(self.params):
-                allmags[self.season.indices] += p * ss.legendre(n)(jds)
-
-            return allmags
-
     def smooth(self, lightcurve):
         """
         Only for plotting purposes : returns jds, mlmagshifts, and refmags with a tight and regular sampling,
         over the range given by the season.
         Note that this time we are interested in the acutal shifted jds, so that it looks right when plotted !
         We return arrays that can directly be plotted to illustrate the microlensing.
-
-        TODO : return refmag, not refmags !
         """
 
         jds = lightcurve.getjds()[self.season.indices]
@@ -270,27 +223,6 @@ class SeasonFct:
             smoothml = np.polyval(self.params, smoothtime)
             smoothtime += refjd  # important, to get the time back at the right place.
             refmags = np.zeros(50) + refmag
-            return {"jds": smoothtime, "ml": smoothml, "refmags": refmags}
-
-        # Legendre polynomials :
-
-        if self.mltype == "leg":
-
-            rjd = (np.max(jds) - np.min(jds)) / 2.0
-            cjd = (np.max(jds) + np.min(jds)) / 2.0
-            jds = (jds - cjd) / rjd
-
-            refmag = np.median(
-                lightcurve.getmags())  # So the reference magnitude is evaluated from the entire lightcurve.
-            # Independent on seasons.
-
-            smoothtime = np.linspace(-1, 1, 300)
-            smoothml = np.zeros(len(smoothtime))
-            for (n, p) in enumerate(self.params):
-                smoothml += p * ss.legendre(n)(smoothtime)
-
-            smoothtime = smoothtime * rjd + cjd  # important, to get the time back at the right place.
-            refmags = np.zeros(300) + refmag
             return {"jds": smoothtime, "ml": smoothml, "refmags": refmags}
 
 
@@ -323,7 +255,7 @@ class Microlensing:
         @ivar: The number of free parameters.
         """
 
-        self.mltype = self.mllist[0].mltype  # ok this is a bit mean...
+        self.mltype = self.mllist[0].mltype
 
     def copy(self):
         return pythoncopy.deepcopy(self)
@@ -448,7 +380,7 @@ def multisetfreeparams(lclist, params):
 # What we still need is a method that collects and sets all the free params of a list of lightcurves.
 
 
-def factory(seasons, nparams, mltype="poly"):
+def factory(seasons, nparams):
     """
     A factory function to create a microlensings object filled by seasonfct objects.
     seasons is a list of season objects
@@ -457,10 +389,6 @@ def factory(seasons, nparams, mltype="poly"):
 
     mltype = "poly" : simple polynomial microlensing, very stupid but fast, ok for degree <= 3
     default type.
-
-    mltype = "leg" : legendre polynomials, very clever but slow :-) These are fine for degree <= 25
-    Above deg 25, some numerical errors set in. Could perhaps be rewritten to make this faster.
-    Or implement in C !!!!
 
     """
 
@@ -472,7 +400,7 @@ def factory(seasons, nparams, mltype="poly"):
         if n != 0:
             p = np.zeros(n, dtype="float")
             mask = p > -1.0
-            sfct = SeasonFct(season, mltype, p, mask)
+            sfct = SeasonFct(season, p, mask)
             mllist.append(sfct)
 
     return Microlensing(mllist)
@@ -506,6 +434,6 @@ def addtolc(l, seasons=None, nparams=1, autoseasonsgap=60.0):
     if type(nparams) == int:
         nparams = [nparams] * len(seasons)
 
-    m = factory(seasons, nparams, mltype="poly")
+    m = factory(seasons, nparams)
 
     l.addml(m)

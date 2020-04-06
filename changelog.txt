@@ -40,6 +40,10 @@ pycs
         --------------
         - in anaoptdrawn(), added a keyword argument to provide the path to save the plots.
 
+        polyml.py
+        --------------
+        - removing support of Lengendre polynomial for microlensing.
+
     regdiff
     ---
         scikitgp.py
