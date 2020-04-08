@@ -998,3 +998,20 @@ def resetlcs(lcs):
     for i, lc in enumerate(lcs):
         lc.resetml()
         lc.resetshifts(keeptimeshift=False)
+
+def applyshifts(lcs, timeshifts, magshifts):
+    """
+    Apply an array of time shifts and magshifts to the curves
+
+    :param lcs: list of LightCurves
+    :param timeshifts: list of time shift, must have the same length as lcs
+    :param magshifts: list of magnitude shifts, must have the same length as lcs
+    :return: Nothing, I modify the LightCurve objects.
+    """
+    if not len(lcs) == len(timeshifts) and len(lcs) == len(magshifts):
+        raise RuntimeError("Hey, give me arrays of the same lenght !")
+
+    for lc, timeshift, magshift in zip(lcs, timeshifts, magshifts):
+        lc.resetshifts()
+        lc.shiftmag(magshift)
+        lc.shifttime(timeshift)

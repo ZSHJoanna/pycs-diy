@@ -1,6 +1,6 @@
 Martin :
 
-- integrate the MCMC_pycs module
+- integrate the MCMC_pycs module (check what we need for matplotlib Backend on a cluster)
 - find what is usefull in the tdc module
 - discard spl_diff
 - complete the coverage

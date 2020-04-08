@@ -114,6 +114,46 @@ def erf(x):
     y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * math.exp(-x * x)
     return sign * y  # erf(-x) = -erf(x)
 
+def compute_dof_spline(rls, kn, knml):
+    """
+    Compute the number of degree of freedom of the spline optimiser, assuming all curves have the same microlensing.
+
+    :param rls: list of residuals LightCurves. Use the subtract() fucntion to generate them.
+    :param kn: float, knotstep of the spline
+    :param knml: float, knotstep of the microlensing splines
+    :return: float, number of degree of freedom
+    """
+    n_curve = len(rls)
+    a = rls[0].jds[0]
+    b = rls[0].jds[-1]
+    nkn = int(float(b - a) / float(kn) - 2)  # number of internal knot
+    if knml != 0:
+        nknml = int(float(b - a) / float(knml) - 2)  # number of internal ml knot
+    else:
+        nknml = 0
+    return (2 * nkn + n_curve) + n_curve * (2 * nknml + n_curve) + n_curve
+
+
+def compute_chi2(rls, kn, knml):
+    """
+    Compute the chi2 of the spline fit, given a list residuals LightCurve
+    :param rls: list of residuals LightCurves. Use the subtract() fucntion to generate them.
+    :param kn: float, knotstep of the spline
+    :param knml: float, knotstep of the microlensing splines
+    :return: float, chi2 per degree of freedom of the fit.
+    """
+    chi2 = 0.0
+    for rl in rls:
+        chi2_c = np.mean((rl.getmags() ** 2) / rl.getmagerrs() ** 2)
+        print("Chi2 for light curve %s : %2.2f" % (rl.object, chi2_c))
+        chi2 += chi2_c
+
+    # chi2 =chi2 / count
+    chi2_red = chi2 / compute_dof_spline(rls, kn, knml)
+    print("DoF :", compute_dof_spline(rls, kn, knml))
+    print("Final chi2 reduced: %2.5f" % chi2_red)
+    return chi2_red
+
 
 def runstest(residuals, autolevel=False, verbose=True):
     """

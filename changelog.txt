@@ -20,6 +20,7 @@ pycs
         lc_func.py
         --------------
         - moved all functions related to list of LigthCurve to this module
+        - added applyshifts function
 
         spl_func.py
         --------------
@@ -66,6 +67,7 @@ pycs
         twk.py
         ------
         -suppressed addspl function.
+        -added tweakml_PS function.
 
         src.py
         -------------
@@ -74,6 +76,11 @@ pycs
         plot.py
         -------------
         -removed the mad function as it is implemented in pycs3.gen.stat
+
+        optim.py
+        --------------
+        - added a new module for adjusting the generative noise mode parameters
+
 
     comb
     ---
@@ -97,3 +104,7 @@ tests
 docs
 ----
 - Add a sphinx documentation source code
+
+scripts
+-------
+- Added the full pipeline to measure time delays
