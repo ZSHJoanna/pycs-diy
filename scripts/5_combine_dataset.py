@@ -1,3 +1,7 @@
+"""
+LAst level of combination, combining across dataset. You can choose which dataset to use in a specific config file :
+Comination/lensname/config_combination_lensname.py
+"""
 import matplotlib.style
 import argparse as ap
 import os

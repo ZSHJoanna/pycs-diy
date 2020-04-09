@@ -10,7 +10,7 @@ from shutil import copyfile
 import pycs3.gen.lc_func
 import pycs3.gen.mrg
 import pycs3.gen.util
-from . import utils
+import utils
 
 
 def main(lensname, dataname, work_dir='./'):

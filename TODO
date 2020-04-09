@@ -5,8 +5,7 @@ Martin :
 - discard spl_diff
 - complete the coverage
 - repair multiCPU
-- code the Power Spectrum class
-
+- add documentation for the scripts
 
 Vivien :
  - transform the doc
