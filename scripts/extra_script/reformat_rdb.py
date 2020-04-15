@@ -33,7 +33,7 @@ if __name__ == '__main__':
     help_lensname = "name of the lens to process"
     help_dataname = "name of the data set to process (Euler, SMARTS, ... )"
     help_magerr = "Type of COSMOULINE error, take 5 by default"
-    help_data_dir = "name of the data directory"
+    help_data_dir = "name of the data directory (default '../data/')"
     parser.add_argument(dest='lensname', type=str,
                         metavar='lens_name', action='store',
                         help=help_lensname)

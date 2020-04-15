@@ -69,7 +69,7 @@ def tweakspl(spline, beta=-2.5, sigma=0.03, fmin=1 / 30.0, fmax=1 / 5.0, hann=Fa
 
     source.addplaw2(beta=beta, sigma=sigma, fmin=fmin, fmax=fmax, hann=hann, flux=False, seed=None)
     source.name += "_twk"
-    newspline = source.spline()
+    newspline = source.generate_spline()
 
     if psplot:
         psnewspline = pycs3.sim.src.PS(source, flux=False)
@@ -183,7 +183,7 @@ def tweakml_PS(lcs, spline, B, f_min = 1/300.0,psplot=False, save_figure_folder 
             source.imags = source.inispline.eval(jds=source.ijds)
 
         source.imags += noise_lcs_rescaled.mags
-        newspline = source.spline()
+        newspline = source.generate_spline()
         l.ml.replacespline(newspline) # replace the previous spline with the tweaked one...
 
         if psplot :

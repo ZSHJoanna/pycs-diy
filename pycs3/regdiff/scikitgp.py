@@ -9,16 +9,15 @@ from sklearn.gaussian_process.kernels import ConstantKernel
 import numpy as np
 
 
-def regression(x, y, yerr, mean, covkernel='matern', pow=1.5, amp=2.0, scale=200.0, errscale=5.0, verbose=True):
+def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=False):
     """
     Give me data points
 
     yerr is the 1sigma error of each y
 
     I return a function : you pass an array of new x, the func returns (newy, newyerr)
-
-    pow, amp and scale are params for the covariance function.
-    @todo : remove the optimsied parameters scale, amp, and pow.
+    WARNING : pow is not used for RBF, it is set by definition to inf
+    amp and scale are now fitted to the data, you provide the starting point, it is better leave them to default value.
     """
     obs_mesh = x.reshape(-1, 1)
     obs_vals = y
@@ -26,7 +25,7 @@ def regression(x, y, yerr, mean, covkernel='matern', pow=1.5, amp=2.0, scale=200
     obs_v = (yerr) **2  # Converting std to variance
 
     if verbose:
-        print("Computing GPR with params pow=%.1f, amp=%.1f, scale=%.1f, errscale=%.1f" % (pow, amp, scale, errscale))
+        print("Computing GPR with params covkernel=%s, pow=%.1f, errscale=%.1f" % (covkernel, pow, errscale))
 
     # v4, allow you to chose your kernel.
     if covkernel == "matern":

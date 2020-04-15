@@ -1,10 +1,13 @@
 #####################
 #  Configuration file
 #####################
-import os, sys
-import pycs
+import sys
+import pycs3.spl.topopt
+import pycs3.regdiff.multiopt
+import pycs3.gen.polyml
+import pycs3.gen.splml
 import numpy as np
-from module import util_func as ut
+import pycs3.optim.pipe_utils as ut
 
 #info about the lens :
 full_lensname =''
@@ -12,7 +15,6 @@ lcs_label = ['A','B','C']
 delay_labels = ['AB', 'AC', 'BC']
 #initial guess :
 timeshifts = ut.convert_delays2timeshifts([0.,0.])#give the estimated AB delay
-magshifts =  [0.,0.,0.]
 
 #general config :
 askquestions = False
@@ -31,14 +33,13 @@ knotstep = [25,35,45,55] #give a list of the parameter you want
 ### REGDIFF PARAMETERS ###
 #To use 5 set of parameters pre-selected :
 use_preselected_regdiff = True #highly recommended, set to True
-preselection_file = 'CHANGE PATH HERE' #'config/preset_regdiff_ECAM.txt'
+preselection_file = 'CHANGE PATH HERE' #'config/preset_regdiff.txt'
 #You can give your own grid here if use_preselected_regdiff == False :
-covkernel = ['matern']  # can be matern, pow_exp or gaussian
+covkernel = ['matern']  # can be matern, RatQuad or RBF
 pointdensity = [2]
-pow = [2.2]
-amp = [0.5]
-scale = [200.0]
-errscale = [25.0]
+pow = [2.5]
+errscale = [1.0]
+
 
 ### RUN PARAMETERS #####
 #change here the number of copie and mock curve you want to draw :
@@ -82,29 +83,39 @@ colored_noise_param = [[-2.95,0.001],[-2.95,0.001],[-2.95,0.001]] #give your bet
 PS_param_B = [[1.0],[1.0],[1.0]] #if you don't want the algorithm fine tune the high cut frequency (given in unit of Nymquist frequency)
 
 #if you chose to optimise the tweakml automatically, you might want to change this
-optimiser = 'DIC' # choose between PSO, MCMC or GRID or DIC
+optimiser = 'DIC' # dichotomic optimser, only DIC is available for the moment
 n_curve_stat =16# Number of curve to compute the statistics on, (the larger the better but it takes longer... 16 or 32 are good, 8 is still OK) .
-n_particles = 50 #this is use only in PSO optimser
-n_iter = 80 #number of iteration in PSO or MCMC
-mpi = False # if you want to use MPI for the PSO
-grid = np.linspace(0.1,1,10) #this is use in the GRID optimiser
 max_iter = 15 # this is used in the DIC optimiser, 10 is usually enough.
 
 
 ###### SPLINE MARGINALISATION #########
 # Chose the parameters you want to marginalise on for the spline optimiser. Script 4b.
-name_marg_spline = 'marginalisation_spline' #choose a name for your marginalisation
+name_marg_spline = 'marginalisation_spline'  # choose a name for your marginalisation
 tweakml_name_marg_spline = ['PS']
-knotstep_marg = knotstep #parameters to marginalise over, give a list or just select the same that you used above to marginalise over all the available parameters
-mlknotsteps_marg = mlknotsteps
+knotstep_marg = knotstep  # parameters to marginalise over, give a list or just select the same that you used above to marginalise over all the available parameters
+if forcen and mltype == 'splml':  # microlensing parameters to marginalise over, give a list or just select the same that you used above to marginalise over all the available parameters
+	mlknotsteps_marg = nmlspl
+elif mltype == 'splml':
+	mlknotsteps_marg = mlknotsteps
+elif mltype == 'polyml':
+	mlknotsteps_marg = degree
+else:
+	mlknotsteps_marg = []
 
 ###### REGDIFF MARGINALISATION #########
 # Chose the parameters you want to marginalise on for the regdiff optimiser. Script 4c.
 # We will marginalise over the set of parameters in your preselection_file, you have to create one at this step.
 name_marg_regdiff = 'marginalisation_regdiff'
 tweakml_name_marg_regdiff = ['PS']
-knotstep_marg_regdiff = knotstep #choose the knotstep range you want to marginalise over, by default it is recommanded to take the same as knotstep
-mlknotsteps_marg_regdiff = mlknotsteps #mlknotsteps or nmlspl if use forcen == True or degree if you use polyml.
+knotstep_marg_regdiff = knotstep  # choose the knotstep range you want to marginalise over, by default it is recommanded to take the same as knotstep
+if forcen and mltype == 'splml':  # microlensing parameters to marginalise over, give a list or just select the same that you used above to marginalise over all the available parameters
+	mlknotsteps_marg_regdiff = nmlspl
+elif mltype == 'splml':
+	mlknotsteps_marg_regdiff = mlknotsteps
+elif mltype == 'polyml':
+	mlknotsteps_marg_regdiff = degree
+else:
+	mlknotsteps_marg_regdiff = []
 
 #other parameteres for regdiff and spline marginalisation :
 testmode = True # number of bin to use for the mar
@@ -119,25 +130,17 @@ sigmathresh_list = [0.5,0.5] #sigmathresh to use for marginalisation_spline and 
 sigmathresh_final = 0.0 #sigma used in the final marginalisation
 
 ### Functions definition
-if optfctkw == "regdiff" or simoptfctkw == "regdiff":
-	from pycs import regdiff
-
 def spl1(lcs, **kwargs):
-	# spline = pycs.spl.topopt.opt_rough(lcs, nit=5)
-	spline = pycs.spl.topopt.opt_fine(lcs, knotstep=kwargs['kn'], bokeps=kwargs['kn']/3.0, nit=5, stabext=100)
+	# spline = pycs3.spl.topopt.opt_rough(lcs, nit=5)
+	spline = pycs3.spl.topopt.opt_fine(lcs, knotstep=kwargs['kn'], bokeps=kwargs['kn']/3.0, nit=5, stabext=100)
 	return spline
 
 def regdiff(lcs, **kwargs):
-	return pycs.regdiff.multiopt.opt_ts(lcs, pd=kwargs['pointdensity'], covkernel=kwargs['covkernel'], pow=kwargs['pow'],
-										amp=kwargs['amp'], scale=kwargs['scale'], errscale=kwargs['errscale'], verbose=True, method="weights")
+	return pycs3.regdiff.multiopt.opt_ts(lcs, pd=kwargs['pointdensity'], covkernel=kwargs['covkernel'], pow=kwargs['pow'],
+										 errscale=kwargs['errscale'], verbose=True, method="weights")
 
 
 ###### DON'T CHANGE ANYTHING BELOW THAT LINE ######
-rawdispersionmethod = lambda lc1, lc2 : pycs.disp.disps.linintnp(lc1, lc2, interpdist=interpdist)
-dispersionmethod = lambda lc1, lc2 : pycs.disp.disps.symmetrize(lc1, lc2, rawdispersionmethod)
-def disp(lcs):
-	return pycs.disp.topopt.opt_full(lcs, rawdispersionmethod, nit=3, verbose=True)
-
 def attachml(lcs, ml):
 	if ml == 0 : #I do nothing if there is no microlensing to attach.
 		return
@@ -150,19 +153,19 @@ def attachml(lcs, ml):
 				mlbokeps = np.floor(curve_length / nml)
 
 				if nml == 1 : #spline cannot have 0 internal knot, then we use a polynome of degree 2 to represents a spline with only two external knot
-					pycs.gen.polyml.addtolc(lcml,  nparams=3 )
+					pycs3.gen.polyml.addtolc(lcml,  nparams=3 )
 				else :
-					pycs.gen.splml.addtolc(lcml, n=nml, bokeps=mlbokeps)
+					pycs3.gen.splml.addtolc(lcml, n=nml, bokeps=mlbokeps)
 		else:
 			for lcml, mlknotstep in zip(lcmls, mlvec):
 				mlbokeps_ad = mlknotstep / 3.0   #maybe change this
-				pycs.gen.splml.addtolc(lcml, knotstep=mlknotstep, bokeps=mlbokeps_ad)
+				pycs3.gen.splml.addtolc(lcml, knotstep=mlknotstep, bokeps=mlbokeps_ad)
 
 	# polynomial microlensing
 	nparams = [ml for ind in mllist]
 	if mltype == 'polyml':
 		for ind, lcml in enumerate(lcmls):
-			pycs.gen.polyml.addtolc(lcml, nparams=nparams[ind], autoseasonsgap = 60.0)
+			pycs3.gen.polyml.addtolc(lcml, nparams=nparams[ind], autoseasonsgap = 60.0)
 
 if optfctkw == "spl1":
 	optfct = spl1
@@ -180,7 +183,7 @@ if simoptfctkw == "regdiff":
 	if use_preselected_regdiff :
 		regdiffparamskw = ut.read_preselected_regdiffparamskw(preselection_file)
 	else :
-		regdiffparamskw = ut.generate_regdiffparamskw(pointdensity,covkernel, pow, amp, scale, errscale)
+		regdiffparamskw = ut.generate_regdiffparamskw(pointdensity,covkernel, pow, amp)
 
 
 if mltype == "splml" :
@@ -202,7 +205,7 @@ if simoptfctkw == "regdiff":
 		kwargs_optimiser_simoptfct = ut.get_keyword_regdiff_from_file(preselection_file)
 		optset = [simoptfctkw + regdiffparamskw[i] + 't' + str(int(tsrand)) for i in range(len(regdiffparamskw))]
 	else :
-		kwargs_optimiser_simoptfct = ut.get_keyword_regdiff(pointdensity, covkernel, pow, amp, scale, errscale)
+		kwargs_optimiser_simoptfct = ut.get_keyword_regdiff(pointdensity, covkernel, pow, errscale)
 		optset = [simoptfctkw + regdiffparamskw[i] + 't' + str(int(tsrand)) for i in range(len(regdiffparamskw))]
 elif simoptfctkw == 'spl1':
 	optset = [simoptfctkw + 't' + str(int(tsrand))]

@@ -10,8 +10,9 @@ import importlib
 import pycs3.gen.util
 import pycs3.gen.lc_func
 import pycs3.gen.stat
+import pycs3.gen.mrg
 import pycs3.regdiff.rslc
-from . import utils as ut
+import pycs3.optim.pipe_utils as ut
 
 
 def main(lensname, dataname, work_dir='./'):
@@ -23,8 +24,8 @@ def main(lensname, dataname, work_dir='./'):
         os.mkdir(figure_directory)
 
     for i, lc in enumerate(config.lcs_label):
-        print("I will aplly a initial shift of : %2.4f days, %2.4f mag for %s" % (
-            config.timeshifts[i], config.magshifts[i], config.lcs_label[i]))
+        print("I will aplly a initial shift of : %2.4f days for %s" % (
+            config.timeshifts[i], config.lcs_label[i]))
 
     # Do the optimisation with the splines
     if config.mltype == "splml":
@@ -46,7 +47,7 @@ def main(lensname, dataname, work_dir='./'):
         for j, ml in enumerate(ml_param):
             print(("ML param", j, ml))
             lcs = pycs3.gen.util.readpickle(config.data)
-            pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts, config.magshifts)
+            pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts, [-np.median(lc.getmags()) for lc in lcs]) #remove median and set the time shift to the initial guess
             if ml != 0:
                 config.attachml(lcs, ml)  # add microlensing
 
@@ -76,7 +77,7 @@ def main(lensname, dataname, work_dir='./'):
     # DO the optimisation with regdiff as well, just to have an idea, this the first point of the grid !
     lcs = pycs3.gen.util.readpickle(config.data)
     pycs3.gen.mrg.colourise(lcs)
-    pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts, config.magshifts)
+    pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts, [-np.median(lc.getmags()) for lc in lcs])
 
     for ind, l in enumerate(lcs):
         l.shiftmag(ind * 0.1)
@@ -92,7 +93,7 @@ def main(lensname, dataname, work_dir='./'):
 
     for i, k in enumerate(kwargs_optimiser_simoptfct):
         myrslcs = [pycs3.regdiff.rslc.factory(l, pd=k['pointdensity'], covkernel=k['covkernel'],
-                                              pow=k['pow'], amp=k['amp'], scale=k['scale'], errscale=k['errscale']) for
+                                              pow=k['pow'], errscale=k['errscale']) for
                    l in lcs]
 
         if config.display:

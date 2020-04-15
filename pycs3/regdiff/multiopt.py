@@ -9,7 +9,7 @@ import pycs3.gen.lc
 import pycs3.gen.lc_func
 
 
-def opt_ts(lcs, method="weights", pd=5, covkernel="matern", pow=1.5, amp=2.0, scale=200.0, errscale=5.0, verbose=True):
+def opt_ts(lcs, method="weights", pd=5, covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=True):
     """
     Give me lightcurves (with more or less good initial time shifts)
     I run a regression on them, optimize regdiff, and set their delays to the optimal values.

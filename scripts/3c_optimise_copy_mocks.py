@@ -14,6 +14,7 @@ import copy
 import argparse as ap
 import importlib
 import pickle as pkl
+import numpy as np
 
 def exec_worker_copie_aux(args):
     return exec_worker_copie(*args)
@@ -23,7 +24,7 @@ def exec_worker_copie(i, simset_copy, lcs, simoptfct, kwargs_optim, optset, tsra
     print("worker %i starting..." % i)
     time.sleep(i)
     sucess_dic = pycs3.sim.run.multirun(simset_copy, lcs, simoptfct, kwargs_optim=kwargs_optim,
-                                       optset=optset, tsrand=tsrand, destpath=destpath)
+                                       optset=optset, tsrand=tsrand, destpath=destpath, ncpu=1)
     return sucess_dic
 
 
@@ -35,7 +36,7 @@ def exec_worker_mocks(i, simset_mock, lcs, simoptfct, kwargs_optim, optset, tsra
     print("worker %i starting..." % i)
     time.sleep(i)
     sucess_dic = pycs3.sim.run.multirun(simset_mock, lcs, simoptfct, kwargs_optim=kwargs_optim,
-                                       optset=optset, tsrand=tsrand, keepopt=True, destpath=destpath)
+                                       optset=optset, tsrand=tsrand, keepopt=True, destpath=destpath,ncpu=1)
     return sucess_dic
 
 
@@ -82,7 +83,7 @@ def main(lensname, dataname, work_dir='./'):
             destpath = os.path.join(main_path, config.lens_directory + config.combkw[a, b] + '/')
             print(destpath)
             ##### We start by shifting our curves "by eye", to get close to the result and help the optimisers to do a good job
-            pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts, config.magshifts)  # be careful, this remove ml as well.
+            pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts,[-np.median(lc.getmags()) for lc in lcs])  # be careful, this remove ml as well.
 
             # We also give them a microlensing model (here, similar to Courbin 2011)
             config.attachml(lcs, ml)  # this is because they were saved as raw lcs, wihtout lcs.
@@ -121,7 +122,7 @@ def main(lensname, dataname, work_dir='./'):
                             print("Dir link :", dir_link)
                             pkl.dump(dir_link, open(
                                 os.path.join(config.lens_directory, 'regdiff_copies_link_%s.pkl' % kwargs['name']),
-                                'w'))
+                                'wb'))
 
                     f.write('COPIES, kn%i, %s%i, optimiseur %s : \n' % (kn, string_ML, ml, kwargs['name']))
                     write_report_optimisation(f, success_list_copies)
@@ -130,19 +131,14 @@ def main(lensname, dataname, work_dir='./'):
                 if config.run_on_sims:
                     print("I will run the optimiser on the simulated lcs with the parameters :", kwargs)
                     p = Pool(nworkers)
-                    if config.simoptfctkw == "spl1":
-                        job_args = [
-                            (j, config.simset_mock, lcs, config.simoptfct, kwargs, opts, config.tsrand, destpath) for j
-                            in
-                            range(nworkers)]
-                        success_list_simu = p.map(exec_worker_mocks_aux, job_args)
-                        # success_list_simu = [exec_worker_mocks_aux(job_args[0])] #DEBUG
-                    elif config.simoptfctkw == "regdiff":
+                    job_args = [(j, config.simset_mock, lcs, config.simoptfct, kwargs, opts, config.tsrand, destpath) for j in range(nworkers)]
+                    """
+                    Serial version of this code :
                         job_args = (0, config.simset_mock, lcs, config.simoptfct, kwargs, opts, config.tsrand, destpath)
-                        success_list_simu = exec_worker_mocks_aux(
-                            job_args)  # because for some reason, regdiff does not like multiproc.
-                        success_list_simu = [success_list_simu]
-                        # p.map(exec_worker_copie_aux, job_args)
+                        success_list_simu = exec_worker_mocks_aux(job_args)  # if regdiff uses another level of parallelism.
+                        success_list_simu = [success_list_simu]# p.map(exec_worker_copie_aux, job_args)
+                    """
+                    success_list_simu = p.map(exec_worker_copie_aux, job_args)
                     f.write('SIMULATIONS, kn%i, %s%i, optimiseur %s : \n' % (kn, string_ML, ml, kwargs['name']))
                     write_report_optimisation(f, success_list_simu)
                     f.write('################### \n')

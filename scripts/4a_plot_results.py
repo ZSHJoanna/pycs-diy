@@ -1,6 +1,8 @@
 """
 This script is going through your optimised mock lightcurves and measure the time delay estimates (i.e. the central value + error bars)
 """
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 import pycs3.sim.run
 import pycs3.sim.plot
@@ -53,7 +55,7 @@ def main(lensname, dataname, work_dir='./'):
                 if config.simoptfctkw == "regdiff":
                     kwargs = config.kwargs_optimiser_simoptfct[o]
                     dir_link = pkl.load(
-                        open(os.path.join(config.lens_directory, 'regdiff_copies_link_%s.pkl' % kwargs['name']), 'r'))
+                        open(os.path.join(config.lens_directory, 'regdiff_copies_link_%s.pkl' % kwargs['name']), 'rb'))
 
                     if a == 0 and b == 0:
                         regdiff_copie_dir = os.path.join(regdiff_dir, "copies/")
@@ -72,14 +74,16 @@ def main(lensname, dataname, work_dir='./'):
                     pycs3.sim.plot.measvstrue(simres, r=2 * config.truetsr, nbins=1, plotpoints=True,
                                               ploterrorbars=True, sidebyside=True,
                                               errorrange=5., binclip=binclip, binclipr=binclipr, dataout=True,
-                                              figsize=(12, 8),
+                                              figsize=(12, 9),
                                               filename=figure_directory + 'deviation_hist_%i-%i_sims_%s_opt_%s.png' % (
                                                   kn, ml, config.simset_copy, opt),
                                               outdir=regdiff_mocks_dir)
-                    spl = (pycs3.gen.util.readpickle(regdiff_copie_dir + 'sims_%s_opt_%s_delays.pkl' % (
-                        config.simset_copy, opt)),
-                           pycs3.gen.util.readpickle(regdiff_mocks_dir + 'sims_%s_opt_%s_errorbars.pkl' % (
-                               config.simset_mock, opt)))
+
+                    cscontainer = pycs3.mltd.comb.CScontainer("Regdiff kn%s %s%s"%(kn, string_ML, ml), knots=str(kn), ml=str(ml),
+                                                              result_file_delays=regdiff_copie_dir + 'sims_%s_opt_%s_delays.pkl' % (
+                                                                  config.simset_copy, opt),
+                                                              result_file_errorbars=regdiff_mocks_dir + 'sims_%s_opt_%s_errorbars.pkl' % (
+                                                                  config.simset_mock, opt))
 
                 elif config.simoptfctkw == "spl1":
                     copiesres = [pycs3.sim.run.collect(
@@ -95,30 +99,37 @@ def main(lensname, dataname, work_dir='./'):
                     pycs3.sim.plot.measvstrue(simres, r=2 * config.truetsr, nbins=1, plotpoints=True,
                                               ploterrorbars=True, sidebyside=True,
                                               errorrange=10., binclip=binclip, binclipr=binclipr, dataout=True,
-                                              figsize=(12, 8),
+                                              figsize=(12, 9),
                                               filename=figure_directory + 'deviation_hist_%i-%i_sims_%s_opt_%s.png' % (
                                                   kn, ml, config.simset_copy, opt),
                                               outdir=config.lens_directory + config.combkw[
                                                   a, b] + '/sims_%s_opt_%s/' % (
                                                          config.simset_copy, opt))
-                    spl = (pycs3.gen.util.readpickle(config.lens_directory + config.combkw[a, b] +
-                                                     '/sims_%s_opt_%s/' % (
-                                                         config.simset_copy, opt) + 'sims_%s_opt_%s_delays.pkl' % (
-                                                         config.simset_copy, opt)),
-                           pycs3.gen.util.readpickle(config.lens_directory + config.combkw[a, b] +
-                                                     '/sims_%s_opt_%s/' % (
-                                                         config.simset_copy, opt) + 'sims_%s_opt_%s_errorbars.pkl' % (
-                                                         config.simset_mock, opt)))
+
+                    cscontainer = pycs3.mltd.comb.CScontainer("Spline kn%s %s%s"%(kn, string_ML,ml), knots=str(kn), ml=str(ml),
+                                                              result_file_delays=os.path.join(
+                                                                  config.lens_directory + config.combkw[
+                                                                      a, b] + '/sims_%s_opt_%s/' % (
+                                                                      config.simset_copy, opt) +
+                                                                  'sims_%s_opt_%s_delays.pkl' % (
+                                                                      config.simset_copy, opt)),
+                                                              result_file_errorbars=config.lens_directory +
+                                                                                    config.combkw[
+                                                                                        a, b] + '/sims_%s_opt_%s/' % (
+                                                                                    config.simset_copy,
+                                                                                    opt) + 'sims_%s_opt_%s_errorbars.pkl' % (
+                                                                                        config.simset_mock, opt))
+                    print(cscontainer.result_file_delays)
 
                 if config.display:
                     plt.show()
 
-                toplot.append(spl)
+                toplot.append(pycs3.mltd.comb.getresults(cscontainer, useintrinsic=False))
 
-                text = [(0.43, 0.85, r"$\mathrm{" + config.full_lensname + "}$", {"fontsize": 18})]
+                text = [(0.12, 0.9, r"$\mathrm{" + config.full_lensname + "}$", {"fontsize": 22})]
 
-                pycs3.mltd.plot.delayplot(toplot, rplot=10.0, displaytext=True, text=text,
-                                          filename=figure_directory + "fig_delays__%i-%i_%s_%s.png" % (
+                pycs3.mltd.plot.delayplot(toplot, rplot=10.0, displaytext=True, text=text, showlegend=False,
+                                          filename=figure_directory + "fig_delays_%i-%i_%s_%s.png" % (
                                               kn, ml, config.simset_mock, opt))
 
                 if config.display:

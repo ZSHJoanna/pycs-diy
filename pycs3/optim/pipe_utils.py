@@ -53,19 +53,14 @@ def write_func_append(fn, stream, **kwargs):
     stream.write('\n' + fn_as_string)
 
 
-def generate_regdiffparamskw(pointdensity, covkernel, pow, amp, scale, errscale):
+def generate_regdiffparamskw(pointdensity, covkernel, pow, errscale):
     out_kw = []
     for c in covkernel:
         for pts in pointdensity:
             for p in pow:
-                for a in amp:
-                    for s in scale:
-                        for e in errscale:
-                            if covkernel == 'gaussian':  # no pow parameter
-                                out_kw.append("_pd%i_ck%s_amp%.1f_sc%i_errsc%i_" % (pts, c, a, s, e))
-                            else:
-                                out_kw.append("_pd%i_ck%s_pow%.1f_amp%.1f_sc%i_errsc%i_" % (
-                                    pts, c, p, a, s, e))
+                for e in errscale:
+                    out_kw.append("_pd%i_ck%s_pow%.1f_errsc%i_" % (
+                        pts, c, p, e))
     return out_kw
 
 
@@ -74,25 +69,23 @@ def read_preselected_regdiffparamskw(file):
     with open(file, 'r') as f:
         dic = json.load(f)
         for d in dic:
-            if d['covkernel'] == 'gaussian':  # no pow parameter
-                out_kw.append("_pd%i_ck%s_amp%.1f_sc%i_errsc%i_" % (
-                d['pointdensity'], d['covkernel'], d['amp'], d['scale'], d['errscale']))
+            if d['covkernel'] == 'RBF':  # no pow parameter, RBF correspond to Mattern with pow --> inf
+                out_kw.append("_pd%i_ck%s_errsc%i_" % (
+                d['pointdensity'], d['covkernel'], d['errscale']))
             else:
-                out_kw.append("_pd%i_ck%s_pow%.1f_amp%.1f_sc%i_errsc%i_" % (
-                d['pointdensity'], d['covkernel'], d['pow'], d['amp'], d['scale'], d['errscale']))
+                out_kw.append("_pd%i_ck%s_pow%.1f_errsc%i_" % (
+                d['pointdensity'], d['covkernel'], d['pow'], d['errscale']))
     return out_kw
 
 
-def get_keyword_regdiff(pointdensity, covkernel, pow, amp, scale, errscale):
+def get_keyword_regdiff(pointdensity, covkernel, pow, errscale):
     kw_list = []
     for c in covkernel:
         for pts in pointdensity:
             for p in pow:
-                for a in amp:
-                    for s in scale:
-                        for e in errscale:
-                            kw_list.append(
-                                {'covkernel': c, 'pointdensity': pts, 'pow': p, 'amp': a, 'scale': s, 'errscale': e})
+                for e in errscale:
+                        kw_list.append(
+                            {'covkernel': c, 'pointdensity': pts, 'pow': p, 'errscale': e})
     return kw_list
 
 

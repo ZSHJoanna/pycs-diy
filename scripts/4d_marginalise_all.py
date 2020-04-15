@@ -9,7 +9,7 @@ import os
 import pickle as pkl
 import importlib
 import argparse as ap
-from . import utils as ut
+import pycs3.optim.pipe_utils as ut
 
 matplotlib.style.use('classic')
 matplotlib.rc('font', family="Times New Roman")

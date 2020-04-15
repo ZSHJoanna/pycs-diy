@@ -51,7 +51,6 @@ class Source:
             dp = pycs3.gen.spl.DataPoints(jds, mags, magerrs, splitup=False, sort=False)
             self.inispline = pycs3.gen.spl.Spline(dp)
             self.inispline.uniknots(3)  # Puts coeffs to 0, that's ok.
-            # self.inispline.optc()
             self.plotcolour = "grey"
 
         self.name = name

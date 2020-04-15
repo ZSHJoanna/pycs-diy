@@ -23,14 +23,11 @@ class Optimiser(object):
                  tweakml_name='', correction_PS_residuals=True, tolerance=0.75):
 
         if len(fit_vector) != len(lcs):
-            print("Error : Your target vector and list of light curves must have the same size !")
-            exit()
+            raise RuntimeError("Your target vector and list of light curves must have the same size !")
         if recompute_spline is True and knotstep is None:
-            print("Error : I can't recompute spline if you don't give me the knotstep ! ")
-            exit()
+            raise  RuntimeError(" I can't recompute spline if you don't give me the knotstep ! ")
         if tweakml_type != 'colored_noise' and tweakml_type != 'PS_from_residuals':
-            print("I don't recognize your tweakml type, choose either colored_noise or PS_from_residuals.")
-            exit()
+            raise RuntimeError("I don't recognize your tweakml type, choose either colored_noise or PS_from_residuals.")
 
         self.lcs = lcs
         self.ncurve = len(lcs)
@@ -44,8 +41,7 @@ class Optimiser(object):
             elif tweakml_type == 'PS_from_residuals':
                 theta_init = [[0.5] for i in range(self.ncurve)]
         if len(theta_init) != len(lcs):
-            print("Error : Your init vector and list of light curves must have the same size !")
-            exit()
+            raise RuntimeError("Your init vector and list of light curves must have the same size !")
         self.theta_init = theta_init
         self.knotstep = knotstep
         self.savedirectory = savedirectory
@@ -161,7 +157,7 @@ class Optimiser(object):
                                      keeporiginalml=False,
                                      inprint_fake_shifts=None)  # this return mock curve without ML
 
-        pycs3.gen.lc_func.applyshifts(mocklc, self.timeshifts, self.magshifts)
+        pycs3.gen.lc_func.applyshifts(mocklc, self.timeshifts, [-np.median(lc.getmags()) for lc in mocklc])
         self.attachml_function(mocklc, self.attachml_param)  # adding the microlensing here ! Before the optimisation
 
         if self.recompute_spline:
@@ -221,8 +217,6 @@ class Optimiser(object):
 
         for i in range(self.n_curve_stat):
             tweak_list = self.get_tweakml_list(theta)
-            print(theta)
-            print(tweak_list)
             mocklc.append(pycs3.sim.draw.draw(lcscopies, spline_copy,
                                               tweakml=tweak_list, shotnoise=self.shotnoise,
                                               shotnoisefrac=self.shotnoisefrac,
@@ -230,12 +224,12 @@ class Optimiser(object):
                                               scaletweakresi=False,
                                               inprint_fake_shifts=None))  # this will return mock curve WITHOUT microlensing !
 
-            pycs3.gen.lc_func.applyshifts(mocklc[i], self.timeshifts, self.magshifts)
+            pycs3.gen.lc_func.applyshifts(mocklc[i], self.timeshifts, [-np.median(lc.getmags()) for lc in mocklc[i]])
             self.attachml_function(mocklc[i], self.attachml_param)  # adding the microlensing here
 
             if self.recompute_spline:
                 if self.knotstep is None:
-                    print("Error : you must give a knotstep to recompute the spline")
+                    raise RuntimeError("You must give a knotstep to recompute the spline")
                 spline_on_mock = pycs3.spl.topopt.opt_fine(mocklc[i], nit=5, knotstep=self.knotstep,
                                                            verbose=self.verbose, bokeps=self.knotstep / 3.0,
                                                            stabext=100)  # TODO : maybe pass the optimisation function to the class in argument
@@ -275,8 +269,7 @@ class Optimiser(object):
 
     def check_success(self):
         if any(self.rel_error_zruns_mini[i] is None for i in range(self.ncurve)):
-            print("Error you should run analyse_plot_results() first !")
-            exit()
+            raise RuntimeError("Error you should run analyse_plot_results() first !")
         else:
             if all(self.rel_error_zruns_mini[i] < self.tolerance for i in range(self.ncurve)) \
                     and all(self.rel_error_sigmas_mini[i] < self.tolerance for i in range(self.ncurve)):
@@ -320,7 +313,8 @@ class Optimiser(object):
         # Write the error report :
         g = open(self.savedirectory + 'errors_tweakml_optimisation.txt', 'a')
         for mes in self.error_message:
-            g.write(mes)
+            if not len(mes) == 0 :
+                g.write(str(mes))
         g.close()
 
     def reset_report(self):
@@ -515,26 +509,3 @@ def get_fit_vector(lcs, spline):
     fit_vector = [[fit_zruns[i], fit_sigma[i]] for i in range(len(rls))]
     return fit_vector
 
-
-# todo : Is this useful ??
-def tweakml_PS_1(lcs, spline):
-    return twk.tweakml_PS(lcs, spline, 0.12500000000000003, f_min=1 / 300.0, psplot=False, verbose=False,
-                          interpolation='linear', A_correction=1.0385175125538744)
-
-
-def tweakml_PS_2(lcs, spline):
-    return twk.tweakml_PS(lcs, spline, 0.12500000000000003, f_min=1 / 300.0, psplot=False, verbose=False,
-                          interpolation='linear', A_correction=1.0439695004938903)
-
-
-def tweakml_PS_3(lcs, spline):
-    return twk.tweakml_PS(lcs, spline, 1.5499999999999998, f_min=1 / 300.0, psplot=False, verbose=False,
-                          interpolation='linear', A_correction=0.9497062988061292)
-
-
-def tweakml_PS_4(lcs, spline):
-    return twk.tweakml_PS(lcs, spline, 0.12500000000000003, f_min=1 / 300.0, psplot=False, verbose=False,
-                          interpolation='linear', A_correction=0.9883240534172314)
-
-
-tweakml_list = [tweakml_PS_1, tweakml_PS_2, tweakml_PS_3, tweakml_PS_4, ]

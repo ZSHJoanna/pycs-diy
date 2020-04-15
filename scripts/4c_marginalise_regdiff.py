@@ -12,7 +12,7 @@ import numpy as np
 import pickle as pkl
 import importlib
 import argparse as ap
-from . import utils as ut
+import pycs3.optim.pipe_utils as ut
 
 
 def main(lensname, dataname, work_dir='./'):
@@ -131,10 +131,9 @@ def main(lensname, dataname, work_dir='./'):
                         color_id = 0  # reset the color form the beginning
 
                     f.write('Set %i, knotstep : %2.2f, %s : %2.2f \n' % (count, kn, string_ML, ml))
-                    f.write('covkernel : %s, point density: %2.2f, pow : %2.2f, amp : %2.2f, '
-                            'scale:%2.2f, errscale:%2.2f \n' % (dickw["covkernel"], dickw["pointdensity"],
-                                                                dickw["pow"], dickw["amp"], dickw["scale"],
-                                                                dickw["errscale"]))
+                    f.write('covkernel : %s, point density: %2.2f, pow : %2.2f, errscale:%2.2f \n'
+                            % (dickw["covkernel"], dickw["pointdensity"],
+                               dickw["pow"], dickw["errscale"]))
                     f.write('Tweak ml name : %s \n' % noise)
                     f.write('------------------------------------------------ \n')
 
@@ -206,7 +205,7 @@ def main(lensname, dataname, work_dir='./'):
                 marginalisation_dir + config.name_marg_regdiff + "_%s_%s" % (dickw['name'], noise) + '_combined.pkl')
             name_list.append('%s, Noise : %s ' % (dickw['name'], noise))
 
-    #------  MAKE THE FINAL REGDIFF ESTIMATE ------#
+    # ------  MAKE THE FINAL REGDIFF ESTIMATE ------#
     final_groups, final_combined = ut.group_estimate(path_list, name_list, config.delay_labels, colors,
                                                      config.sigmathresh,
                                                      config.name_marg_regdiff, testmode=config.testmode,
@@ -218,18 +217,18 @@ def main(lensname, dataname, work_dir='./'):
 
     if config.display:
         pycs3.mltd.plot.delayplot(final_groups + [final_combined], rplot=radius_f, refgroup=final_combined,
-                                 tick_step_auto=True,
-                                 text=text, hidedetails=True, showbias=False, showran=False, auto_radius=auto_radius,
-                                 autoobj=config.lcs_label,
-                                 showlegend=True, figsize=(15, 10), horizontaldisplay=False, legendfromrefgroup=False)
+                                  tick_step_auto=True,
+                                  text=text, hidedetails=True, showbias=False, showran=False, auto_radius=auto_radius,
+                                  autoobj=config.lcs_label,
+                                  showlegend=True, figsize=(15, 10), horizontaldisplay=False, legendfromrefgroup=False)
 
     pycs3.mltd.plot.delayplot(final_groups + [final_combined], rplot=radius_f, refgroup=final_combined, text=text,
-                             hidedetails=True,
-                             showbias=False, showran=False, showlegend=True, figsize=(15, 10), horizontaldisplay=False,
-                             autoobj=config.lcs_label,
-                             legendfromrefgroup=False, auto_radius=auto_radius, tick_step_auto=True,
-                             filename=indiv_marg_dir + config.name_marg_regdiff + "_sigma_%2.2f.png" % (
-                                 config.sigmathresh))
+                              hidedetails=True,
+                              showbias=False, showran=False, showlegend=True, figsize=(15, 10), horizontaldisplay=False,
+                              autoobj=config.lcs_label,
+                              legendfromrefgroup=False, auto_radius=auto_radius, tick_step_auto=True,
+                              filename=indiv_marg_dir + config.name_marg_regdiff + "_sigma_%2.2f.png" % (
+                                  config.sigmathresh))
 
     pkl.dump(final_groups,
              open(

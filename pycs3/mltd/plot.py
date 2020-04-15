@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
 def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=False, showbias=True, showran=True,
-              showerr=True, showlegend=True, text=None, figsize=(10, 6), left=0.06, right=0.97, top=0.99, bottom=0.08,
+              showerr=True, showlegend=True, text=None, figsize=(10, 8), left=0.06, right=0.97, top=0.99, bottom=0.12,
               wspace=0.10, hspace=0.15, txtstep=0.03, majorticksstep=2, filename=None, refgroup=None,
               legendfromrefgroup=False, centerdelays=None, ymin=0.2, hlines=None, blindness=False,
               horizontaldisplay=False, showxlabelhd=True, update_group_style=True, auto_radius=False,

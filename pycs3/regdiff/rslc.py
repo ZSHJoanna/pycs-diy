@@ -6,7 +6,6 @@ import numpy as np
 import pycs3.regdiff.scikitgp as scikitgp
 import copy as pythoncopy
 import scipy.optimize as spopt
-import time
 
 class Rslc:
     """
@@ -66,15 +65,17 @@ class Rslc:
         return out
 
 
-def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=2.0, scale=200.0, errscale=5.0):
+def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0):
     """
     Give me a lightcurve, I return a regularly sampled light curve, by performing some regression.
+    Amp and scale parameters are now fitted, it is just the starting point,
+    so you should leave it to default value. Choose pow=1.5 or pow=2.5 for Matern covariance for a big speed-up
 
     :param l: LightCurve object
     :param pad: the padding, in days
     :param pd: the point density, in points per days.
     :param plotcolour: string, colour to plot the LightCurve
-    :param covkernel: string Choose between "matern","pow_exp" and "gaussian"
+    :param covkernel: string Choose between "matern","RatQuad" and "RBF". See scikit GP documentation for details
     :param pow: float, exponent coefficient of the covariance function
     :param amp: float, amplitude coefficient of the covariance function
     :param scale: float, characteristic time scale
@@ -107,25 +108,16 @@ def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=
     rsjds = np.linspace(minjd, maxjd, npts)  # rs for regularly sampled
 
     # The regression itself
-
-    mean_mag = np.mean(mags)
-    #todo : remove time checks
-    start = time.time()
-    # def meanprior(query):
-    #     return 0.0 * query + mean_mag
-
-    # regfct = pymcgp.regression(jds, mags, magerrs, meanprior, covkernel=covkernel, pow=pow, amp=amp, scale=scale,
-    #                            errscale=errscale)
-
-    regfct = scikitgp.regression(jds, mags, magerrs, mean_mag, covkernel=covkernel, pow=pow, amp=amp, scale=scale,
+    regfct = scikitgp.regression(jds, mags, magerrs, covkernel=covkernel, pow=pow, amp=amp, scale=scale,
                                errscale=errscale)
-    #
-    #
+    """
+    Alternative implementation using pymc3
+    (rsmags, rsmagerrs) = pymc3gp.regression(jds, mags, magerrs, mean_mag, rsjds, covkernel=covkernel, pow=pow,
+                                             amp=amp, scale=scale,errscale=errscale)
+    """
+
     (rsmags, rsmagerrs) = regfct(rsjds)  # that fucker does not want to be executed in a multiprocessing loop. Why ?
-    # (rsmags, rsmagerrs) = pymc3gp.regression(jds, mags, magerrs, mean_mag, rsjds, covkernel=covkernel, pow=pow,
-    #                                          amp=amp, scale=scale,errscale=errscale)
-    stop = time.time()
-    print("Took : %2.2f"%(stop-start))
+
     return Rslc(rsjds, rsmags, rsmagerrs, pad, pd, timeshift=timeshift, name=name, plotcolour=plotcolour)
 
 
