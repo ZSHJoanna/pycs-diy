@@ -9,7 +9,7 @@ import numpy as np
 import math
 import datetime
 import gzip
-import pycs3
+import pycs3.gen.lc_func
 import csv
 
 tracei = 1  # global variable, filename to write trace pkl.
@@ -124,7 +124,7 @@ def plottrace(tracedir="trace", reset=False, showspl=True, **kwargs):
 
         shiftstxt = "(%s)" % "/".join(["%+.1f" % (getattr(l, "truetimeshift", 0.0)) for l in pkl["lclist"]])
         titletxt = "%s %s %s" % (tracedir, "", shiftstxt)
-        pycs3.gen.lc.display(pkl["lclist"], pkl["splist"], title=titletxt, filename=tracepkl[:-3] + ".png", **kwargs)
+        pycs3.gen.lc_func.display(pkl["lclist"], pkl["splist"], title=titletxt, filename=tracepkl[:-3] + ".png", **kwargs)
 
     map(plot, tracepkls)
 
