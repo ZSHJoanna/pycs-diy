@@ -138,7 +138,7 @@ def main(lensname, dataname, work_dir='./'):
                         success_list_simu = exec_worker_mocks_aux(job_args)  # if regdiff uses another level of parallelism.
                         success_list_simu = [success_list_simu]# p.map(exec_worker_copie_aux, job_args)
                     """
-                    success_list_simu = p.map(exec_worker_copie_aux, job_args)
+                    success_list_simu = p.map(exec_worker_mocks_aux, job_args)
                     f.write('SIMULATIONS, kn%i, %s%i, optimiseur %s : \n' % (kn, string_ML, ml, kwargs['name']))
                     write_report_optimisation(f, success_list_simu)
                     f.write('################### \n')
