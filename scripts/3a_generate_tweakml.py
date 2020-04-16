@@ -3,7 +3,8 @@ This script will find the generative noise model parameters that create mock lig
 You can also provide directly the correct parameters in the config file. In this case I will just generate the python files to proceed to the step 3b and 3c
 and skip the optimisation
 """
-
+import matplotlib
+matplotlib.use('Agg')
 import os
 import pycs3.sim.draw
 import pycs3.gen.util

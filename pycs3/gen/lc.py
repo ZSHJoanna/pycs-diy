@@ -516,7 +516,22 @@ class LightCurve:
         if verbose:
             print("Done with maskskiplist, %i epochs are now masked." % (np.sum(self.mask == False)))
 
-    # noinspection PyStringFormat
+    def remove_epochs(self, index):
+        """
+        Delete epochs in your LightCurve
+
+        :param integer or array of integer containing the position of the epoch to remove
+        :return:
+        """
+
+        self.jds = np.delete(self.jds, index)
+        self.mags = np.delete(self.mags, index)
+        self.magerrs = np.delete(self.magerrs, index)
+        self.mask = np.delete(self.mask, index)
+        self.properties = np.delete(self.properties, index)
+        self.labels = np.delete(self.labels, index)
+        self.validate()
+
     def maskinfo(self):
         """
         Returns a description of the masked points and available properties of them.

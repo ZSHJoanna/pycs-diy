@@ -2,6 +2,8 @@
 This script simply check that the optimised mocks light curves have the same statistics than the real one in term of zruns and sigmas.
 Plots are created in your figure directory.
 """
+import matplotlib
+matplotlib.use('Agg')
 import pycs3.gen.stat
 import pycs3.gen.util
 import os
