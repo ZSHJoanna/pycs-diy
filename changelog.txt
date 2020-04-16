@@ -16,6 +16,7 @@ pycs
             - remove the showlabels attribute
         - Simplify LightCurve.__str__ docstring and remove unused bit of code
         - corrected logical bug in calcfluxshiftmags()
+        - added method remove_epoch()
 
         lc_func.py
         --------------

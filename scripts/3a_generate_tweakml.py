@@ -169,7 +169,7 @@ def main(lensname, dataname, work_dir='./'):
 
             else:
                 raise RuntimeError("I don't know your tweak_ml_type, please use colored_noise or PS_form_residuals.")
-
+            f.close()
             # rename the file :
             files = [file for file in os.listdir(optim_directory)
                      if os.path.isfile(os.path.join(optim_directory, file)) and (string_ML not in file)]
