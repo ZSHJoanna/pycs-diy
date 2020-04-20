@@ -63,7 +63,7 @@ def main(lensname, dataname, work_dir='./'):
                             os.mkdir(regdiff_copie_dir)
                         copiesres = [pycs3.sim.run.collect(dir_link, 'blue',
                                                            dataname + "_regdiff_%s" % kwargs['name'])]
-                        pycs3.sim.plot.hists(copiesres, r=50.0, nbins=100, dataout=True,
+                        pycs3.sim.plot.hists(copiesres, r=50.0, nbins=100, dataout=True, usemedian=True,
                                              filename=figure_directory + 'delay_hist_%i-%i_sims_%s_opt_%s.png' % (
                                                  kn, ml, config.simset_copy, opt),
                                              outdir=regdiff_copie_dir)
@@ -91,7 +91,7 @@ def main(lensname, dataname, work_dir='./'):
                         'blue',
                         dataname + "_" + config.combkw[a, b])]
 
-                    pycs3.sim.plot.hists(copiesres, r=50.0, nbins=100, dataout=True,
+                    pycs3.sim.plot.hists(copiesres, r=50.0, nbins=100, dataout=True, usemedian=True,
                                          filename=figure_directory + 'delay_hist_%i-%i_sims_%s_opt_%s.png' % (
                                              kn, ml, config.simset_copy, opt),
                                          outdir=config.lens_directory + config.combkw[a, b] + '/sims_%s_opt_%s/' % (
