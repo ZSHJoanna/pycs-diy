@@ -1,11 +1,10 @@
 Martin :
 
 - integrate the MCMC_pycs module (check what we need for matplotlib Backend on a cluster)
-- find what is usefull in the tdc module
-- discard spl_diff
 - complete the coverage
 - repair multiCPU
 - add documentation for the scripts
+- solve the binclip problem
 
 Vivien :
  - transform the doc

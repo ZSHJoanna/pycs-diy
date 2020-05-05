@@ -417,6 +417,8 @@ class DicOptimiser(Optimiser):
                 B[i][0] += self.step[i]
                 if B[i][0] <= 0.05:
                     B[i][0] = 0.05  # minimum for B
+                if B[i][0] >= 4.0:
+                    B[i][0] = 4.0  # maximum for B
 
             if self.iteration % 5 == 0:
                 self.A_correction, _, _, _, _ = self.compute_set_A_correction(
