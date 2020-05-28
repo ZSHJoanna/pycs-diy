@@ -5,7 +5,6 @@ import unittest
 from tests import TEST_PATH
 import pycs3.gen.polyml
 import pycs3.gen.splml
-import pycs3.disp.disps
 import pycs3.gen.mrg as mrg
 import pycs3.gen.lc_func as lc_func
 

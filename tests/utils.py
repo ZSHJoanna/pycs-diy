@@ -1,7 +1,5 @@
 import pycs3.spl.topopt
 import pycs3.regdiff.multiopt as multiopt
-import pycs3.disp.disps
-import pycs3.disp.topopt
 import pycs3.sim.twk
 
 

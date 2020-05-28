@@ -1,8 +1,6 @@
 """
 Top level functions that use the src module to tweak microlensing and source splines.
 These are the function to pass them to draw.draw or draw.multidraw.
-
-There is
 """
 
 import matplotlib.pyplot as plt
@@ -299,7 +297,7 @@ def interpolate(x1, x2, interpolate='nearest'):
 
 
     :param x1: LightCurve 1
-    :param x2: LightCurve 1
+    :param x2: LightCurve 2
     :param interpolate: string, choose between 'nearest' and 'linear'
     :return: interpolated LightCurve
     """
