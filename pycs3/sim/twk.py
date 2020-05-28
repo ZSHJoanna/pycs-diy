@@ -179,7 +179,7 @@ def tweakml_PS(lcs, spline, B, f_min = 1/300.0,psplot=False, save_figure_folder 
             if verbose :
                 print("Warning : round error somewhere, I will need to change a little bit the sampling of your source, but don't worry, I can deal with that.")
             source.sampling = float(source.jdmax - source.jdmin) / float(len(noise_lcs_rescaled))
-            source.ijds = np.linspace(source.jdmin, source.jdmax, float(len(noise_lcs_rescaled)))
+            source.ijds = np.linspace(source.jdmin, source.jdmax, (len(noise_lcs_rescaled)))
             source.imags = source.inispline.eval(jds=source.ijds)
 
         source.imags += noise_lcs_rescaled.mags

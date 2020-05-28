@@ -410,9 +410,14 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
             if plotcurveindexes is not None:
                 optorigrlcs = [optorigrlcs[index] for index in plotcurveindexes]
                 optmockrlcs = [optmockrlcs[index] for index in plotcurveindexes]
+
+            if showplot :
+                filn = os.path.join(plotpath, "fig_anaoptdrawn_%s_%s_resi_%i.png" % (simset, optset, i + 1))
+            else :
+                filn = None
             plotresiduals([optorigrlcs, optmockrlcs], jdrange=plotjdrange, nicelabel=False, showlegend=False,
                           showsigmalines=False, errorbarcolour="#999999",
-                          filename=os.path.join(plotpath, "fig_anaoptdrawn_%s_%s_resi_%i.png" % (simset, optset, i + 1)))
+                          filename=filn)
 
     return stats
 

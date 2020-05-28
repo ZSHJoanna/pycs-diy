@@ -45,7 +45,7 @@ class TestMrg(unittest.TestCase):
                         filename=os.path.join(self.outpath, 'merged_0408_ECAM.png'), jdrange=[57550, 57900])
         lc_func.display(self.lcs_WFI, style="homepagepdf",
                         filename=os.path.join(self.outpath, 'merged_0408_WFI.png'), jdrange=[57550, 57900])
-        pycs3.gen.mrg.matchtels(self.lcs_WFI, self.lcs_ECAM, pycs3.disp.disps.linintnp, fluxshifts=True)
+        pycs3.gen.mrg.matchtels(self.lcs_WFI, self.lcs_ECAM, pycs3.gen.lc_func.linintnp, fluxshifts=True)
         merged_lcs = pycs3.gen.mrg.merge([self.lcs_WFI, self.lcs_ECAM])
         n_merged = len(merged_lcs[0].jds)
         print("Datapoints WFI+ECAM: ", n_merged)

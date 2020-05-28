@@ -8,6 +8,7 @@ import os
 import random
 
 import numpy as np
+import matplotlib.pyplot as plt
 from pycs3.gen.lc import LightCurve
 from pycs3.gen.util import datetimefromjd
 
@@ -30,6 +31,8 @@ def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", 
     :param object: name of the astronomical object
     :type verbose: bool
     :param verbose: verbosity of the function
+
+    :return LightCurve
     """
 
     # Make a brand new lightcurve object :
@@ -87,6 +90,8 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
     :param absmagerrs: boolean, allow to take the absolute value of the given errors
     :param propertycols: (default : None) is a dict : ``propertycols = {"fwhm":7, "skylevel":8}`` means that col 7 should be read in as property "fwhm" and 8 as "skylevel".
     :type propertycols: dictionary
+
+    :return LightCurve
 
 
     """
@@ -174,9 +179,21 @@ def rdbimport(filepath, object="Unknown", magcolname="mag", magerrcolname="mager
     ["property1", "property2"] : just give a list of properties to import.
 
     The default column names are those used by the method :py:meth:`pycs.gen.lc.lightcurve.rdbexport` : "mhjd", "mag", "magerr", "mask".
-
     We use flexibleimport under the hood.
 
+
+    :param filepath: string, filepath to the data
+    :param object: string, Name of the object
+    :param magcolname: string, Name of the column containing the magnitudes
+    :param magerrcolname: string, Name of the column containing the magnitude errors
+    :param telescopename: string, name of the telescope
+    :param plotcolour: string, color to plot the LightCurve
+    :param mhjdcolname: string, Name of the column containing the date of the observation
+    :param flagcolname: string, Name of the column containing the flag to mask some data points
+    :param propertycolnames: string, Name of the column containing any other properties (e.g., seeing, airmass, .. )
+    :param verbose: boolean, verbosity
+    :param absmagerrs: boolean, allow to take the absolute value of the given errors
+    :return:
     """
 
     if verbose:
@@ -857,6 +874,8 @@ def displayrange(lcs, margin=0.05):
     returns a plausible range of mags and hjds to plot, so that you can keep this fixed in your plots
     :param lcs: LightCurve object
     :param margin: float
+
+    :return tuple of tuple of float : ((min_jds, max_jds),(min_magnitude, max_magnitude))
     """
     mags = []
     jds = []
@@ -888,7 +907,9 @@ def getnicetimedelays(lcs, separator="\n", to_be_sorted=False):
     .. warning:: This is the function that **defines** the concept of "delay" (and its sign) used by
         pycs. **The delay AB corresponds to timeshift(B) - timeshift(A)**
         Other places where this is hard-coded :
-        :py:func:`pycs.sim.plot.hists`
+        :py:func:`pycs3.sim.plot.hists`
+
+    :return string to be printed
 
     """
     n = len(lcs)
@@ -924,6 +945,8 @@ def getdelays(lcs, to_be_sorted=False):
 def getnicetimeshifts(lcs, separator="\n"):
     """
     I return the timeshifts as a text string, use mainly for checks and debugging.
+    :param lcs: list of LightCurves
+    :return string to be printed
     """
     return separator.join(["%s  %+7.2f" % (l.object, l.timeshift) for l in lcs])
 
@@ -933,10 +956,12 @@ def gettimeshifts(lcs, includefirst=True):
     I simply return the **absolute** timeshifts of the input curves as a numpy array.
     This is used by time shift optimizers, and usually not by the user.
 
-    :param lcs:
+    :param lcs: list of LightCurves
     :param includefirst: If False, I skip the first of the shifts.
         For timeshift optimizers, it's indeed often ok not to move the first curve.
     :type includefirst: boolean
+
+    :return array of timesshift
 
     """
     if includefirst:
@@ -949,6 +974,12 @@ def settimeshifts(lcs, shifts, includefirst=False):
     """
     I set the timeshifts like those returned from :py:func:`gettimeshifts`.
     An do a little check.
+
+    :param lcs: list of LightCurves
+    :param shifts : list of time shift to be applied
+    :param includefirst : boolean, to include a shift the first curve of the list or not.
+
+    :return
     """
 
     if includefirst:
@@ -966,6 +997,8 @@ def settimeshifts(lcs, shifts, includefirst=False):
 def shuffle(lcs):
     """
     I scramble the order of the objects in your list, in place.
+
+    :param lcs: list of LightCurves
     """
     random.shuffle(lcs)  # That was easier than I thought it would be when starting to wright this function ...
 
@@ -996,6 +1029,12 @@ def objsort(lcs, ret=False, verbose=True):
         return sorted(lcs, key=operator.attrgetter('object'))
 
 def resetlcs(lcs):
+    """
+    Reset microlensing and shifts of all the curves in the list
+
+    :param lcs: list of LightCurves
+    :return:
+    """
     for i, lc in enumerate(lcs):
         lc.resetml()
         lc.resetshifts(keeptimeshift=False)
@@ -1016,3 +1055,114 @@ def applyshifts(lcs, timeshifts, magshifts):
         lc.resetshifts()
         lc.shiftmag(magshift)
         lc.shifttime(timeshift)
+
+def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False):
+    """
+    Dispersion method, return the "distance" between two curves.
+
+    This is the default one, fast implementation without loops.
+    If usemask == True, it is a bit slower...
+    If you do not change the mask, it's better to cutmask() it, then use usemask = False.
+
+    :param lc1: LightCurve of reference
+    :param lc2: LightCurve that will get interpolated
+    :param interpdist: float, interpolation grid
+    :param weights: boolean, to weight the fit by the photometric error bars
+    :param usemask: boolean, to mask some data
+    :param plot: boolean, display plot of the interpolated curves
+
+    :return dicitionnary containing the number of interpolation and the d2 "distance".
+
+    """
+    if usemask:
+        lc1jds = lc1.getjds()[lc1.mask]  # lc1 is the "reference" curve
+        lc2jds = lc2.getjds()[lc2.mask]  # lc2 is the curve that will get interpolated.
+        lc1mags = lc1.getmags()[lc1.mask]
+        lc2mags = lc2.getmags()[lc2.mask]
+        lc1magerrs = lc1.magerrs[lc1.mask]
+        lc2magerrs = lc2.magerrs[lc2.mask]
+    else:
+        lc1jds = lc1.getjds()  # lc1 is the "reference" curve
+        lc2jds = lc2.getjds()  # lc2 is the curve that will get interpolated.
+        lc1mags = lc1.getmags()
+        lc2mags = lc2.getmags()
+        lc1magerrs = lc1.magerrs
+        lc2magerrs = lc2.magerrs
+
+    # --- Mask creation : which points of lc1 can be taken into account ? ---
+
+    # double-sampled version #
+
+    interpdist = interpdist / 2.0
+
+    # We double-sample the lc2jds:
+    add_points = np.ediff1d(lc2jds) / 2.0 + lc2jds[:-1]
+    lc2jdsa = np.sort(np.concatenate([lc2jds, add_points]))  # make this faster
+
+    # We want to create of mask telling us which jds of lc1 can be interpolated on lc2,
+    # without doing any python loop. We will build an auxiliary array, then interpolate it.
+    lc2interpcode_lr = np.cast['int8'](
+        np.ediff1d(lc2jdsa, to_end=interpdist + 1, to_begin=interpdist + 1) <= interpdist)  # len lc2 + 1
+    lc2interpcode_sum = lc2interpcode_lr[1:] + lc2interpcode_lr[:-1]  # len lc2
+    '''
+    This last array contains ints :
+        2 if both right and left distances are ok
+        1 if only one of them is ok
+        0 if both are two fare away (i.e. fully isolated point)
+    We now interpolate on this (filling False for the extrapolation):
+    '''
+    lc1jdsmask = np.interp(lc1jds, lc2jdsa, lc2interpcode_sum, left=0, right=0) >= 1.0
+
+    # --- Magnitude interpolation for all points, disregarding the mask (simpler -> faster) ---
+    # These left and right values are a safety check : they should be masked, but if not, you will see them ...
+    ipmagdiffs = np.interp(lc1jds, lc2jds, lc2mags, left=1.0e5, right=1.0e5) - lc1mags
+
+    # --- Cutting out the mask
+    okdiffs = ipmagdiffs[lc1jdsmask]
+    n = len(okdiffs)
+
+    if weights:
+        # Then we do something similar for the errors :
+        ipmagerrs = np.interp(lc1jds, lc2jds, lc2magerrs, left=1.0e-5, right=1.0e-5)
+        ipsqrerrs = ipmagerrs * ipmagerrs + lc1magerrs * lc1magerrs  # interpolated square errors
+        oksqrerrs = ipsqrerrs[lc1jdsmask]
+
+        d2 = np.sum((okdiffs * okdiffs) / oksqrerrs) / n
+    else:
+        d2 = np.sum((okdiffs * okdiffs)) / n
+
+    if plot:
+        # Then we make a plot, essentially for testing purposes. Nothing important here !
+        # This is not optimal, and actually quite slow.
+        # Masked points are not shown at al
+
+        plt.figure(figsize=(12, 8))  # sets figure size
+        axes = plt.gca()
+
+        # The points
+        plt.plot(lc1jds, lc1mags, ".", color=lc1.plotcolour, label=lc1.object)
+        plt.plot(lc2jds, lc2mags, ".", color=lc2.plotcolour, label=lc2.object)
+
+        # Lines between lc2 points
+        plt.plot(lc2jds, lc2mags, "-", color=lc2.plotcolour,
+                 label=lc2.object)  # lines between non-masked lc2 points (= interpolation !)
+
+        # Circles around non-used lc1 points
+        plt.plot(lc1jds[lc1jdsmask == False], lc1mags[lc1jdsmask == False], linestyle="None", marker="o", markersize=8.,
+                 markeredgecolor="black", markerfacecolor="None", color="black")  # circles around masked point
+
+        # Dispersion "sticks"
+        for (jd, mag, magdiff) in zip(lc1jds[lc1jdsmask], lc1mags[lc1jdsmask], okdiffs):
+            plt.plot([jd, jd], [mag, mag + magdiff], linestyle=":", color="grey")
+
+        # Something for astronomers only : we invert the y axis direction !
+        axes.set_ylim(axes.get_ylim()[::-1])
+
+        # And we make a title for that combination of lightcurves :
+        # plt.title("Lightcurves", fontsize=20)
+        plt.xlabel("Days", fontsize=16)
+        plt.ylabel("Magnitude", fontsize=16)
+        plt.title("%i interpolations" % n, fontsize=16)
+        plt.show()
+
+    return {'n': n, 'd2': d2}

@@ -17,14 +17,6 @@ def regdiff(lcs, **kwargs):
                            method="weights")
 
 
-rawdispersionmethod = lambda lc1, lc2: pycs3.disp.disps.linintnp(lc1, lc2, interpdist=30.0)
-dispersionmethod = lambda lc1, lc2: pycs3.disp.disps.symmetrize(lc1, lc2, rawdispersionmethod)
-
-
-def disp(lcs):
-    return pycs3.disp.topopt.opt_full(lcs, rawdispersionmethod, nit=5, verbose=True)
-
-
 # The small scale extrinsic variability, used to generated the synthetic curves:
 def Atweakml(lcs, spline):
     return pycs3.sim.twk.tweakml(lcs,spline, beta=-1.5, sigma=0.25, fmin=1 / 500.0, fmax=None, psplot=False)
