@@ -5,10 +5,10 @@ but of course you can still choose to optimize evrything at once (when using dis
 When using a spline fit, optimizing a polynom corresponds to weighted to linear least squares -- fast !
 """
 
-from pycs3.gen.sea import autofactory
-import numpy as np
 import copy as pythoncopy
-import scipy.special as ss
+
+import numpy as np
+from pycs3.gen.sea import autofactory
 
 
 def polyfit(jds, mags, magerrs, nparams):

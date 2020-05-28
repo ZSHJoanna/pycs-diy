@@ -2,10 +2,12 @@
 Defines a class that represents a regularly sampled lightcurve
 
 """
+import copy as pythoncopy
+
 import numpy as np
 import pycs3.regdiff.scikitgp as scikitgp
-import copy as pythoncopy
 import scipy.optimize as spopt
+
 
 class Rslc:
     """

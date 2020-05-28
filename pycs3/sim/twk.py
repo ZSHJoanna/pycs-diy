@@ -5,11 +5,11 @@ These are the function to pass them to draw.draw or draw.multidraw.
 There is
 """
 
-import pycs3.sim.src
-import pycs3.gen.stat
-import pycs3.gen.lc
 import matplotlib.pyplot as plt
 import numpy as np
+import pycs3.gen.lc
+import pycs3.gen.stat
+import pycs3.sim.src
 import scipy.signal as sc
 
 

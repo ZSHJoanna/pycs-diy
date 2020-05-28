@@ -2,10 +2,10 @@
 Module containing the function related to Spline operation
 """
 
-from pycs3.gen.spl import Spline
-from pycs3.gen.datapoints import DataPoints
-import scipy.optimize as spopt
 import numpy as np
+from pycs3.gen.datapoints import DataPoints
+from pycs3.gen.spl import Spline
+
 
 def merge(lcs, olddp=None, splitup=True, deltat=0.000001, sort=True, stab=False,
           stabext=300.0, stabgap=30.0, stabstep=5.0, stabmagerr=2.0, stabrampsize=0, stabrampfact=1.0):

@@ -2,16 +2,17 @@
 Functions to run curve shifting techniques on lightcurves produced by sim.multidraw.
 We define the class runresults that "holds" results obtained by curve shifting techniques (saved into pickles).
 """
-import pycs3.sim.draw
-import pycs3.gen.util
+import copy as pythoncopy
+import os
+import time
+from glob import glob
+
+import multiprocess
+import numpy as np
 import pycs3.gen.lc
 import pycs3.gen.lc_func
-import numpy as np
-import time
-import copy as pythoncopy
-from glob import glob
-import os
-import multiprocess
+import pycs3.gen.util
+import pycs3.sim.draw
 
 
 def applyopt(optfct, lcslist, ncpu, **kwargs):

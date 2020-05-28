@@ -4,8 +4,8 @@ They return a float, the dispersion value.
 They can be used with :py:func:`pycs.sim.run.multirun`
 We do not redefine the ML, but we keep it.
 """
-import pycs3.gen.lc
 import pycs3.disp.multiopt
+import pycs3.gen.lc
 
 
 def opt_full(lcs, rawdispersionmethod, nit=5, verbose=True):

@@ -2,11 +2,10 @@
 Wrapper around pymc's GP module
 
 """
-import os
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, Matern, WhiteKernel, RationalQuadratic
-from sklearn.gaussian_process.kernels import ConstantKernel
 import numpy as np
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import ConstantKernel
+from sklearn.gaussian_process.kernels import RBF, Matern, WhiteKernel, RationalQuadratic
 
 
 def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=False):

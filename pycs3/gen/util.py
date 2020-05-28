@@ -2,15 +2,16 @@
 Various useful stuff.
 For now there are some wrappers to pickle objects.
 """
-import os
-import glob
-import pickle as pickle
-import numpy as np
-import math
-import datetime
-import gzip
-import pycs3
 import csv
+import datetime
+import glob
+import gzip
+import math
+import os
+import pickle as pickle
+
+import numpy as np
+import pycs3
 
 tracei = 1  # global variable, filename to write trace pkl.
 

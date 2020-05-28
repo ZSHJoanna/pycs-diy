@@ -9,11 +9,11 @@ Some rules of splrep (k = 3)
 """
 
 import copy as pythoncopy
-import numpy as np
+
 import matplotlib.pyplot as plt
-import scipy.optimize as spopt
+import numpy as np
 import scipy.interpolate as si
-import pycs3.gen.util as ut
+import scipy.optimize as spopt
 
 
 class Spline:

@@ -1,12 +1,13 @@
+import copy
+import json
+import os
+import pickle as pkl
 import sys
-import numpy as np
 from inspect import getsource
 from textwrap import dedent
-import json
-import pickle as pkl
-import os
+
+import numpy as np
 import pycs3.mltd.comb
-import copy
 
 
 def proquest(askquestions):

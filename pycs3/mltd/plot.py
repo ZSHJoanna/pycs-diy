@@ -2,11 +2,13 @@
 Plot functions. Now replacing delayplot function of sim.plot module.
 """
 
-import numpy as np
 import math
 import os
+
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.ticker import MultipleLocator
+
 
 def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=False, showbias=True, showran=True,
               showerr=True, showlegend=True, text=None, figsize=(10, 8), left=0.06, right=0.97, top=0.99, bottom=0.12,

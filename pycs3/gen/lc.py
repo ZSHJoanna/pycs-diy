@@ -2,8 +2,9 @@
 Module containing all we need to manipulate lightcurves. Could ideally be used by all our curve-shifting algorithms.
 """
 import copy as pythoncopy
-import numpy as np
 from functools import reduce
+
+import numpy as np
 from pycs3.gen.util import readidlist
 
 

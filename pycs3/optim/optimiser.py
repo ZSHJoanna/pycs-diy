@@ -2,18 +2,19 @@
 Module to optimise the parameter of the noise generation. We keep only the DIC optimiser, since the likelihood evaluation is very
 expensive computationally, the MCMC and PSO optimiser are very un-efficient. They are now removed from this version.
 """
-import matplotlib.pyplot as plt
-import numpy as np
 import copy
 import os
 import time
-import multiprocess
-import pycs3.sim.twk as twk
-import pycs3.sim.draw
-import pycs3.spl.topopt
-import pycs3.gen.stat
-import pycs3.gen.lc_func
 from functools import partial
+
+import matplotlib.pyplot as plt
+import multiprocess
+import numpy as np
+import pycs3.gen.lc_func
+import pycs3.gen.stat
+import pycs3.sim.draw
+import pycs3.sim.twk as twk
+import pycs3.spl.topopt
 
 
 class Optimiser(object):

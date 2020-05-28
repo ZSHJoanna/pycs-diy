@@ -4,9 +4,9 @@ Optimization using regdiff
 Would be great to have an opt_flux in here !
 
 """
-import pycs3.regdiff.rslc
 import pycs3.gen.lc
 import pycs3.gen.lc_func
+import pycs3.regdiff.rslc
 
 
 def opt_ts(lcs, method="weights", pd=5, covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=True):
@@ -30,7 +30,7 @@ def opt_ts(lcs, method="weights", pd=5, covkernel="matern", pow=1.5, amp=1.0, sc
     if verbose:
         print("Regressions done.")
 
-    minwtv = pycs3.regdiff.rslc.opt_rslcs(rss, method=method, verbose=True)
+    minwtv = pycs3.regdiff.rslc.opt_rslcs(rss, method=method, verbose=verbose)
 
     for (l, r) in zip(lcs, rss):
         l.timeshift = r.timeshift

@@ -4,10 +4,10 @@ These are building blocks, to be assembled to make a general optimizer.
 
 """
 import numpy as np
-import scipy.optimize as spopt
-import pycs3.gen.polyml
 import pycs3.gen.lc_func
+import pycs3.gen.polyml
 import pycs3.gen.util
+import scipy.optimize as spopt
 
 
 def opt_magshift(lcs, rawdispersionmethod, verbose=True, trace=False):

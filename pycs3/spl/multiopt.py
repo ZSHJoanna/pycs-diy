@@ -18,10 +18,10 @@ opt_ml_source
 
 """
 import numpy as np
-import scipy.optimize as spopt
 import pycs3.gen.util
-from pycs3.gen.spl_func import r2, mltv, merge
+import scipy.optimize as spopt
 from pycs3.gen.polyml import polyfit
+from pycs3.gen.spl_func import r2, mltv, merge
 
 
 def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False):

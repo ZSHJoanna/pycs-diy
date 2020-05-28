@@ -2,13 +2,14 @@
 Module containing the function related to LightCurve operation
 It contains light curves plotting routine, and all function that operate on a *list* of LightCurve
 """
-import numpy as np
+import operator
 import os
-from pycs3.gen.lc import LightCurve
-from pycs3.gen.util import datetimefromjd
 # For the sort and shuffle stuff :
 import random
-import operator
+
+import numpy as np
+from pycs3.gen.lc import LightCurve
+from pycs3.gen.util import datetimefromjd
 
 
 # Factory functions : give me some stuff and I make a lightcurve object from this.

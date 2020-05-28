@@ -3,15 +3,17 @@ Subpackage with functions to plot all kind of results from runs.
 The delayplot function is now moved to pycs3.mltd.plot
 """
 
-import numpy as np
 import math
 import os
-import matplotlib.pyplot as plt
+
 import matplotlib.colors as colors
-from matplotlib.ticker import MultipleLocator, MaxNLocator
-import scipy.ndimage
+import matplotlib.pyplot as plt
+import numpy as np
 import pycs3.gen.util
+import scipy.ndimage
+from matplotlib.ticker import MultipleLocator, MaxNLocator
 from pycs3.gen.stat import mad
+
 
 class DelayContainer:
     """
@@ -68,7 +70,6 @@ def hists(rrlist, r=10.0, nbins=100, showqs=True, showallqs=False, qsrange=None,
 
     .. warning:: To avoid rewriting newdelayplot, if usemedian is True then I write the median and mad in the mean and std fields of the pickles. This is dangerous (and a bit stupid and lazy), but since hists() and newdelayplot() are usually called one after the other it should not create too much confusion.
 
-    @todo : test the impact of a change to default use_median
     """
 
     n = rrlist[0].nimages()

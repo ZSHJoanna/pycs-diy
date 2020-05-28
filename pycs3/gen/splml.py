@@ -2,10 +2,11 @@
 Microlensing represented by splines.
 """
 
-import numpy as np
-from pycs3.gen.spl import Spline
-from pycs3.gen.datapoints import DataPoints
 import copy as pythoncopy
+
+import numpy as np
+from pycs3.gen.datapoints import DataPoints
+from pycs3.gen.spl import Spline
 
 
 class SplineML:

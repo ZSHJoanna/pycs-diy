@@ -2,12 +2,14 @@
 Statistics related functions.
 """
 
-import numpy as np
-import math
 import glob
+import math
 import os
-import pycs3.gen.util as ut
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pycs3.gen.util as ut
+
 
 def normal(x, mu, sigma):
     return (1.0 / np.sqrt(2.0 * np.pi * sigma * sigma)) * np.exp(- (x - mu) ** 2 / (2 * sigma * sigma))

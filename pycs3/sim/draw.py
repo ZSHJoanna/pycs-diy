@@ -4,13 +4,12 @@ This module generates fake curves by "drawing" them from common sourcesplines, a
 
 import os
 import time
-import numpy as np
 
+import numpy as np
 import pycs3.gen.lc
 import pycs3.gen.lc_func
 import pycs3.gen.util
 import pycs3.sim.src
-
 import scipy.ndimage.filters
 
 

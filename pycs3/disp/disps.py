@@ -14,8 +14,8 @@ Any microlensing is naturally taken into account, if present, simply using the g
 
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False):

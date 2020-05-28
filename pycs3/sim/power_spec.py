@@ -1,9 +1,10 @@
 """
 Module to define the PowerSpectrum class and associated functions
 """
-import numpy as np
 import copy as pythoncopy
+
 import matplotlib.pyplot as plt
+import numpy as np
 import scipy.optimize as spopt
 
 

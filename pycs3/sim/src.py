@@ -3,12 +3,13 @@ Stuff to represent a light curve as points on a regular grid, and power spectrum
 This allows e.g. to tweak its power spectrum by adding "correlated noise", resample it, etc.
 
 """
-import numpy as np
 import copy as pythoncopy
+
 import matplotlib.pyplot as plt
-import scipy.interpolate as si
-import pycs3.gen.spl
+import numpy as np
 import pycs3.gen.datapoints
+import pycs3.gen.spl
+import scipy.interpolate as si
 
 
 class Source:
