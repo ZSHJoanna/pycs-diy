@@ -46,7 +46,7 @@ class TestRegdiff(unittest.TestCase):
                          'verbose': True, 'method': "weights"}
         myrslcs, error_fct = utils.regdiff(lc_copy, **regdiff_param)  # good set for Radial-Basis Function
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
-        delays_th = [-6.33, -21.68, -70.45, -15.35, -64.13, -48.77]
+        delays_th = [-6.944359, -20.746719, -70.711597, -13.80236 , -63.767238, -49.964879]
         assert_allclose(delays, delays_th, atol=0.5)
         assert error_fct <= 0.015
 
