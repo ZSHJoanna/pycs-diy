@@ -1,0 +1,1 @@
+This folder contains the copies and mock light curves used to measure time-delay uncertainties. This is where all the products of the example notebook are saved. 
