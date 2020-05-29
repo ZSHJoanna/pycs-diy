@@ -19,7 +19,7 @@ import pycs3.spl.topopt
 
 class Optimiser(object):
     def __init__(self, lcs, fit_vector, spline, attachml_function, attachml_param, knotstep=None,
-                 savedirectory="./", recompute_spline=True, max_core=16, theta_init=None,
+                 savedirectory="./", recompute_spline=True, max_core=None, theta_init=None,
                  n_curve_stat=32, shotnoise="magerrs", tweakml_type='colored_noise', display=False, verbose=False,
                  tweakml_name='', correction_PS_residuals=True, tolerance=0.75):
 
@@ -282,7 +282,7 @@ class Optimiser(object):
         if self.chain_list is None:
             raise RuntimeError("You should run optimise() first ! I can't write the report")
 
-        f = open(self.savedirectory + 'report_tweakml_optimisation.txt', 'a')
+        f = open(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt'), 'a')
         for i in range(self.ncurve):
 
             f.write('Lightcurve %s : \n' % self.lcs[i].object)
@@ -312,15 +312,15 @@ class Optimiser(object):
         f.close()
 
         # Write the error report :
-        g = open(self.savedirectory + 'errors_tweakml_optimisation.txt', 'a')
+        g = open(os.path.join(self.savedirectory, 'errors_tweakml_optimisation.txt'), 'a')
         for mes in self.error_message:
             if not len(mes) == 0 :
                 g.write(str(mes))
         g.close()
 
     def reset_report(self):
-        if os.path.isfile(self.savedirectory + 'report_tweakml_optimisation.txt'):
-            os.remove(self.savedirectory + 'report_tweakml_optimisation.txt')
+        if os.path.isfile(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt')):
+            os.remove(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt'))
 
     def compute_set_A_correction(self, eval_pts):
         # this function compute the sigma obtained after optimisation in the middle of the grid and return the correction that will be used for the rest of the optimisation
@@ -338,7 +338,7 @@ class Optimiser(object):
 
 class DicOptimiser(Optimiser):
     def __init__(self, lcs, fit_vector, spline, attachml_function, attachml_param, knotstep=None,
-                 savedirectory="./", recompute_spline=True, max_core=16, theta_init=None,
+                 savedirectory="./", recompute_spline=True, max_core=None, theta_init=None,
                  n_curve_stat=32, shotnoise=None, tweakml_type='PS_from_residuals', tweakml_name='',
                  display=False, verbose=False, step=0.1, correction_PS_residuals=True, max_iter=10, tolerance=0.75):
 
@@ -489,8 +489,8 @@ class DicOptimiser(Optimiser):
             plt.ylabel('sigma')
             plt.legend()
 
-            fig1.savefig(self.savedirectory + self.tweakml_name + '_zruns_' + l.object + '.png')
-            fig2.savefig(self.savedirectory + self.tweakml_name + '_std_' + l.object + '.png')
+            fig1.savefig(os.path.join(self.savedirectory, self.tweakml_name + '_zruns_' + l.object + '.png'))
+            fig2.savefig(os.path.join(self.savedirectory, self.tweakml_name + '_std_' + l.object + '.png'))
 
             if self.display:
                 plt.show()
@@ -501,8 +501,8 @@ class DicOptimiser(Optimiser):
         x = np.arange(1, len(self.chain_list[1]) + 1, 1)
         plt.plot(x, self.chain_list[1])
         plt.xlabel('Iteration')
-        plt.ylabel('$\chi^2$')
-        fig3.savefig(self.savedirectory + self.tweakml_name + '_chi2.png')
+        plt.ylabel(r'$\chi^2$')
+        fig3.savefig(os.path.join(self.savedirectory, self.tweakml_name + '_chi2.png'))
 
 
 def get_fit_vector(lcs, spline):

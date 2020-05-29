@@ -28,6 +28,8 @@ class TestLightCurve(unittest.TestCase):
             lc_func.rdbimport(self.rdbfile, object='D', magcolname='mag_D', magerrcolname='magerr_D',
                               telescopename="Trial")
         ]
+        self.guess_timeshifts = [0.,0.,-15.,-65.]
+        self.true_delays = [-5.0, -20.0, -70., -15., -65., -50.]
         mrg.colourise(self.lcs)
 
     def test_lc_infos(self):
@@ -48,6 +50,7 @@ class TestLightCurve(unittest.TestCase):
 
     def test_opt_spline_polyml(self):
         lc_copy =[lc.copy() for lc in self.lcs]
+        pycs3.gen.lc_func.applyshifts(lc_copy, self.guess_timeshifts, [-np.median(lc.getmags()) for lc in lc_copy])
         pycs3.gen.polyml.addtolc(lc_copy[1], nparams=2, autoseasonsgap=60.0)  # add affine microlensing to each season
         pycs3.gen.polyml.addtolc(lc_copy[2], nparams=3, autoseasonsgap=600.0)  # add polynomial of degree 2 on the entire light curve
         pycs3.gen.polyml.addtolc(lc_copy[3], nparams=3, autoseasonsgap=600.0)
@@ -61,10 +64,9 @@ class TestLightCurve(unittest.TestCase):
         lc_func.display(lc_copy, [spline],style="internal", filename=os.path.join(self.outpath, 'spline_wi_ml5.png'))
         lc_func.display(lc_copy, [spline],style="cosmograil_dr1", filename=os.path.join(self.outpath, 'spline_wi_ml6.png'))
         lc_func.display(lc_copy, [spline],style="cosmograil_dr1_microlensing", filename=os.path.join(self.outpath, 'spline_wi_ml7.png'))
-        delays_th = [-6.44376707514413, -26.199323016152675, -70.92455333399347, -19.755555941008545,
-                     -64.48078625884935, -44.7252303178408]
 
-        assert_allclose(delays, delays_th, atol=0.2)
+        delay_th = [-6.380928, -26.039074, -70.74382, -19.658146, -64.362892, -44.704746] #delay not accurately recover but this is because the poor ml model
+        assert_allclose(delays, delay_th, atol=1.)
 
         #play a bit with the microlensing object:
         microlensing = lc_copy[2].ml
@@ -81,6 +83,7 @@ class TestLightCurve(unittest.TestCase):
 
     def test_opt_spline_splml(self):
         lc_copy = [lc.copy() for lc in self.lcs]
+        pycs3.gen.lc_func.applyshifts(lc_copy, self.guess_timeshifts, [-np.median(lc.getmags()) for lc in lc_copy])
         mlknotstep = 200
         mlbokeps_ad = mlknotstep / 3.0  # maybe change this
         pycs3.gen.splml.addtolc(lc_copy[1], knotstep=mlknotstep, bokeps=mlbokeps_ad)
@@ -89,13 +92,13 @@ class TestLightCurve(unittest.TestCase):
         spline = utils.spl(lc_copy)
         tv, dist = pycs3.gen.spl_func.mltv(lc_copy, spline) # some metric of the fit
         assert tv < 900
-        assert dist<5710
+        assert dist<5950
 
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         print(delays)
-        delays_th = [-5.93916576886539, -20.7304134782579, -31.155687183119934, -14.791247709392511, -25.216521414254544, -10.425273704862033]
-        assert_allclose(delays, delays_th, atol=0.2)
+        assert_allclose(delays, self.true_delays, atol=2.)
         lc_func.display(lc_copy, [spline], style="homepagepdf",filename=os.path.join(self.outpath, 'spline_wi_splml.png'))
+        pycs3.gen.util.writepickle((lc_copy, spline), os.path.join(self.outpath, 'optcurves.pkl'))
 
         #trace function :
         self.clean_trace()
