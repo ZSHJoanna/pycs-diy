@@ -12,7 +12,7 @@ import numpy as np
 import pickle as pkl
 import importlib
 import argparse as ap
-import pycs3.optim.pipe_utils as ut
+import pycs3.pipe.pipe_utils as ut
 
 
 def main(lensname, dataname, work_dir='./'):
@@ -206,10 +206,11 @@ def main(lensname, dataname, work_dir='./'):
             name_list.append('%s, Noise : %s ' % (dickw['name'], noise))
 
     # ------  MAKE THE FINAL REGDIFF ESTIMATE ------#
-    final_groups, final_combined = ut.group_estimate(path_list, name_list, config.delay_labels, colors,
-                                                     config.sigmathresh,
-                                                     config.name_marg_regdiff, testmode=config.testmode,
-                                                     object_name=config.lcs_label)
+    final_groups, final_combined = pycs3.mltd.comb.group_estimate(path_list, name_list=name_list, colors=colors,
+                                                                  sigma_thresh=config.sigmathresh,
+                                                                  new_name_marg=config.name_marg_regdiff,
+                                                                  testmode=config.testmode,
+                                                                  object_name=config.lcs_label)
     radius_f = (final_combined.errors_down[0] + final_combined.errors_up[0]) / 2.0 * 2.5
     text = [
         (0.85, 0.90, r"$\mathrm{" + config.full_lensname + "}$" + "\n" + r"$\mathrm{PyCS\ estimates}$",

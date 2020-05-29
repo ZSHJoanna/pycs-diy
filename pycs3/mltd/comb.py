@@ -6,6 +6,9 @@ To combine various distributions, they need to be "linearized" on the same basis
 """
 import numpy as np
 import pycs3.gen.util
+import pickle as pkl
+import os
+import copy
 
 
 class CScontainer:
@@ -490,11 +493,11 @@ def combine_estimates(groups, sigmathresh, verbose=True, testmode=True):
 
     Give me a list of groups, I pick the most precise on by myself, compute the tension with all the others. If the tension exceed a certain threshold, I combine (i.e. sum) the best estimate with the most precise estimate that it is in tension with. I iteratively compute the tension and combine with the remaining estimates if necessary.
 
-    :param groups:
-    :param sigmathresh:
-    :param verbose:
-    :param testmode:
-    :return:
+    :param groups: list of Groups
+    :param sigmathresh: float, tension threshold, if the tension exceed this value, the groups in tension are combined
+    :param verbose:  boolean, verbosity
+    :param testmode: boolean, for fast computation, if you want more stable results use False
+    :return: the final combined Group
     """
 
     # I will iterately remove groups from this list, so I duplicate it to avoid removing from the original one.
@@ -586,3 +589,78 @@ def mult_estimates(groups, testmode=True):
         weightslist["weights"].append(multweights)
 
     return asgetresults(weightslist, testmode=testmode)
+
+
+def group_estimate(path_list, name_list = None, colors=None, sigma_thresh=0, new_name_marg = 'Combined',
+                   object_name=None, testmode=True):
+    """
+    Top level function to combine groups stored in pickle files.
+    Give a list of path to the pickle files containing the group to be combined. I am a more flexible version of
+    combine_estimate(), since you can rename the group and I automatically re-adjust the bins. This function is used
+    at the very last step of the automated pipelines when the spline and regdiff are combined.
+
+    :param path_list: list of path to the pickles containing
+    :param name_list: list of string, if you want to rename the groups
+    :param delay_labels:
+    :param colors: list of string, if you want to change the color of the groups
+    :param sigma_thresh: sigmathresh: float, tension threshold, if the tension exceed this value, the groups in tension are combined (0 is a true marginalization)
+    :param new_name_marg: string, name of the combined Group
+    :param testmode: boolean, for fast computation, if you want more stable results use False
+    :param object_name: list of string, if you want to rename the object
+    :return: tuple containing (list of Group, combined Group)
+    """
+    if testmode:
+        nbins = 500
+    else:
+        nbins = 5000
+
+    group_list = []
+    medians_list = []
+    errors_up_list = []
+    errors_down_list = []
+    if len(path_list) != len(name_list):
+        raise RuntimeError("Path list and name_list should have he same lenght")
+    for p, path in enumerate(path_list):
+        if not os.path.isfile(path):
+            print("Warning : I cannot find %s. I will skip this one. Be careful !" % path)
+            continue
+
+        group = pkl.load(open(path, 'rb'))
+        if name_list is not None :
+            group.name = name_list[p]
+        group_list.append(group)
+        medians_list.append(group.medians)
+        errors_up_list.append(group.errors_up)
+        errors_down_list.append(group.errors_down)
+
+    # build the bin list :
+    medians_list = np.asarray(medians_list)
+    errors_down_list = np.asarray(errors_down_list)
+    errors_up_list = np.asarray(errors_up_list)
+    binslist = []
+    for i in range(len(medians_list[0, :])):
+        bins = np.linspace(min(medians_list[:, i]) - 10 * min(errors_down_list[:, i]),
+                           max(medians_list[:, i]) + 10 * max(errors_up_list[:, i]), nbins)
+        binslist.append(bins)
+
+    color_id = 0
+    for g, group in enumerate(group_list):
+        if colors is not None :
+            group.plotcolor = colors[color_id]
+        group.binslist = binslist
+        group.linearize(testmode=testmode)
+        group.objects = object_name
+        color_id += 1
+        if color_id >= len(colors):
+            print("Warning : I don't have enough colors in my list, I'll restart from the beginning.")
+            color_id = 0  # reset the color form the beginning
+
+    combined = copy.deepcopy(pycs3.mltd.comb.combine_estimates(group_list, sigmathresh=sigma_thresh, testmode=testmode))
+    combined.linearize(testmode=testmode)
+    combined.name = 'Combined ($\\tau_{thresh} = %2.1f$)' % sigma_thresh
+    combined.plotcolor = 'black'
+    print("Final combination for marginalisation ", new_name_marg)
+    combined.niceprint()
+
+    return group_list, combined
+

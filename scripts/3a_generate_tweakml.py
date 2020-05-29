@@ -11,8 +11,8 @@ import pycs3.gen.util
 import pycs3.gen.splml
 import pycs3.sim.twk as twk
 import pycs3.spl.topopt
-import pycs3.optim.optimiser
-import pycs3.optim.pipe_utils as ut
+import pycs3.pipe.optimiser
+import pycs3.pipe.pipe_utils as ut
 import sys
 import argparse as ap
 import importlib
@@ -22,14 +22,14 @@ def run_DIC(lcs, spline, fit_vector, kn, ml, optim_directory, config_file, strea
     config = importlib.import_module(config_file)
     pycs3.sim.draw.saveresiduals(lcs, spline)
     print("I'll try to recover these parameters :", fit_vector)
-    dic_opt = pycs3.optim.optimiser.DicOptimiser(lcs, fit_vector, spline, config.attachml, ml, knotstep=kn,
-                                 savedirectory=optim_directory,
-                                 recompute_spline=True, max_core=config.max_core,
-                                 n_curve_stat=config.n_curve_stat,
-                                 shotnoise=config.shotnoise_type, tweakml_type=config.tweakml_type,
-                                 tweakml_name=config.tweakml_name, display=config.display, verbose=False,
-                                 correction_PS_residuals=True, max_iter=config.max_iter, tolerance=tolerance,
-                                 theta_init=None)
+    dic_opt = pycs3.pipe.optimiser.DicOptimiser(lcs, fit_vector, spline, config.attachml, ml, knotstep=kn,
+                                                savedirectory=optim_directory,
+                                                recompute_spline=True, max_core=config.max_core,
+                                                n_curve_stat=config.n_curve_stat,
+                                                shotnoise=config.shotnoise_type, tweakml_type=config.tweakml_type,
+                                                tweakml_name=config.tweakml_name, display=config.display, verbose=False,
+                                                correction_PS_residuals=True, max_iter=config.max_iter, tolerance=tolerance,
+                                                theta_init=None)
 
     chain = dic_opt.optimise()
     dic_opt.analyse_plot_results()
@@ -84,7 +84,7 @@ def main(lensname, dataname, work_dir='./'):
             f.write('from pycs3.sim import twk as twk \n')
             lcs, spline = pycs3.gen.util.readpickle(config.lens_directory + '%s/initopt_%s_ks%i_%s%i.pkl' % (
             config.combkw[i, j], dataname, kn, string_ML, ml))
-            fit_vector = pycs3.optim.optimiser.get_fit_vector(lcs, spline)  # we get the target parameter now
+            fit_vector = pycs3.pipe.optimiser.get_fit_vector(lcs, spline)  # we get the target parameter now
             if not os.path.isdir(optim_directory):
                 os.mkdir(optim_directory)
 

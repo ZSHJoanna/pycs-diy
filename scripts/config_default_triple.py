@@ -7,7 +7,7 @@ import pycs3.regdiff.multiopt
 import pycs3.gen.polyml
 import pycs3.gen.splml
 import numpy as np
-import pycs3.optim.pipe_utils as ut
+import pycs3.pipe.pipe_utils as ut
 
 #info about the lens :
 full_lensname =''

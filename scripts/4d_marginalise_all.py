@@ -9,7 +9,6 @@ import os
 import pickle as pkl
 import importlib
 import argparse as ap
-import pycs3.optim.pipe_utils as ut
 
 matplotlib.style.use('classic')
 matplotlib.rc('font', family="Times New Roman")
@@ -42,9 +41,10 @@ def main(lensname, dataname, work_dir='./'):
     path_list = [config.lens_directory + marg + '/' + marg + '_sigma_%2.2f' % sig + '_combined.pkl' for marg, sig in
                  zip(config.name_marg_list, config.sigmathresh_list)]
     name_list = [d for d in config.display_name]
-    group_list, combined = ut.group_estimate(path_list, name_list, config.delay_labels, colors,
-                                             config.sigmathresh_final, config.new_name_marg
-                                             , testmode=config.testmode, object_name=config.lcs_label)
+    group_list, combined = pycs3.mltd.comb.group_estimate(path_list, name_list=name_list, colors=colors,
+                                                          sigma_thresh=config.sigmathresh_final,
+                                                          new_name_marg=config.new_name_marg
+                                                          , testmode=config.testmode, object_name=config.lcs_label)
 
     # plot the results :
 

@@ -6,7 +6,7 @@ import sys
 import os, glob, importlib
 import argparse as ap
 import shutil
-from pycs3.optim import utils
+from pycs3.pipe import utils
 
 
 def main(lensname,dataname, work_dir = './'):

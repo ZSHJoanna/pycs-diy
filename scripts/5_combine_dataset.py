@@ -74,8 +74,9 @@ def main(lensname, work_dir='./'):
               'violet', 'dodgerblue', 'palevioletred', 'olive',
               'brown', 'salmon', "seagreen", 'chocolate', 'indigo', 'steelblue', 'cyan', 'gold', 'lightcoral']
 
-    groups, sum = ut.group_estimate(path_list, name_list, config.delay_labels, colors, config.sigma_thresh, "Sum",
-                                    testmode=config.testmode)
+    groups, sum = pycs3.mltd.comb.group_estimate(path_list, name_list=name_list, colors=colors,
+                                                 sigma_thresh=config.sigma_thresh, new_name_marg="Sum",
+                                                 testmode=config.testmode)
     sum.name = "PyCS-Sum"
     sum.plotcolor = "black"
 
@@ -153,8 +154,9 @@ def main(lensname, work_dir='./'):
     legendy_offset = 0.17
 
     # Plot with the spline only
-    groups_spline, sum_spline = ut.group_estimate(path_list_spline, name_list, config.delay_labels, colors,
-                                                  config.sigma_thresh, "Sum", testmode=config.testmode)
+    groups_spline, sum_spline = pycs3.mltd.comb.group_estimate(path_list_spline, name_list=name_list, colors=colors,
+                                                               sigma_thresh=config.sigma_thresh, new_name_marg="Sum",
+                                                               testmode=config.testmode)
     sum_spline.name = "Sum"
     sum_spline.plotcolor = "black"
     text = [
@@ -177,10 +179,10 @@ def main(lensname, work_dir='./'):
                               filename=plot_dir + "/" + lensname + "_combined_estimate_spline_" + config.combi_name + ".png",
                               legendx=legendx, legendy_offset=legendy_offset)
 
-
     # Plot with regdiff only
-    groups_regdiff, sum_regdiff = ut.group_estimate(path_list_regdiff, name_list, config.delay_labels, colors,
-                                                    config.sigma_thresh, "Sum", testmode=config.testmode)
+    groups_regdiff, sum_regdiff = pycs3.mltd.comb.group_estimate(path_list_regdiff, name_list=name_list, colors=colors,
+                                                                 sigma_thresh=config.sigma_thresh, new_name_marg="Sum",
+                                                                 testmode=config.testmode)
     sum_regdiff.name = "Sum"
     sum_regdiff.plotcolor = "black"
     text = [
@@ -210,8 +212,9 @@ def main(lensname, work_dir='./'):
     for i, p in enumerate(path_list_spline):
         name_list_all.append("Spline %s" % config.data_sets[i])
 
-    groups_all, sum_all = ut.group_estimate(path_list_regdiff + path_list_spline, name_list_all, config.delay_labels,
-                                            colors, config.sigma_thresh, "Sum", testmode=config.testmode)
+    groups_all, sum_all = pycs3.mltd.comb.group_estimate(path_list_regdiff + path_list_spline, name_list_all,
+                                                         config.delay_labels,
+                                                         colors, config.sigma_thresh, "Sum", testmode=config.testmode)
     sum_all.name = "Sum"
     sum_all.plotcolor = "black"
     text = [

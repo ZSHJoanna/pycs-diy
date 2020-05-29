@@ -1,19 +1,19 @@
-import copy
+"This module contains various function that facilitate the formating of the inputs when using the automated pipeline"
+
 import json
 import os
-import pickle as pkl
 import sys
 from inspect import getsource
 from textwrap import dedent
 
 import numpy as np
-import pycs3.mltd.comb
 
 
 def proquest(askquestions):
     """
     Asks the user if he wants to proceed. If not, exits python.
-    askquestions is a switch, True or False, that allows to skip the
+
+    :param askquestions: boolean, askquestions is a switch, True or False, that allows to skip the
     questions.
     """
     if askquestions:
@@ -100,62 +100,6 @@ def get_keyword_spline(kn):
     return {'kn': kn}
 
 
-def group_estimate(path_list, name_list, delay_labels, colors, sigma_thresh, new_name_marg, testmode=True,
-                   object_name=None):
-    if testmode:
-        nbins = 500
-    else:
-        nbins = 5000
-
-    group_list = []
-    medians_list = []
-    errors_up_list = []
-    errors_down_list = []
-    if len(path_list) != len(name_list):
-        raise RuntimeError("Path list and name_list should have he same lenght")
-    for p, path in enumerate(path_list):
-        if not os.path.isfile(path):
-            print("Warning : I cannot find %s. I will skip this one. Be careful !" % path)
-            continue
-
-        group = pkl.load(open(path, 'rb'))
-        group.name = name_list[p]
-        group_list.append(group)
-        medians_list.append(group.medians)
-        errors_up_list.append(group.errors_up)
-        errors_down_list.append(group.errors_down)
-
-    # build the bin list :
-    medians_list = np.asarray(medians_list)
-    errors_down_list = np.asarray(errors_down_list)
-    errors_up_list = np.asarray(errors_up_list)
-    binslist = []
-    for i, lab in enumerate(delay_labels):
-        bins = np.linspace(min(medians_list[:, i]) - 10 * min(errors_down_list[:, i]),
-                           max(medians_list[:, i]) + 10 * max(errors_up_list[:, i]), nbins)
-        binslist.append(bins)
-
-    color_id = 0
-    for g, group in enumerate(group_list):
-        group.plotcolor = colors[color_id]
-        group.binslist = binslist
-        group.linearize(testmode=testmode)
-        group.objects = object_name
-        color_id += 1
-        if color_id >= len(colors):
-            print("Warning : I don't have enough colors in my list, I'll restart from the beginning.")
-            color_id = 0  # reset the color form the beginning
-
-    combined = copy.deepcopy(pycs3.mltd.comb.combine_estimates(group_list, sigmathresh=sigma_thresh, testmode=testmode))
-    combined.linearize(testmode=testmode)
-    combined.name = 'Combined ($\\tau_{thresh} = %2.1f$)' % sigma_thresh
-    combined.plotcolor = 'black'
-    print("Final combination for marginalisation ", new_name_marg)
-    combined.niceprint()
-
-    return group_list, combined
-
-
 def convert_delays2timeshifts(timedelay):
     """
     Convert the time-delays you can measure by eye into time-shifts for the individual curve
@@ -168,6 +112,11 @@ def convert_delays2timeshifts(timedelay):
 
 
 def mkdir_recursive(path):
+    """
+    Create directory recursively if they subfolders do not exist
+    :param path: folder to be created
+    :return:
+    """
     sub_path = os.path.dirname(path)
     if not os.path.exists(sub_path):
         mkdir_recursive(sub_path)

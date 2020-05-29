@@ -12,7 +12,7 @@ import pycs3.gen.lc_func
 import pycs3.gen.stat
 import pycs3.gen.mrg
 import pycs3.regdiff.rslc
-import pycs3.optim.pipe_utils as ut
+import pycs3.pipe.pipe_utils as ut
 
 
 def main(lensname, dataname, work_dir='./'):
