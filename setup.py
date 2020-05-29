@@ -19,7 +19,7 @@ setup(
     author='Martin Millon',
     author_email='martin.millon@epfl.ch',
     description='Python Curve Shifting for python 3',
-    packages=["pycs3", "pycs3.gen", "pycs3.spl", "pycs3.regdiff"],
+    packages=["pycs3", "pycs3.gen", "pycs3.spl", "pycs3.regdiff", "pycs3.sim", "pycs3.mltd","pycs3.optim"],
     requires=['numpy', 'matplotlib', 'scipy','sklearn', 'multiprocess'],
     tests_requires=['pytest>=2.3'],
     cmdclass={'test': PyTest}
