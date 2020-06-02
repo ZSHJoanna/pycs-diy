@@ -58,7 +58,7 @@ class TestOptim(unittest.TestCase):
         print('Best fit', B_best)
         print('A correction', A)
 
-        assert chi2 < 5
+        assert chi2 < 10
 
 
 if __name__ == '__main__':
