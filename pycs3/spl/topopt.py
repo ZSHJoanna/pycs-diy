@@ -82,9 +82,8 @@ def opt_fine(lcs, spline=None, nit=10, shifttime=True, crit="r2",
              bokeps=10, boktests=10, bokwindow=None,
              distribflux=False, splflat=True, verbose=True):
     """
-    Fine approach, we assume that the timeshifts are within 2 days, and ML is optimized.
+    Fine approach, we assume that the timeshifts are within 10 days, and ML is optimized.
 
-    Watch out for splflat, a bit dangerous all this ...
     Default is True for the iterations, and we release the splines only at the end.
     If you put it to False, spline are left free at any stage. This should be fine if you leave one curve without ML.
 

@@ -78,7 +78,14 @@ pycs
         -------------
         -removed the mad function as it is implemented in pycs3.gen.stat
 
-        optim.py
+    pipe
+    ----
+        Added new sub package
+        pipe_utils.py
+        -------------
+        - new module containing the function to interact with the automated pipeline
+
+        optimiser.py
         --------------
         - added a new module for adjusting the generative noise mode parameters
 
@@ -95,6 +102,12 @@ pycs
         - In CSContainer constructor (__init__):
             - only the name of the CSCOntainer is now mandatory
         - bug fix in the colour transmission between CSContainer and Group
+
+    spl
+    ---
+        multiopt.py
+        -----------
+        - Deleted opt_ts_powell as this is not used anymore
 
 
 tests
