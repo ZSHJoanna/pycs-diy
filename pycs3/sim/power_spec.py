@@ -1,5 +1,6 @@
 """
-Module to define the PowerSpectrum class and associated functions
+Module to define the PowerSpectrum class and associated functions. This can be used to measure the slope of the PowerSpectrum
+and adjust the argument in the pycs3.sim.twk.tweakspl function, when using 'colored_noise' for generating the mock curves.
 """
 import copy as pythoncopy
 

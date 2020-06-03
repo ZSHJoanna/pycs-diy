@@ -13,7 +13,7 @@ from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equ
 from tests import utils
 
 
-class TestLightCurve(unittest.TestCase):
+class TestOpt(unittest.TestCase):
     def setUp(self):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")

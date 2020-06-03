@@ -10,7 +10,7 @@ import pycs3.gen.sea
 import pycs3.gen.mrg as mrg
 import pycs3.gen.lc_func as lc_func
 
-class TestLightCurve(unittest.TestCase):
+class TestSeason(unittest.TestCase):
     def setUp(self):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")

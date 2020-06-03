@@ -17,7 +17,7 @@ import numpy as np
 import shutil
 
 
-class TestCopies(unittest.TestCase):
+class TestSims(unittest.TestCase):
     def setUp(self):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")

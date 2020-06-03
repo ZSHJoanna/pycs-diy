@@ -14,7 +14,7 @@ NUM = np.nan # variable to be replaced when writing the function
 def function_trial(test_number=NUM):
     print('Hello world !',test_number)
 
-class TestLightCurve(unittest.TestCase):
+class TestPipeUtils(unittest.TestCase):
     def setUp(self):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")
