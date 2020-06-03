@@ -1,4 +1,4 @@
-"This module contains various function that facilitate the formating of the inputs when using the automated pipeline"
+"This module contains various function that facilitate the formatting of the inputs when using the automated pipeline"
 
 import json
 import os
@@ -24,8 +24,12 @@ def proquest(askquestions):
 
 
 def getdelays(lcs):
-    """Function to obtain the time delay pairs given a list of light curves.
-    The function return a list of delay between the pai of images and a list containing the name of the image pairs."""
+    """
+    Function to obtain the time delay pairs given a list of light curves.
+    The function return a list of delay between the pai of images and a list containing the name of the image pairs.
+    :param lcs: list of LightCurves
+    :return: tuple containing (array of delay pairs, array of delay name)
+    """
 
     delay_pair = []
     delay_name = []
@@ -45,7 +49,13 @@ def getdelays(lcs):
 
 
 def write_func_append(fn, stream, **kwargs):
-    # function to write a function in a file, replacing the variable by their value
+    """
+    Function to write a python function in a file, replacing the variable by their value
+    :param fn: python function to be written in a file
+    :param stream: Python File Object
+    :param kwargs: dictionnary, containing the keyword argument to be written in the file
+    :return:
+    """
     fn_as_string = getsource(fn)
     for var in kwargs:
         fn_as_string = fn_as_string.replace(var, kwargs[var])
@@ -55,6 +65,15 @@ def write_func_append(fn, stream, **kwargs):
 
 
 def generate_regdiffparamskw(pointdensity, covkernel, pow, errscale):
+    """
+    Generate the naming keywords, given the parameter of regdiff. See pycs3.regdiff documentation for details.
+
+    :param pointdensity: integer, point density parameter to be passed to regdiff
+    :param covkernel: string, covariance kernel to be passed to regdiff, Choose between 'RBF', 'Matern' and "RatQuad"
+    :param pow: float, exponent of the Mattern function
+    :param errscale: float, additionnal scaling of the photometric error bars.
+    :return: list of string containing the keywords
+    """
     out_kw = []
     for c in covkernel:
         for pts in pointdensity:
@@ -66,6 +85,12 @@ def generate_regdiffparamskw(pointdensity, covkernel, pow, errscale):
 
 
 def read_preselected_regdiffparamskw(file):
+    """
+    Read a text file readable with json and extract the keyword for regdiff.
+
+    :param file: string, path to the file containing the preselected parameters
+    :return: list of string containing the keywords
+    """
     out_kw = []
     with open(file, 'r') as f:
         dic = json.load(f)
@@ -80,6 +105,16 @@ def read_preselected_regdiffparamskw(file):
 
 
 def get_keyword_regdiff(pointdensity, covkernel, pow, errscale):
+    """
+    Generate the dictionnary to be given to the regdiff optimiser. See pycs3.regdiff documentation for details.
+
+    :param pointdensity: integer, point density parameter to be passed to regdiff
+    :param covkernel: string, covariance kernel to be passed to regdiff, Choose between 'RBF', 'Matern' and "RatQuad"
+    :param pow: float, exponent of the Matern function
+    :param errscale: float, additionnal scaling of the photometric error bars.
+    :return: list of dictionnary containing the argument to be given to the regdiff optimiser
+    """
+
     kw_list = []
     for c in covkernel:
         for pts in pointdensity:
@@ -91,12 +126,24 @@ def get_keyword_regdiff(pointdensity, covkernel, pow, errscale):
 
 
 def get_keyword_regdiff_from_file(file):
+    """
+    Read a text file readable with json and extract the keyword for regdiff.
+
+    :param file: string, path to the file containing the preselected parameters
+    :return: : list of dictionnary containing the argument to be given to the regdiff optimiser
+    """
     with open(file, 'r') as f:
         kw_list = json.load(f)
     return kw_list
 
 
 def get_keyword_spline(kn):
+    """
+    Generate the dictionnary to be given to the spline optimiser.
+
+    :param kn: integer, knotstep of the spline optimiser
+    :return: dictionnary containing the argument to be given to the spline optimiser
+    """
     return {'kn': kn}
 
 

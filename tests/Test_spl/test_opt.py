@@ -4,6 +4,7 @@ from tests import TEST_PATH
 import pycs3.gen.lc_func as lc_func
 import pycs3.gen.mrg as mrg
 import pycs3.spl.multiopt
+import pycs3.spl.topopt
 import pycs3.gen.splml
 import pytest
 import unittest
@@ -80,6 +81,19 @@ class TestLightCurve(unittest.TestCase):
         lc_func.display(lc_copy_ECAM + lc_copy_WFI, [], showlegend=False, filename=os.path.join(self.outpath, 'ECAM+WFI_fluxshift.png'))
         assert_allclose(fluxshift_WFI, flux_shift_th, rtol=0.01)
 
+    def test_opt_ts_indi(self):
+        lc_copy = [lc.copy() for lc in self.lcs]
+        spline = self.spline.copy()
+        pycs3.spl.multiopt.opt_ts_indi(lc_copy, spline, method='fmin', crit="r2", verbose=True, optml=True)
+        delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
+
+        lc_copy2 = [lc.copy() for lc in self.lcs]
+        spline2 = self.spline.copy()
+        pycs3.spl.multiopt.opt_ts_indi(lc_copy2, spline2, method='fmin', crit="tv", verbose=True, optml=True)
+        delays2 = lc_func.getdelays(lc_copy2, to_be_sorted=True)
+        assert_allclose(delays, self.true_delays, atol=3)
+        assert_allclose(delays2, self.true_delays, atol=3)
+
     def test_opt_source_magshift(self):
         lc_copy = [lc.copy() for lc in self.lcs]
         self.clean_trace()
@@ -94,6 +108,16 @@ class TestLightCurve(unittest.TestCase):
         self.clean_trace()
         r2 = pycs3.spl.multiopt.opt_source(lc_copy, sourcespline=self.spline, dpmethod="extadj", bokmethod="BF", verbose=True,trace=True,tracedir=self.outpath)
         assert r2 < 3000
+
+    def test_distrib_flux(self):
+        lc_copy = [lc.copy() for lc in self.lcs[:2]] #we take only 2 curves to test flux sharing
+        spline = self.spline.copy()
+        pycs3.spl.topopt.opt_fine(lc_copy, spline, distribflux=True)
+        delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
+        print(delays)
+        lc_func.display(lc_copy, [spline], showlegend=False,
+                        filename=os.path.join(self.outpath, 'trial_opt_distrib_flux.png'))
+        assert_allclose(delays, self.true_delays[0], atol=3)
 
     def clean_trace(self):
         pkls = glob.glob(os.path.join(self.outpath,  "??????.pkl"))
