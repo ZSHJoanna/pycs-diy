@@ -1,4 +1,5 @@
 import os
+import glob
 from tests import TEST_PATH
 import pycs3.gen.lc_func as lc_func
 import pycs3.gen.mrg as mrg
@@ -49,7 +50,8 @@ class TestLightCurve(unittest.TestCase):
 
         lc_copy_ECAM = [lc.copy() for lc in self.lcs_ECAM]
         lc_copy_WFI = [lc.copy() for lc in self.lcs_WFI]
-        pycs3.spl.multiopt.opt_magshift([lc_copy_ECAM[0],lc_copy_WFI[0]], sourcespline=None, verbose=True, trace=False)
+        self.clean_trace()
+        pycs3.spl.multiopt.opt_magshift([lc_copy_ECAM[0],lc_copy_WFI[0]], sourcespline=None, verbose=True, trace=True,tracedir=self.outpath)
         pycs3.spl.multiopt.opt_magshift([lc_copy_ECAM[1],lc_copy_WFI[1]], sourcespline=None, verbose=True, trace=False)
         pycs3.spl.multiopt.opt_magshift([lc_copy_ECAM[2],lc_copy_WFI[2]], sourcespline=None, verbose=True, trace=False)
         magshift_ECAM = [lc.magshift for lc in lc_copy_ECAM]
@@ -78,15 +80,25 @@ class TestLightCurve(unittest.TestCase):
         lc_func.display(lc_copy_ECAM + lc_copy_WFI, [], showlegend=False, filename=os.path.join(self.outpath, 'ECAM+WFI_fluxshift.png'))
         assert_allclose(fluxshift_WFI, flux_shift_th, rtol=0.01)
 
-    def test_opt_ts_brute(self):
+    def test_opt_source_magshift(self):
         lc_copy = [lc.copy() for lc in self.lcs]
-        r2 = pycs3.spl.multiopt.opt_ts_brute(lc_copy, self.spline, movefirst=True, optml=False, r=2, step=1.0, verbose=True, trace=False)
-        delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
-        print(delays)
-        assert r2 < 3000
-        assert_allclose(delays, self.true_delays, atol=2.)
+        self.clean_trace()
+        pycs3.spl.multiopt.opt_magshift(lc_copy, sourcespline=self.spline, verbose=True, trace=True, tracedir=self.outpath)
+        magshift = [lc.magshift for lc in lc_copy]
+        magshift_th = [12.625243648475646, 11.979070915466306, 11.020983992368699, 10.532716687860487]
+        lc_func.display(lc_copy, [self.spline], showlegend=False, filename=os.path.join(self.outpath, 'trial_opt_magshift_source.png'))
+        assert_allclose(magshift, magshift_th, atol=0.01)
 
-        lc_func.display(lc_copy, [self.spline], showlegend=False, filename=os.path.join(self.outpath, 'ECAM+WFI_opt_ts_brut.png'))
+    def test_opt_source(self):
+        lc_copy = [lc.copy() for lc in self.lcs]
+        self.clean_trace()
+        r2 = pycs3.spl.multiopt.opt_source(lc_copy, sourcespline=self.spline, dpmethod="extadj", bokmethod="BF", verbose=True,trace=True,tracedir=self.outpath)
+        assert r2 < 3000
+
+    def clean_trace(self):
+        pkls = glob.glob(os.path.join(self.outpath,  "??????.pkl"))
+        for pkl in pkls :
+            os.remove(pkl)
 
 
 if __name__ == '__main__':

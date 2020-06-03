@@ -108,6 +108,7 @@ pycs
         multiopt.py
         -----------
         - Deleted opt_ts_powell as this is not used anymore
+        - Deleted opt_ts_brut as this was not working
 
 
 tests

@@ -22,7 +22,6 @@ class PowerSpectrum:
     """
     A class representing a power spectrum of a Source object.
     """
-    #TODO : add the power spectrum part of MCMC_pycs here.
     def __init__(self, source, flux=False):
         """
         Constructor, simply takes a Source object and calculates the power spectrum

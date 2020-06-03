@@ -24,7 +24,7 @@ from pycs3.gen.polyml import polyfit
 from pycs3.gen.spl_func import r2, mltv, merge
 
 
-def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False):
+def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False, tracedir='trace'):
     """
     If you don't give any sourcespline, this is a dirty rough magshift optimization,
     using the median mag level (without microlensing), once for all.
@@ -35,8 +35,14 @@ def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False):
 
     We use the l1-norm of the residues, not a usual r2, to avoid local minima. Important !
     This is done with the nosquare=True option to the call of r2 !
-    """
 
+    :param lcs: list of LightCurves
+    :param sourcespline: Spline to be matched
+    :param verbose: boolean, verbosity
+    :param trace: boolean, to keep a trace of the operation
+    :param tracedir: string, directory to save the trace
+    :return:
+    """
     if sourcespline is None:
 
         reflevel = np.median(lcs[0].getmags(noml=True))
@@ -44,7 +50,7 @@ def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False):
             level = np.median(l.getmags(noml=True))
             l.shiftmag(reflevel - level)
             if trace:
-                pycs3.gen.util.trace(lcs)
+                pycs3.gen.util.trace(lcs, tracedir=tracedir)
         if verbose:
             print("Magshift optimization done.")
 
@@ -58,13 +64,13 @@ def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False):
             inip = l.magshift
 
             def setp(p):
-                l.magshift = p
+                l.magshift = p[0]
 
             def errorfct(p):
                 setp(p)
                 return r2([l], sourcespline, nosquare=True)
 
-            minout = spopt.fmin(errorfct, inip, full_output=1, xtol=0.001, disp=verbose)
+            minout = spopt.fmin(errorfct, inip, full_output=True, xtol=0.001, disp=verbose)
             popt = minout[0]
             if verbose:
                 print("Optimal magshift: %.4f" % popt)
@@ -73,11 +79,21 @@ def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False):
                 print("Magshift optimization of %s done." % l)
 
 
-def opt_source(lcs, sourcespline, dpmethod="extadj", bokit=0, bokmethod="BF", verbose=True, trace=False):
+def opt_source(lcs, sourcespline, dpmethod="extadj", bokit=0, bokmethod="BF", verbose=True, trace=False, tracedir = 'trace'):
     """
-    Just the source spline, without touching the ML of the lcs.
+    Optimise just the source spline, without touching the MicroLensing of the lcs.
     At each call, I update the sourcespline with the merged lcs.
     The internal knots of the sourcespline stay where they are, only the external ones are adjusted.
+
+    :param lcs: list of LightCurves
+    :param sourcespline: Spline to be matched
+    :param dpmethod: string, optimisation method
+    :param bokit: integer, number of iteration to build the spline
+    :param bokmethod: string, method to build the
+    :param verbose: boolean, Verbosity
+    :param trace: boolean, to keep a trace of the operation
+    :param tracedir : string, directory to save the trace
+    :return:
     """
 
     inir2 = sourcespline.r2(nostab=True)
@@ -97,7 +113,7 @@ def opt_source(lcs, sourcespline, dpmethod="extadj", bokit=0, bokmethod="BF", ve
         finalr2 = sourcespline.r2(nostab=True)  # Important, to set sourcesplie.lastr2nostab
 
     if trace:
-        pycs3.gen.util.trace(lcs, [sourcespline])
+        pycs3.gen.util.trace(lcs, [sourcespline], tracedir=tracedir)
     if verbose:
         print("Final r2 : %f" % finalr2)
     return finalr2
@@ -144,7 +160,7 @@ def opt_fluxshift(lcs, sourcespline, verbose=True):
             print("Done with %s ..." % l)
 
 
-def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=True, trace=False):
+def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=True, trace=False, tracedir='trace'):
     """
     Optimizes the microlensing of the lcs (one curve after the other) so that they fit to the spline.
     I work with both polynomial and spline microlensing.
@@ -167,6 +183,7 @@ def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=Tr
     :param splflat: boolean, if you want to optimise only the border coefficient after a first optimisation
     :param verbose: boolean, verbosity
     :param trace: boolean, trace all the operation applied to the LightCurve
+    :param tracedir: string, directory to save the trace
 
     Parameters for poly ML :
 
@@ -179,7 +196,7 @@ def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=Tr
     """
 
     if trace:
-        pycs3.gen.util.trace(lcs, [sourcespline])
+        pycs3.gen.util.trace(lcs, [sourcespline], tracedir=tracedir)
 
     if verbose:
         print("Starting ML optimization ...")
@@ -202,7 +219,7 @@ def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=Tr
             else:
                 l.ml.spline.optc()
             if trace:
-                pycs3.gen.util.trace(lcs, [sourcespline])
+                pycs3.gen.util.trace(lcs, [sourcespline],tracedir=tracedir)
 
         if (l.ml is not None) and (l.ml.mltype == "poly"):
 
@@ -269,112 +286,6 @@ def redistribflux(lc1, lc2, sourcespline, verbose=True, maxfrac=0.2):
 
     if verbose:
         print("Done with redistrib,     r2 = %10.2f" % (r2([lc1, lc2], sourcespline)))
-
-
-def comb(*sequences):
-    """
-    http://code.activestate.com/recipes/502199/
-    combinations of multiple sequences so you don't have
-    to write nested for loops
-
-    >>> from pprint import pprint as pp
-    >>> pp(comb(['Guido','Larry'], ['knows','loves'], ['Phyton','Purl']))
-    [['Guido', 'knows', 'Phyton'],
-    ['Guido', 'knows', 'Purl'],
-    ['Guido', 'loves', 'Phyton'],
-    ['Guido', 'loves', 'Purl'],
-    ['Larry', 'knows', 'Phyton'],
-    ['Larry', 'knows', 'Purl'],
-    ['Larry', 'loves', 'Phyton'],
-    ['Larry', 'loves', 'Purl']]
-    >>>
-    """
-    combinations = [[seq] for seq in sequences[0]]
-    for seq in sequences[1:]:
-        combinations = [cb + [item]
-                        for cb in combinations
-                        for item in seq]
-    return combinations
-
-
-def opt_ts_brute(lcs, sourcespline, movefirst=True, optml=False, r=2, step=1.0, verbose=True, trace=False):
-    """
-
-    If you use this again, implement mlsplflat, might be important.
-
-    Given the current delays, I will explore a hypercube (r steps in each direction on each axis)
-    of possible time shift combinations. And choose the shifts that gave the smallest chi2.
-
-    For each trial shift, I optimize the sourcespline to fit all curves, and optionally also the ML of every curve.
-
-    This is very slow, not really used.
-
-    """
-    origlcs = [l.copy() for l in lcs]
-    origsourcespline = sourcespline.copy()
-
-    if movefirst:
-        origshifts = np.array([l.timeshift for l in lcs])
-    else:
-        origshifts = np.array([l.timeshift for l in lcs[1:]])
-
-    relrange = np.linspace(-1.0 * r * step, 1.0 * r * step, int(2 * r + 1))
-    absrangelist = [list(relrange + origshift) for origshift in origshifts]
-
-    # We want a list of combinations to explore. Its length is (2*r + 1)**len(lcs)
-    combilist = comb(*absrangelist)
-    if movefirst:
-        assert len(combilist) == (2 * r + 1) ** len(lcs)
-    else:
-        assert len(combilist) == (2 * r + 1) ** (len(lcs) - 1)
-
-    combir2s = np.zeros(len(combilist))
-    for i, absshifts in enumerate(combilist):
-        if verbose:
-            print("%i / %i" % (i + 1, len(combilist)))
-
-        # We make internal copies :
-        mylcs = [l.copy() for l in origlcs]
-        mysourcespline = origsourcespline.copy()
-
-        # We set the shifts of these internal copies :
-
-        if movefirst:
-            for (l, shift) in zip(mylcs, absshifts):
-                l.timeshift = shift
-        else:
-            for (l, shift) in zip(mylcs[1:], absshifts):
-                l.timeshift = shift
-        # We do a first source opt :
-        finalr2 = opt_source(mylcs, mysourcespline, verbose=False, trace=trace)
-        # And then ML, and source once again :
-        if optml:
-            opt_ml(mylcs, mysourcespline, bokit=0, verbose=False)
-            finalr2 = opt_source(mylcs, mysourcespline, verbose=False, trace=False)
-
-        # And save the r2 :
-        combir2s[i] = finalr2
-
-    # Find the min
-    minindex = np.argmin(combir2s)
-    optabshifts = combilist[minindex]
-    if verbose:
-        print("Best shift at index %i :" % minindex)
-        print(optabshifts)
-    # And set the actual curves :
-    if movefirst:
-        for (l, shift) in zip(lcs, optabshifts):
-            l.timeshift = shift
-    else:
-        for (l, shift) in zip(lcs[1:], optabshifts):
-            l.timeshift = shift
-    finalr2 = opt_source(lcs, sourcespline, verbose=False, trace=trace)
-    if optml:
-        opt_ml(lcs, sourcespline, bokit=0, verbose=False)
-        finalr2 = opt_source(lcs, sourcespline, verbose=False, trace=False)
-
-    return finalr2
-
 
 def opt_ts_indi(lcs, sourcespline, method="fmin", crit="r2", optml=False, mlsplflat=False, brutestep=1.0, bruter=5,
                 verbose=True):
