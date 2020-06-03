@@ -150,7 +150,7 @@ def get_keyword_spline(kn):
 def convert_delays2timeshifts(timedelay):
     """
     Convert the time-delays you can measure by eye into time-shifts for the individual curve
-    :param timedelay: list of time delays
+    :param timedelay: list of time delays (only AB,AC,AD in the case of a quad)
     :return: list of timeshifts
     """
     timeshift = np.zeros(len(timedelay) + 1)
