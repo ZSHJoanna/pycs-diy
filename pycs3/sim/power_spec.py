@@ -14,11 +14,6 @@ def window_hanning(x):
     return np.hanning(len(x)) * x
 
 
-def detrend_mean(x):
-    """Return x minus the mean(x)"""
-    return x - x.mean()
-
-
 class PowerSpectrum:
     """
     A class representing a power spectrum of a Source object.

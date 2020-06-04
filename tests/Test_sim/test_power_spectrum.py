@@ -30,6 +30,7 @@ class TestPowerSpectrum(unittest.TestCase):
         assert_almost_equal(power_spec.slope['slope'], -7.2061329070514155, 7)
 
         pycs3.sim.power_spec.psplot([power_spec_copy],filename=os.path.join(self.outpath,'power_spec_plot.png'))
+        pycs3.sim.power_spec.psplot([power_spec],nbins=30,filename=os.path.join(self.outpath,'power_spec_plot2.png'))
 
 
 if __name__ == '__main__':
