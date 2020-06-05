@@ -422,7 +422,12 @@ def compute_sigmas(refgroup, groups, verbose=False, niceprint=True):
 
 def convolve_estimates(group, errors, testmode=True):
     """
-    Convolve the group estimates by the errors distribution.
+    Convolve the group estimates by the errors distribution. This can be used if you want to add another source of
+    errors (e.g., microlensing time delay, Tie & Kochanek 2018).
+
+    Warning : this will linearize the distributions before the convolution so it will just add in quadrature the sigma of the
+    two Gaussian distribution and displace the mean...
+    @todo : Make this work for non-Gaussian distribution
 
     :param group: Group that contain the estimates you want to convolve
     :param errors: Group that contains the error distribution.
@@ -456,7 +461,8 @@ def convolve_estimates(group, errors, testmode=True):
         for oldlins, oldbins, elabel in zip(errors.lins, errors.binslist, errors.labels):
             mybins = group.binslist[group.labels.index(elabel)]
             newbins = mybins - np.mean(mybins)  # centering the padding
-            newvals = np.interp(x=newbins, xp=oldbins, fp=oldlins, left=0, right=0)
+            centeroldbins = [oldbins[i] + (oldbins[i+1] - oldbins[i]) / 2. for i in range(len(oldbins)-1)]
+            newvals = np.interp(x=newbins, xp=centeroldbins, fp=oldlins, left=0, right=0)
             newvals = newvals / sum(newvals)
 
             newbinslist.append(newbins)

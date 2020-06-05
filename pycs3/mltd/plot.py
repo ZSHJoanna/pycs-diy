@@ -115,7 +115,6 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
                 blindshift = np.mean(blinddelays)
 
             for ipl, group in enumerate(plotlist):
-
                 # Getting the delay for this particular panel
                 labelindex = group.labels.index(delaylabel)
                 median = group.medians[labelindex]

@@ -6,7 +6,7 @@ from tests import TEST_PATH
 import numpy as np
 import pycs3.mltd.comb
 import pycs3.mltd.plot
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_almost_equal
 import pickle as pkl
 
 
@@ -39,7 +39,7 @@ class TestComb(unittest.TestCase):
                                   auto_radius=True, horizontaldisplay=False, legendfromrefgroup=False,
                                   tick_step_auto=True)
 
-    def test_combine(self):
+    def test_combine_from_groups(self):
         groups = [pycs3.mltd.comb.getresults(self.CS_spline, useintrinsic=False),
                   pycs3.mltd.comb.getresults(self.CS_regdiff, useintrinsic=False)]
 
@@ -95,6 +95,9 @@ class TestComb(unittest.TestCase):
                                   tick_step_auto=True, blindness=True)
 
         pycs3.mltd.plot.write_delays(combined, write_dir=self.outpath)
+        pycs3.mltd.plot.write_delays(combined, write_dir=self.outpath, mode='Lenstro')
+        index_best_prec = pycs3.mltd.comb.get_bestprec(groups, refimg='A', verbose=True)
+
 
     def test_combine_from_pkl(self):
         path_list = [os.path.join(self.datapath, 'marginalisation_regdiff.pkl'),
@@ -112,6 +115,54 @@ class TestComb(unittest.TestCase):
         assert_allclose(combined.medians, medians_th, atol=0.2)
         assert_allclose(combined.errors_up, error_up_th, atol=0.2)
         assert_allclose(combined.errors_down, error_down_th, atol=0.2)
+
+    def test_confinterval(self):
+        xs = np.random.normal(size=100000)
+        out = pycs3.mltd.comb.confinterval(xs, testmode=True)
+        out2 = pycs3.mltd.comb.confinterval(xs, testmode=True,cumulative=True)
+        assert_allclose([0.,1.,1.], out, atol=0.02)
+
+    def test_convolution(self):
+        group_spline = pkl.load(open(os.path.join(self.datapath, 'marginalisation_spline.pkl'), 'rb'))
+        group_spline.nicename = 'Spline'
+        group_spline.name = 'Spline'
+        group_spline.niceprint()
+        group_spline.linearize(testmode=True)
+
+        bins = group_spline.binslist
+        n_delay = len(group_spline.labels)
+
+        medians = [0. for i in range(n_delay)]
+        error_up = [1. for i in range(n_delay)]
+        error_down = [1. for i in range(n_delay)]
+        mltd = pycs3.mltd.comb.Group(group_spline.labels, medians, error_up, error_down, "ML Time Delay",binslist=bins, nicename="Microlensing Time Delay")
+        mltd.plotcolor = 'red'
+
+        mltd_copy = copy.deepcopy(mltd)
+        mltd_copy.name = "ML Time Delay copy"
+        mltd_copy.nicename = "ML Time Delay copy"
+        mltd_copy.binslist = [np.linspace(-10.,10.,50000)] # need to reset the binslist as the bins from group_spline is not covering 0
+        mltd_copy.linearize(verbose=True)
+
+        convolved = pycs3.mltd.comb.convolve_estimates(group_spline, mltd, testmode=True)
+        convolved2 = pycs3.mltd.comb.convolve_estimates(group_spline, mltd_copy, testmode=True)
+        convolved2.niceprint()
+        convolved.niceprint()
+
+        assert np.abs(convolved.medians[0] - convolved2.medians[0]) < 0.1
+        assert np.abs(group_spline.medians[0] - convolved.medians[0]) < 0.1 #check that the mean did not change
+
+        predicted_error_up = np.sqrt(error_up + group_spline.errors_up[0])
+        predicted_error_down = np.sqrt(error_down + group_spline.errors_down[0])
+        assert np.abs(predicted_error_up - convolved.errors_up[0]) < 0.1
+        assert np.abs(predicted_error_down - convolved.errors_down[0]) < 0.1
+
+        pycs3.mltd.plot.delayplot([group_spline, mltd, convolved, convolved2], rplot=20.0, refgroup=convolved, displaytext=True,showran=False,showbias=False,
+                                  filename=os.path.join(self.outpath, "fig_delays_comb_convolved.png"), figsize=(15, 10))
+
+
+
+
 
 if __name__ == '__main__':
     pytest.main()

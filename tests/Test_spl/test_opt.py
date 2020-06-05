@@ -6,6 +6,7 @@ import pycs3.gen.mrg as mrg
 import pycs3.spl.multiopt
 import pycs3.spl.topopt
 import pycs3.gen.splml
+from pycs3.sim.draw import shareflux
 import pytest
 import unittest
 import numpy as np
@@ -111,12 +112,15 @@ class TestOpt(unittest.TestCase):
 
     def test_distrib_flux(self):
         lc_copy = [lc.copy() for lc in self.lcs[:2]] #we take only 2 curves to test flux sharing
+        shareflux(lc_copy[0], lc_copy[1], frac=0.1)
+        lc_func.display(lc_copy, [], showlegend=False,
+                        filename=os.path.join(self.outpath, 'trial_opt_distrib_flux_before_optim.png'))
         spline = self.spline.copy()
         pycs3.spl.topopt.opt_fine(lc_copy, spline, distribflux=True)
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         print(delays)
         lc_func.display(lc_copy, [spline], showlegend=False,
-                        filename=os.path.join(self.outpath, 'trial_opt_distrib_flux.png'))
+                        filename=os.path.join(self.outpath, 'trial_opt_distrib_flux_after_optim.png'))
         assert_allclose(delays, self.true_delays[0], atol=3)
 
     def clean_trace(self):
