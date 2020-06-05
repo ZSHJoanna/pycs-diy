@@ -120,7 +120,7 @@ class TestComb(unittest.TestCase):
         xs = np.random.normal(size=100000)
         out = pycs3.mltd.comb.confinterval(xs, testmode=True)
         out2 = pycs3.mltd.comb.confinterval(xs, testmode=True,cumulative=True)
-        assert_allclose([0.,1.,1.], out, atol=0.02)
+        assert_allclose([0.,1.,1.], out, atol=0.04)
 
     def test_convolution(self):
         group_spline = pkl.load(open(os.path.join(self.datapath, 'marginalisation_spline.pkl'), 'rb'))
