@@ -49,7 +49,7 @@ class Source:
             jds = np.linspace(self.jdmin, self.jdmax, 100)
             mags = np.zeros(jds.shape)
             magerrs = 0.1 * np.ones(jds.shape)
-            dp = pycs3.gen.spl.DataPoints(jds, mags, magerrs, splitup=False, sort=False)
+            dp = pycs3.gen.datapoints.DataPoints(jds, mags, magerrs, splitup=False, sort=False)
             self.inispline = pycs3.gen.spl.Spline(dp)
             self.inispline.uniknots(3)  # Puts coeffs to 0, that's ok.
             self.plotcolour = "grey"
@@ -219,7 +219,7 @@ def sourceplot(sourcelist, filename=None, figsize=(12, 8), showlegend=True, show
             plt.plot(s.ijds, s.imags, marker=marker, color=s.plotcolour, linestyle="none", label="%s" % s.name)
 
         if showspline:
-            spline = s.spline()
+            spline = s.generate_spline()
             xs = np.arange(s.ijds[0], s.ijds[-1], 0.02)
             ys = spline.eval(jds=xs)
             plt.plot(xs, ys, "-", color="red", zorder=+20, label="%s.spline()" % s.name)

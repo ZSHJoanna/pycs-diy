@@ -66,6 +66,8 @@ class TestSims(unittest.TestCase):
                                   plotpoints=True, filename=os.path.join(self.outpath, "fig_measvstrue.png"),
                                   dataout=True, outdir=self.outpath)
         pycs3.sim.plot.newcovplot(simresults, filepath=self.outpath, showplots=False, printcovmat=True)
+        pycs3.sim.plot.newcovplot(simresults, filepath=self.outpath, showplots=False, printcovmat=True, detailplots=True, method='depbin',
+                                  printdetails=False)
 
         #test anaoptdrawn
         stat = pycs3.gen.stat.anaoptdrawn(self.lcs, self.spline, simset="mocks", optset="spl", npkl=1, plots=True, nplots=1, r=0.11,

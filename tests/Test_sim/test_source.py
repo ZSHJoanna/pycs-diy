@@ -4,7 +4,7 @@ from tests import TEST_PATH
 
 import pycs3.gen.util
 import pycs3.sim.power_spec
-from pycs3.sim.src import Source
+from pycs3.sim.src import Source, sourceplot
 import pytest
 import unittest
 import numpy as np
@@ -12,7 +12,7 @@ from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equ
 from tests import utils
 
 
-class TestPowerSpectrum(unittest.TestCase):
+class TestSource(unittest.TestCase):
     def setUp(self):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")
@@ -31,6 +31,17 @@ class TestPowerSpectrum(unittest.TestCase):
 
         pycs3.sim.power_spec.psplot([power_spec_copy],filename=os.path.join(self.outpath,'power_spec_plot.png'))
         pycs3.sim.power_spec.psplot([power_spec],nbins=30,filename=os.path.join(self.outpath,'power_spec_plot2.png'))
+
+    def test_source(self):
+        source = Source(name='source1')
+        source_copy = source.copy()
+        source_copy.name = 'source_copy'
+        source.addrw()
+        source.addplaw2(hann=True, flux=True)
+        jds = np.linspace(np.min(source.ijds), np.max(source.ijds),100)
+        print(source)
+        print(jds)
+        sourceplot([source, source_copy], filename=os.path.join(self.outpath,'sourceplot.png'))
 
 
 if __name__ == '__main__':
