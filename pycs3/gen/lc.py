@@ -598,7 +598,7 @@ class LightCurve:
         # finally we change the mask itself :
         self.mask = self.magerrs >= 0.0  # This should be True for all !
 
-        if self.ml is not None:
+        if self.ml is not None: # pragma: no cover
             print("WARNING : cutmask() just removed your microlensing !")
             self.rmml()
 
@@ -631,22 +631,22 @@ class LightCurve:
 
         ndates = len(self.jds)
         if len(self.mags) != ndates or len(self.magerrs) != ndates or len(self.mask) != ndates or len(
-                self.labels) != ndates or len(self.properties) != ndates:
+                self.labels) != ndates or len(self.properties) != ndates:# pragma: no cover
             raise RuntimeError("Incoherence in the length of your lightcurve !")
 
         # I postulate that lightcurves shorter then 2 points make no sense (the next test, and seasons() etc would crash...)
-        if ndates < 2:
+        if ndates < 2: # pragma: no cover
             raise RuntimeError("Your lightcurve is too short... give me at least 2 points.")
 
         # some algorithms have been optimized so that they NEED ordered lightcurves, i.e. values in self.jds must be increasing.
         # here we check if this is the case for a given lightcurve.
         first = self.jds[:-1]
         second = self.jds[1:]
-        if not np.alltrue(np.less_equal(first, second)):  # Note the less_equal : ok to have points with same JD.
+        if not np.alltrue(np.less_equal(first, second)):  # pragma: no cover # Note the less_equal : ok to have points with same JD.
             raise RuntimeError("Your lightcurve is not sorted !")
 
         # we check if the errors are positive:
-        if not np.alltrue(self.magerrs > 0.0):
+        if not np.alltrue(self.magerrs > 0.0): # pragma: no cover
             raise RuntimeError("Your lightcurve has negative or null errors !")
         # note that we use this sometimes in the code to generate masks etc... so don't just
         # remove this check.
@@ -674,7 +674,7 @@ class LightCurve:
         self.labels = [self.labels[i] for i in sortedindices]  # trick as labels is not a numpy array
         self.properties = [self.properties[i] for i in sortedindices]  # trick as properties is not a numpy array
 
-        if self.ml is not None:
+        if self.ml is not None: # pragma: no cover
             print("WARNING : sort() just removed your microlensing !")
             self.rmml()
 
@@ -737,7 +737,7 @@ class LightCurve:
 
         indices = np.arange(len(self))[self.mask]  # the indices we want to bootstrap : only unmasked ones.
 
-        if indices.size == 1:
+        if indices.size == 1: # pragma: no cover
             raise RuntimeError("Not enough points to bootstrap !")
 
         draws = np.random.randint(0, high=indices.size, size=indices.size)  # indexes of the indices that are drawn
@@ -770,15 +770,15 @@ class LightCurve:
 
         """
         # Let's warn the user if there are timeshifts in the curves :
-        if self.timeshift != 0.0 or otherlc.timeshift != 0.0:
+        if self.timeshift != 0.0 or otherlc.timeshift != 0.0: # pragma: no cover
             print("WARNING : you ask me to merge time-shifted lightcurves !")
 
         # and microlensing :
-        if self.ml is not None or otherlc.ml is not None:
+        if self.ml is not None or otherlc.ml is not None: # pragma: no cover
             print("WARNING : I am merging lightcurves with possible microlensing !")
 
         # for the magnitude shift, for otherlc it is quite common, but not for self :
-        if self.magshift != 0.0 or self.fluxshift != 0.0:
+        if self.magshift != 0.0 or self.fluxshift != 0.0: # pragma: no cover
             print("WARNING : merging into a lightcurve with magshift or fluxshift : everything gets applied ! ")
 
         # Frist we just concatenate all the values into new numpy arrays :
@@ -838,7 +838,7 @@ class LightCurve:
 
         self.validate()  # Good idea to keep this here, as the code below is so ugly ...
 
-        if filename is None:
+        if filename is None: # pragma: no cover
             filename = "%s_%s.rdb" % (self.telescopename, self.object)
 
         # We include a "mask" column only if mask is not True for all points
