@@ -23,12 +23,6 @@ Get the latest PyCS by cloning it from `GitLab <https://gitlab.com/vbonvin/PyCS3
 	git clone https://gitlab.com/vbonvin/PyCS3
 
 
-If for some reason you want the exact version of PyCS that was used in the original paper, you can still find it here::
-
-	svn export https://svn.epfl.ch/svn/pycs/tags/PyCS-1.0 ./PyCS-1.0
-	
-
-
 Installation
 ------------
 

@@ -88,12 +88,13 @@ def main(lensname, dataname, work_dir='./'):
                     else:
                         stats = pycs3.gen.stat.anaoptdrawn(lcs, spline, simset=sset, optset=ooset, showplot=False,
                                                            nplots=1,
-                                                           directory=config.lens_directory + config.combkw[i, j] + '/')
+                                                           directory=config.lens_directory + config.combkw[i, j] + '/',
+                                                           plotpath= check_stat_plot_dir, id =config.combkw[i, j])
                         # move the figure to the correct directory :
-                        os.system("mv " + "fig_anaoptdrawn_%s_%s_resi_1.png " % (sset, ooset) + check_stat_plot_dir
-                                  + "%s_fig_anaoptdrawn_%s_%s_resi_1.png" % (config.combkw[i, j], sset, ooset))
-                        os.system("mv " + "fig_anaoptdrawn_%s_%s_resihists.png " % (sset, ooset) + check_stat_plot_dir
-                                  + "%s_fig_anaoptdrawn_%s_%s_resihists.png" % (config.combkw[i, j], sset, ooset))
+                        # os.system("mv " + "fig_anaoptdrawn_%s_%s_resi_1.png " % (sset, ooset) + check_stat_plot_dir
+                        #           + "%s_fig_anaoptdrawn_%s_%s_resi_1.png" % (config.combkw[i, j], sset, ooset))
+                        # os.system("mv " + "fig_anaoptdrawn_%s_%s_resihists.png " % (sset, ooset) + check_stat_plot_dir
+                        #           + "%s_fig_anaoptdrawn_%s_%s_resihists.png" % (config.combkw[i, j], sset, ooset))
                         write_report_checkstat(f, lcs, stats, config.combkw[i, j], sset, ooset)
 
     f.close()

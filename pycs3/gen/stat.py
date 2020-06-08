@@ -264,7 +264,7 @@ def mapresistats(rls):
 
 
 def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npkl=1000, plots=True, nplots=3, r=0.11,
-                plotjdrange=None, plotcurveindexes=None, showplot=False, directory="./", plotpath="./", resihist_figsize=None):
+                plotjdrange=None, plotcurveindexes=None, showplot=False, directory="./", plotpath="./", id = "", resihist_figsize=None):
     """
     Not flexible but very high level function to analyse the spline-fit-residuals of drawn curves and comparing them to the
     real observations.
@@ -285,6 +285,7 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
     :param plotpath: string, directory to save the pngs, used if showplot is False
     :param directory: path to look for the simulation
     :param resihist_figsize: tuple, containing the dimension of the residuals histograms
+    :param id: string, to give an additionnal id name in the figure name.
     :return dictionnary containing the statistics about your run
 
     """
@@ -394,7 +395,7 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
         if showplot:
             plt.show()
         else :
-            plt.savefig(os.path.join(plotpath, "fig_anaoptdrawn_%s_%s_resihists.png" % (simset, optset)))
+            plt.savefig(os.path.join(plotpath, "%s_fig_anaoptdrawn_%s_%s_resihists.png" % (id, simset, optset)))
 
     # A detailed plot of some residuals, just for a few drawn curves
 
@@ -411,10 +412,11 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
                 optorigrlcs = [optorigrlcs[index] for index in plotcurveindexes]
                 optmockrlcs = [optmockrlcs[index] for index in plotcurveindexes]
 
-            if showplot :
-                filn = os.path.join(plotpath, "fig_anaoptdrawn_%s_%s_resi_%i.png" % (simset, optset, i + 1))
+            if not showplot :
+                filn = os.path.join(plotpath, "%s_fig_anaoptdrawn_%s_%s_resi_%i.png" % (id, simset, optset, i + 1))
             else :
                 filn = None
+
             plotresiduals([optorigrlcs, optmockrlcs], jdrange=plotjdrange, nicelabel=False, showlegend=False,
                           showsigmalines=False, errorbarcolour="#999999",
                           filename=filn)
