@@ -48,7 +48,7 @@ def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", 
     else:
         newlc.magerrs = np.asarray(magerrs)
 
-    if len(newlc.jds) != len(newlc.mags) or len(newlc.jds) != len(newlc.magerrs):
+    if len(newlc.jds) != len(newlc.mags) or len(newlc.jds) != len(newlc.magerrs): # pragma: no cover
         raise RuntimeError("lightcurve factory called with arrays of incoherent lengths")
 
     newlc.mask = newlc.magerrs >= 0.0  # This should be true for all !
@@ -203,7 +203,7 @@ def rdbimport(filepath, object="Unknown", magcolname="mag", magerrcolname="mager
     rdbfile.close()
     headers = rdbfilelines[0].split()
     underlines = rdbfilelines[1].split()
-    if list(map(len, headers)) != list(map(len, underlines)):
+    if list(map(len, headers)) != list(map(len, underlines)):# pragma: no cover
         raise RuntimeError("Error in parsing headers")
     # headerindices = np.array(range(len(headers))) + 1 # +1 as we use human convention in flexibleimport
 
@@ -220,7 +220,7 @@ def rdbimport(filepath, object="Unknown", magcolname="mag", magerrcolname="mager
     if propertycolnames:
         checknames.extend(propertycolnames)
     for name in checknames:
-        if name not in headers:
+        if name not in headers: # pragma: no cover
             raise RuntimeError('I cannot find a column named "%s" in your file !' % name)
 
     jdcol = headers.index(mhjdcolname) + 1  # +1 as we use human convention in flexibleimport

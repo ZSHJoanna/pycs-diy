@@ -209,11 +209,21 @@ class TestLightCurve(unittest.TestCase):
         lc_copy[1].remove_epochs(np.arange(50,len(lc_copy[1].jds)))
         lc_func.display([lc_copy[1]], [], style="cosmograil_dr1_microlensing", collapseref=True, hidecollapseref=True,
                         showlogo=True, logopos='center', showinsert=True,
-                        insertname=os.path.join(self.path, "data", "EPFL_logo.png"), magrange=[-11., -12.4], jdrange=[54000, 54600],
+                        insertname=os.path.join(self.path, "data", "EPFL_Logo.png"), magrange=[-11., -12.4], jdrange=[54000, 54600],
                         filename=os.path.join(self.outpath, 'test_jd_labels.png'), verbose=True)
         lc_copy[1].clearlabels()
         lc_copy[1].clearproperties()
         lc_copy[1].validate(verbose=True)
+
+    def test_factory(self):
+        mags = 0.1*np.random.randn(10) + 1.
+        jds = np.arange(1,11)
+        lc = lc_func.factory(jds, mags, verbose=True)
+
+    def test_import(self):
+        lc_ECAM = lc_func.flexibleimport(os.path.join(self.path, "data", "DES0408_ECAM.rdb"), jdcol=1,startline=3,
+                                         magcol=12, errcol=13, flagcol=11, propertycols={"fwhm":6}, absmagerrs=True)
+
 
     def clean_trace(self):
         pkls = glob.glob(os.path.join(self.outpath, "??????.pkl"))
