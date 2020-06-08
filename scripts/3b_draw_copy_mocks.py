@@ -17,7 +17,7 @@ def draw_mock_para(i, j, kn, ml, string_ML, lensname, dataname, work_dir):
     sys.path.append(work_dir + "config/")
     config = importlib.import_module("config_" + lensname + "_" + dataname)
 
-    print("I am drawing curves for ks%i, ksml%i" % (kn, ml))
+    print("I am drawing curves for ks%i, knml%i" % (kn, ml))
     os.chdir(config.lens_directory + config.combkw[i, j])
     lcs, spline = pycs3.gen.util.readpickle('initopt_%s_ks%i_%s%i.pkl' % (dataname, kn, string_ML, ml))
 

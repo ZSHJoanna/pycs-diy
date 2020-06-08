@@ -187,7 +187,7 @@ if simoptfctkw == "regdiff":
 
 if mltype == "splml" :
 	if forcen == False :
-		combkw = [["%s_ks%i_%s_ksml_%i" %(optfctkw, knotstep[i], mlname, mlknotsteps[j]) for j in range(len(mlknotsteps))]for i in range(len(knotstep))]
+		combkw = [["%s_ks%i_%s_knml_%i" %(optfctkw, knotstep[i], mlname, mlknotsteps[j]) for j in range(len(mlknotsteps))]for i in range(len(knotstep))]
 	else :
 		combkw = [["%s_ks%i_%s_nmlspl_%i" % (optfctkw, knotstep[i], mlname, nmlspl[j]) for j in range(len(nmlspl))]for i in range(len(knotstep))]
 elif mltype == "polyml":

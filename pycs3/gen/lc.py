@@ -297,7 +297,7 @@ class LightCurve:
                 shifts = 2.5 * np.log10((-self.fluxshift * np.ones(len(self)) / (10.0 ** (self.mags / -2.5))) + 1.0)
             else:
                 shifts = -2.5 * np.log10((self.fluxshift * np.ones(len(self)) / (10.0 ** (self.mags / -2.5))) + 1.0)
-            if np.all(np.isnan(shifts) is False) is False:  # If there is a nan in this...
+            if np.all(np.isnan(shifts) is False) is False: # pragma: no cover  # If there is a nan in this...
                 print("Ouch, negative flux !")
                 return np.zeros(len(self))
             else:
@@ -313,7 +313,7 @@ class LightCurve:
         As this changes the actual self.mags, it cannot be undone !
         """
         # We check that we won't go into negative fluxes :
-        if not np.all(fluxes > self.getminfluxshift()):
+        if not np.all(fluxes > self.getminfluxshift()): # pragma: no cover
             raise RuntimeError("That would give negative fluxes ...")
 
         newfluxes = self.getrawfluxes() + fluxes
@@ -361,7 +361,7 @@ class LightCurve:
         the parameters here ! Note that we COPY the microlensing object, so that the one added is independent from yours.
         """
 
-        if self.ml is not None and verbose:
+        if self.ml is not None and verbose: # pragma: no cover
             print("I replace an existing microlensing.")
 
         self.ml = microlensing.copy()  # this copy is important if you append the "same" new ml object to different lcs.
@@ -420,7 +420,7 @@ class LightCurve:
         Note that we do not touch microlensing here, it remains in place and does not change its meaning in any way.
         """
 
-        if self.fluxshift != 0.0:
+        if self.fluxshift != 0.0: # pragma: no cover
             raise RuntimeError("Apply the fluxshift before applying the magshift !")
 
         self.mags += self.magshift
@@ -438,10 +438,10 @@ class LightCurve:
         But, if there is a *fluxshift*, we will have to make sure that it was "applied" before !
         """
 
-        if self.ml is None:
+        if self.ml is None:# pragma: no cover
             raise RuntimeError("Hey, there is no ml associated to this lightcurve !")
 
-        if self.fluxshift != 0.0:
+        if self.fluxshift != 0.0:# pragma: no cover
             raise RuntimeError("Apply the fluxshift before applying the ML !")
         # This is really important. One possibility would be that this function applies the fluxshift ?
 

@@ -47,7 +47,7 @@ class TestPipeUtils(unittest.TestCase):
         dic_list = piut.get_keyword_regdiff(pointdensity=[2,3],covkernel=['Matern'], pow=[1.5,2.5], errscale=[1.] )
         print(dic_list)
 
-    def test_generate_regdiff_dic(self):
+    def test_generate_spline_dic(self):
         dic = piut.get_keyword_spline(30)
         print(dic)
 

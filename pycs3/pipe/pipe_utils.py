@@ -16,7 +16,7 @@ def proquest(askquestions):
     :param askquestions: boolean, askquestions is a switch, True or False, that allows to skip the
     questions.
     """
-    if askquestions:
+    if askquestions: # pragma: no cover
         answer = input("Tell me, do you want to go on ? (yes/no) ")
         if answer[:3] != "yes":
             sys.exit("Ok, bye.")
@@ -158,7 +158,7 @@ def convert_delays2timeshifts(timedelay):
     return timeshift
 
 
-def mkdir_recursive(path):
+def mkdir_recursive(path): # pragma: no cover
     """
     Create directory recursively if they subfolders do not exist
     :param path: folder to be created

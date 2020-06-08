@@ -96,9 +96,11 @@ class TestLightCurve(unittest.TestCase):
 
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         print(delays)
+        print(lc_copy[0].longinfo())
         assert_allclose(delays, self.true_delays, atol=2.)
         lc_func.display(lc_copy, [spline], style="homepagepdf",filename=os.path.join(self.outpath, 'spline_wi_splml.png'))
         pycs3.gen.util.writepickle((lc_copy, spline), os.path.join(self.outpath, 'optcurves.pkl'))
+        mags = lc_copy[0].getmags(noml=True)
 
         #trace function :
         self.clean_trace()
@@ -132,7 +134,7 @@ class TestLightCurve(unittest.TestCase):
         lc_func.shuffle(lc_copy)
         lcs_sorted = lc_func.objsort(lc_copy, ret = True)
         lc_func.objsort(lc_copy, ret=False)
-
+        lc_copy[0].shiftflux(0.1)
 
     def test_timeshifts(self):
         lc_copy = [lc.copy() for lc in self.lcs]
@@ -173,6 +175,27 @@ class TestLightCurve(unittest.TestCase):
 
         lc0_copy.merge(lc0)
         lc0.rdbexport(filename=os.path.join(self.outpath, "merged_A+A.txt"))
+
+    def test_add_rm_ml(self):
+        lc_copy = [lc.copy() for lc in self.lcs]
+        print("0", lc_copy[1].ml)
+        pycs3.gen.splml.addtolc(lc_copy[1], knotstep=200, bokeps=200/3.)
+        print("1", lc_copy[1].ml)
+        pycs3.gen.polyml.addtolc(lc_copy[1], nparams=2, autoseasonsgap=60.0)  # add affine microlensing to each season
+        print("2", lc_copy[1].ml)
+        lc_copy[1].resetml() #reset not remove
+        print("3", lc_copy[1].ml)
+        lc_copy[1].rmml()  # reset not remove
+        print("4", lc_copy[1].ml)
+
+    def test_jdlabels(self):
+        lc_copy = [lc.copy() for lc in self.lcs]
+        lc_copy[1].setjdlabels()
+        lc_copy[1].showlabels = True
+        lc_func.display([lc_copy[1]], [], style="cosmograil_dr1_microlensing",collapseref=True, hidecollapseref=True,
+                        showlogo=True, logopos= 'center', showinsert=True, insertname=os.path.join(self.path, "data","epfl_new_logo.png"),  magrange= [1, -1],
+                        filename=os.path.join(self.outpath, 'test_jd_labels.png'), verbose=True)
+
 
     def clean_trace(self):
         pkls = glob.glob(os.path.join(self.outpath,  "??????.pkl"))

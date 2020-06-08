@@ -40,6 +40,8 @@ class TestMrg(unittest.TestCase):
         n_wfi =  len(self.lcs_WFI[0].jds)
         print("Datapoints ECAM : ",n_ecam)
         print("Datapoints WFI: ", n_wfi)
+        test_stat_WFI = self.lcs_WFI[0].samplingstats()
+
         lc_func.display(self.lcs_ECAM, style="homepagepdf",
                         filename=os.path.join(self.outpath, 'merged_0408_ECAM.png'), jdrange=[57550, 57900])
         lc_func.display(self.lcs_WFI, style="homepagepdf",
