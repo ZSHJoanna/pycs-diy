@@ -422,8 +422,6 @@ def display(lclist=[], splist=[],
     if style is None:
         pass
     elif "homepagepdf" in style :
-        if figsize is None:
-            figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = True
         if "nologo" in style:
@@ -442,8 +440,6 @@ def display(lclist=[], splist=[],
         show_ylabel = True
 
     elif "2m2" in style:
-        if figsize is None:
-            figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = True
         if "nologo" in style:
@@ -467,8 +463,6 @@ def display(lclist=[], splist=[],
         show_ylabel = True
 
     elif "posterpdf" in style :
-        if figsize is None:
-            figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = False
         nicefont = False
@@ -485,8 +479,6 @@ def display(lclist=[], splist=[],
         show_ylabel = True
 
     elif "internal" in style:
-        if figsize is None:
-            figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = False
         nicefont = True
@@ -502,8 +494,6 @@ def display(lclist=[], splist=[],
         show_ylabel = True
 
     elif "cosmograil_dr1" in style:
-        if figsize is None:
-            figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = False
         nicefont = True
@@ -520,8 +510,6 @@ def display(lclist=[], splist=[],
         show_ylabel = True
 
     elif "cosmograil_microlensing" in style :
-        if figsize is None:
-            figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = False
         nicefont = True
@@ -544,6 +532,9 @@ def display(lclist=[], splist=[],
 
     if colourprop is not None:
         (colourpropname, colournicename, colourminval, colourmaxval) = colourprop
+
+    if figsize is None:
+        figsize = (12, 8)
 
     labelfontsize = 14
     if nicefont:

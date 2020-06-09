@@ -73,6 +73,19 @@ class TestSims(unittest.TestCase):
         stat = pycs3.gen.stat.anaoptdrawn(self.lcs, self.spline, simset="mocks", optset="spl", npkl=1, plots=True, nplots=1, r=0.11,
                 plotjdrange=None, plotcurveindexes=None, showplot=False, directory=self.outpath, plotpath=self.outpath, resihist_figsize=None)
 
+    def test_sample(self):
+        lc_copy = self.lcs[0]
+        lc_copy.shiftflux(0.2)
+        pycs3.sim.draw.sample(lc_copy, self.spline)
+
+    def test_single_draw(self):
+        pycs3.sim.draw.saveresiduals(self.lcs, self.spline)
+        fakelcs = pycs3.sim.draw.draw(self.lcs, self.spline, shotnoise='magerrs')
+        lc_func.display(fakelcs, [], filename=os.path.join(self.outpath, 'fakelcs1.png'))
+        fakelcs = pycs3.sim.draw.draw(self.lcs, self.spline, shotnoise='res', keepshifts= True, keeporiginalml=False, keeptweakedml=True)
+        lc_func.display(fakelcs, [], filename=os.path.join(self.outpath, 'fakelcs2.png'))
+        fakelcs = pycs3.sim.draw.draw(self.lcs, self.spline, shotnoise='sigma', keepshifts= True, keeporiginalml=True, keeptweakedml=False)
+        lc_func.display(fakelcs, [], filename=os.path.join(self.outpath, 'fakelcs3.png'))
 
     def clear_sims(self):
         if os.path.exists(os.path.join(self.outpath, "sims_mocks_opt_spl")):

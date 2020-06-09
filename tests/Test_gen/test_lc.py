@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.rcParams['text.usetex']=False #to avoid crash on the CI server.
 import os
 import numpy as np
 import pytest
