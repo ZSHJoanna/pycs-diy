@@ -1,11 +1,11 @@
-#PyCS3 pipeline
+# PyCS3 pipeline
 
 This folder contains all the script to process the light curves and measure the time delays. The complete description of the pipeline can be found in [Millon et al. (2020)](https://arxiv.org/abs/2002.05736).
 
 You should first define a working directory that must contain your light curves in the sub-folder `data`. 
 Your data should have the naming convention `lensname_dataset.rdb` and must contain one column for the days of the observation and two columns per lens image for the measured magnitudes and its associated uncertainties. A dataset typically corresponds to a monitoring campaign conducted by a single telescope.  
 
-##1. Create data set 
+## 1. Create data set 
 
 Run the command : 
 
@@ -13,7 +13,7 @@ Run the command :
 
 to setup the config file. It will create a new folder for your lens and dataset under the subfolder `Simulation/lensname_dataset` from your working directory. If you are not specifying a working directory, it will simply use the current folder `'./'`. The config file is created in the `config` directory under the name `config_lensname_dataset.py` and can be modified. 
 
-##2. Fit spline 
+## 2. Fit spline 
 The first step consists in fitting spline to your original data. You can change the mean knotstep and the microlensing model from the config file. The key parameters here are : 
 
    - `knotstep` : mean intial spacing between the knots of the intrinsic spline. Give a list with the value that you want to test. 
@@ -27,8 +27,8 @@ Once you have chosen the estimator parameters, you can run the command :
     
 This will produce the original fit with all the combination of intrinsic and microlensing models that you provided. You can check visually the quality of the fit with the figures saved in the figure/spline_and_residuals_plots. 
 
-##3. Generate mock light curves
-####3a. Fit the parameter of the generative noise model 
+## 3. Generate mock light curves
+#### 3a. Fit the parameter of the generative noise model 
 This is the tricky part of the process. We will need to adjust to parameter to ensure that the generative noise model creates simulated curves with the same constraining power than the original data. The fit of these two parameters is done with a simple dichotomous search algorithm. The key parameters to control the behaviour are : 
 
  - `n_curve_stat` : number of curves to compute statistics. A large number of curves will reduce the random fluctuation and accelerate the convergence but this comes at the price of heavy computation. Curves are computed in parallel, so you might want to choose a multiple of the number of cores available. For example, 16 is a good number. 
@@ -40,14 +40,14 @@ This is the tricky part of the process. We will need to adjust to parameter to e
  
  __Warning__ : For quad, it happens that the algorithm do not match the 0.75-$\sigma$ criterion in 15 iteration. It will then choose the closest value. Matching $\sigma$ and $\zrun$ within 1 or 2$\sigma$ is sufficient in 99% of the cases. You can still continue until script 3d and check a posteriori that the simulated curves are indeed not too different. 
 
-####3b. Draw mock lights from the generative noise model 
+#### 3b. Draw mock lights from the generative noise model 
 The next step is to generate the copies and mocks. You can adjust the number of copies and mocks gereated by changing `ncopy`, `ncopypkls`, `nsim` and `nsimpkls`. The total number of copies generated is `ncopy`*`ncopypkls`, for every combination of `knotstep` and `mlknotstep`, so the computation time increase very quickly. We recommand to generate 500 copies and 800 mocks for reliable estimate of the uncertainties. 
 
      python3 3b_draw_copy_mocks.py lensname dataset --dir='path_to_working_directory
      
 If you turn on the `ask_question` option, you can run this script many times to generate more mocks. By default, it will erase the already existing files. 
 
-####3c. Optimise the mock light curves 
+#### 3c. Optimise the mock light curves 
 We will now fit the copies and mocks. If you want to run only on the mocks, turn of the `run_on_copies` option. By default, you need to run the optimiser on both the mocks and copies. You can choose which optimiser to run with the `simoptfctkw`. You can now run : 
 
     python3 3c_optimise_copy_mocks.py lensname dataset --dir='path_to_working_directory
@@ -55,16 +55,16 @@ We will now fit the copies and mocks. If you want to run only on the mocks, turn
 This script will optimise the batch curves saved in the pickle files. You can run on many cores in parallel by using the `max_core` option. 
 You can run this script twice, once with the spline optimiser, once with the regdiff optimiser. 
 
-####3d. Check statistics 
-You can now check a posteriori that the generated curves roughly match the original data in term of $z_{run}$ and $\sigma$. To do so, run : 
+#### 3d. Check statistics 
+You can now check a posteriori that the generated curves roughly match the original data in term of z_{run} and $\sigma$. To do so, run : 
 
     python3 3d_check_statistics.py lensname dataset --dir='path_to_working_directory
     
 This will create a series of plots in the figure/check_stat_plots folder. You can now check that the residuals of the mock curves looks similar to the residuals of the data. 
 
-##4. Marginalise over the estimator parameters
+## 4. Marginalise over the estimator parameters
 
-####4a. Get the time delay Estimates 
+#### 4a. Get the time delay Estimates 
 The first step is to collect the results of the optimisation of the mocks and copies. This is done by running : 
 
     python3 4a_plot_results.py lensname dataset --dir='path_to_working_directory
@@ -72,7 +72,7 @@ The first step is to collect the results of the optimisation of the mocks and co
 You should run that script once for each estimator. You can switch from one estimator to the other with the `simoptfctkw` parameter. 
 This will creates plots in the figure/final_results folder. You can verify that the distribution of the delay when running on the copies is peaked. This indicates that your data indeed constrain the time delay. You can also visualize the random and systematic error made on the mocks.
 
-####4b. Margininalise the spline Estimates 
+#### 4b. Margininalise the spline Estimates 
 To obtain the final spline estimate, you can either select the most precise model, marginalize over all available models or follow the hybrid approach describe in [Millon et al. (2020)](https://arxiv.org/abs/2002.05736). This can be controlled with the `sigmathresh` parameter (0 is a true marginalisation, 0.5 is the hybrid approach, and some very high number will pick the most precise estimate). You can ensure a high numerical precision by turning off the `testmode` option but this will take a bit longer. 
 You can name your combination with the `name_marg_spline` option. This is usefull if you want to combine this estimate with the something else in the future. You can also select manually the model to be included in the combination. To do so, you need to provide the list of parameters in `knotstep_marg` and `mlknotsteps_marg` and run : 
 
@@ -80,18 +80,18 @@ You can name your combination with the `name_marg_spline` option. This is useful
 
 By default, the code will take the models provided in your `knotstep` and `mlknotsteps` or `nmlspl` lists. 
 
-####4c. Marginalise the regression difference Estimates
+#### 4c. Marginalise the regression difference Estimates
 Similarly to the spline estimate, you can choose which generative noise model to use with the `knotstep_marg_regdiff` and `mlknotsteps_marg_regdiff` lists. By default we choose the generative noise model that gives the most precise estimates and we use `sigmathresh` to combine the different set of regdiff parameters. 
 
     python3 4c_marginalise_regdiff.py lensname dataset --dir='path_to_working_directory
 
-####4d. Marginalise spline and regression difference Estimates 
+#### 4d. Marginalise spline and regression difference Estimates 
 
 The last step is to combine regdiff and the spline together. You can choose which estimate to combine in the `name_marg_list` list and the threshold used for these combination in `sigmathresh_list`. We also recommend to marginalise over the two estimators, which correspond to use `sigmathresh_final = 0`. Once you decided which estimator to include in your final measurement, you can run : 
     
     python3 4d_marginalise_all.py lensname dataset --dir='path_to_working_directory
 
-##5. Combine Estimates from different data set. 
+## 5. Combine Estimates from different data set. 
 If you have several data set for the same object, you might be interested in combining the data set together. You can then run 
 
      python3 5_combine_dataset.py lensname --dir='path_to_working_directory
