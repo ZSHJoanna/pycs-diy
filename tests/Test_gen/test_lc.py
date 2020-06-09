@@ -1,5 +1,3 @@
-import matplotlib
-matplotlib.rcParams['text.usetex']=False #to avoid crash on the CI server.
 import os
 import numpy as np
 import pytest
@@ -256,12 +254,12 @@ class TestLightCurve(unittest.TestCase):
         kwargs = {"fontsize": 22, "color": 'black'}
         disptext = [(0.8, 0.8, txt, kwargs)]
         lc_func.display(self.lcs, [], showlogo=True, logopos='center', showgrid=True, showdates=False, magrange=3, showdelays=True,
-                        figsize=(15,10),
+                        figsize=(15,10), text=disptext,
                         filename=os.path.join(self.outpath, 'display_test.png'))
         lc_func.display(self.lcs_WFI, [], colourprop=('fwhm', 'Seeing', 0,3), hidecolourbar=True,
-                        filename=os.path.join(self.outpath, 'display_test2.png'), title='DES0408', titlexpos=0.3)
+                        filename=os.path.join(self.outpath, 'display_test2.png'), titlexpos=0.3)
         lc_func.display(self.lcs_WFI, [], colourprop=('fwhm', 'Seeing', 0,3), hidecolourbar=False,  figsize=(12,9),
-                        filename=os.path.join(self.outpath, 'display_test2.png'), title='DES0408')
+                        filename=os.path.join(self.outpath, 'display_test2.png'))
 
     def test_linintp(self):
         lc_func.linintnp(self.lcs_WFI[0].copy(), self.lcs_ECAM[0].copy(), usemask=False, weights=False, plot=True,
