@@ -122,7 +122,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
 
         # We check the consistency of the number of elements...
         if elsperline is not None:
-            if len(elements) != elsperline:
+            if len(elements) != elsperline:# pragma: no cover
                 raise RuntimeError("Parsing error in line %i, check columns : \n%s" % (i + startline, repr(line)))
         elsperline = len(elements)
 
@@ -136,7 +136,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
                 flags.append(True)
             elif strflag == "False":
                 flags.append(False)
-            else:
+            else:# pragma: no cover
                 print("Flag error in line %i : %s" % (i + startline, repr(line)))
                 flags.append(True)
         else:
@@ -421,12 +421,12 @@ def display(lclist=[], splist=[],
 
     if style is None:
         pass
-    elif style in ["homepagepdf", "homepagepdfnologo"]:
+    elif "homepagepdf" in style :
         if figsize is None:
             figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = True
-        if style == "homepagepdfnologo":
+        if "nologo" in style:
             showlogo = False
         nicefont = True
         showdelays = False
@@ -466,7 +466,7 @@ def display(lclist=[], splist=[],
         transparent = False
         show_ylabel = True
 
-    elif style == "posterpdf":
+    elif "posterpdf" in style :
         if figsize is None:
             figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
@@ -484,7 +484,7 @@ def display(lclist=[], splist=[],
         transparent = False
         show_ylabel = True
 
-    elif style == "internal":
+    elif "internal" in style:
         if figsize is None:
             figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
@@ -501,7 +501,7 @@ def display(lclist=[], splist=[],
         transparent = False
         show_ylabel = True
 
-    elif style == "cosmograil_dr1":
+    elif "cosmograil_dr1" in style:
         if figsize is None:
             figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
@@ -519,7 +519,7 @@ def display(lclist=[], splist=[],
         transparent = False
         show_ylabel = True
 
-    elif style == "cosmograil_dr1_microlensing":
+    elif "cosmograil_microlensing" in style :
         if figsize is None:
             figsize = (10, 5)
         plotsize = (0.09, 0.97, 0.10, 0.95)
@@ -536,10 +536,10 @@ def display(lclist=[], splist=[],
         showgrid = False
         transparent = False
         show_ylabel = False
-    else:
+    else: # pragma: no cover
         raise RuntimeError("I do not know the style %s" % style)
 
-    if not (isinstance(lclist, list) or isinstance(lclist, tuple)):
+    if not (isinstance(lclist, list) or isinstance(lclist, tuple)): # pragma: no cover
         raise TypeError("Hey, give me a LIST of lightcurves !")
 
     if colourprop is not None:
@@ -574,7 +574,7 @@ def display(lclist=[], splist=[],
                 actualcurve = curve[0]
                 curveseasons = curve[1]
 
-                if not isinstance(curveseasons, list):
+                if not isinstance(curveseasons, list): # pragma: no cover
                     raise TypeError("lc.display wants LISTs of seasons, not individual seasons !")
                 for curveseason in curveseasons:
                     # the x lims :
@@ -598,7 +598,7 @@ def display(lclist=[], splist=[],
 
             if colourprop is not None:
                 scattervalues = np.array([float(propertydict[colourpropname]) for propertydict in curve.properties])
-                axes.scatter(tmpjds, tmpmags, s=markersize, c=scattervalues, vmin=colourminval, vmax=colourmaxval,
+                mappable = axes.scatter(tmpjds, tmpmags, s=markersize, c=scattervalues, vmin=colourminval, vmax=colourmaxval,
                              edgecolors="None")
             else:
                 if curve.ploterrorbars and showerrorbars:
@@ -733,7 +733,7 @@ def display(lclist=[], splist=[],
     axes.set_ylim(axes.get_ylim()[::-1])
 
     if colourprop is not None and hidecolourbar is False:
-        cbar = plt.colorbar(orientation='vertical', shrink=1.0, fraction=0.065, pad=0.025)
+        cbar = plt.colorbar(mappable, orientation='vertical', shrink=1.0, fraction=0.065, pad=0.025)
         cbar.set_label(colournicename)
 
     # And we make custom title :
@@ -861,7 +861,7 @@ def display(lclist=[], splist=[],
     if ax is not None:
         return
 
-    if filename == "screen":
+    if filename == "screen": # pragma: no cover
         plt.show()
     else:
         plt.savefig(filename, transparent=transparent)
@@ -1016,7 +1016,7 @@ def objsort(lcs, ret=False, verbose=True):
 
     # Maybe we start with some checks :
     diff_objects = set([l.object for l in lcs])
-    if len(diff_objects) != len(lcs):
+    if len(diff_objects) != len(lcs): # pragma : no cover
         raise RuntimeError("Cannot sort these objects : %s" % ", ".join([l.object for l in lcs]))
 
     # The actual sorting ...
@@ -1048,7 +1048,7 @@ def applyshifts(lcs, timeshifts, magshifts):
     :param magshifts: list of magnitude shifts, must have the same length as lcs
     :return: Nothing, I modify the LightCurve objects.
     """
-    if not len(lcs) == len(timeshifts) and len(lcs) == len(magshifts):
+    if not len(lcs) == len(timeshifts) and len(lcs) == len(magshifts):# pragma : no cover
         raise RuntimeError("Hey, give me arrays of the same lenght !")
 
     for lc, timeshift, magshift in zip(lcs, timeshifts, magshifts):
@@ -1056,7 +1056,7 @@ def applyshifts(lcs, timeshifts, magshifts):
         lc.shiftmag(magshift)
         lc.shifttime(timeshift)
 
-def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False):
+def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False, filename=None):
     """
     Dispersion method, return the "distance" between two curves.
 
@@ -1071,7 +1071,7 @@ def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False):
     :param usemask: boolean, to mask some data
     :param plot: boolean, display plot of the interpolated curves
 
-    :return dicitionnary containing the number of interpolation and the d2 "distance".
+    :return dictionary containing the number of interpolation and the d2 "distance".
 
     """
     if usemask:
@@ -1163,6 +1163,9 @@ def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False):
         plt.xlabel("Days", fontsize=16)
         plt.ylabel("Magnitude", fontsize=16)
         plt.title("%i interpolations" % n, fontsize=16)
-        plt.show()
+        if filename is None : # pragma : no cover
+            plt.show()
+        else :
+            plt.savefig(filename)
 
     return {'n': n, 'd2': d2}

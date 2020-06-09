@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 import unittest
 import glob
+import matplotlib.pyplot as plt
 
 from tests import TEST_PATH
 import pycs3.gen.polyml
@@ -18,6 +19,8 @@ class TestLightCurve(unittest.TestCase):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")
         self.rdbfile = os.path.join(self.path, "data", "trialcurves.txt")
+        self.rdbfile_WFI = os.path.join(self.path, "data", "DES0408_WFI.rdb")
+        self.rdbfile_ECAM = os.path.join(self.path, "data", "DES0408_ECAM.rdb")
         self.skiplist = os.path.join(self.path, "data", "skiplist.txt")
         self.lcs = [
             lc_func.rdbimport(self.rdbfile, object='A', magcolname='mag_A', magerrcolname='magerr_A',
@@ -28,6 +31,22 @@ class TestLightCurve(unittest.TestCase):
                               telescopename="Trial"),
             lc_func.rdbimport(self.rdbfile, object='D', magcolname='mag_D', magerrcolname='magerr_D',
                               telescopename="Trial")
+        ]
+        self.lcs_WFI = [
+            lc_func.rdbimport(self.rdbfile_WFI, object='A', magcolname='mag_A', magerrcolname='magerr_A_5',
+                              telescopename="WFI"),
+            lc_func.rdbimport(self.rdbfile_WFI, object='B', magcolname='mag_B', magerrcolname='magerr_B_5',
+                              telescopename="WFI"),
+            lc_func.rdbimport(self.rdbfile_WFI, object='D', magcolname='mag_D', magerrcolname='magerr_D_5',
+                              telescopename="WFI")
+        ]
+        self.lcs_ECAM = [
+            lc_func.rdbimport(self.rdbfile_ECAM, object='A', magcolname='mag_A', magerrcolname='magerr_A_5',
+                              telescopename="ECAM",propertycolnames="lcmanip"),
+            lc_func.rdbimport(self.rdbfile_ECAM, object='B', magcolname='mag_B', magerrcolname='magerr_B_5',
+                              telescopename="ECAM",propertycolnames="lcmanip"),
+            lc_func.rdbimport(self.rdbfile_ECAM, object='D', magcolname='mag_D', magerrcolname='magerr_D_5',
+                              telescopename="ECAM",propertycolnames="lcmanip")
         ]
         self.guess_timeshifts = [0., 0., -15., -65.]
         self.true_delays = [-5.0, -20.0, -70., -15., -65., -50.]
@@ -59,19 +78,23 @@ class TestLightCurve(unittest.TestCase):
                                  autoseasonsgap=600.0)  # add polynomial of degree 2 on the entire light curve
         pycs3.gen.polyml.addtolc(lc_copy[3], nparams=3, autoseasonsgap=600.0)
         spline = utils.spl(lc_copy)
+        delays = lc_func.getdelays(lc_copy)
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         lc_func.getnicetimedelays(lc_copy)
+        lc_func.getnicetimedelays(lc_copy, to_be_sorted=True)
         lc_func.display(lc_copy, [spline], style="homepagepdf",
                         filename=os.path.join(self.outpath, 'spline_wi_ml1.png'))
         lc_func.display(lc_copy, [spline], style="homepagepdfnologo",
                         filename=os.path.join(self.outpath, 'spline_wi_ml2.png'))
-        lc_func.display(lc_copy, [spline], style="2m2", filename=os.path.join(self.outpath, 'spline_wi_ml3.png'))
+        lc_func.display(lc_copy, [spline], style="2m2_largeticks", filename=os.path.join(self.outpath, 'spline_wi_ml3.png'))
         lc_func.display(lc_copy, [spline], style="posterpdf", filename=os.path.join(self.outpath, 'spline_wi_ml4.png'))
         lc_func.display(lc_copy, [spline], style="internal", filename=os.path.join(self.outpath, 'spline_wi_ml5.png'))
         lc_func.display(lc_copy, [spline], style="cosmograil_dr1",
                         filename=os.path.join(self.outpath, 'spline_wi_ml6.png'))
-        lc_func.display(lc_copy, [spline], style="cosmograil_dr1_microlensing",
-                        filename=os.path.join(self.outpath, 'spline_wi_ml7.png'))
+        figure = plt.figure()
+        ax = plt.subplot(111)
+        ax = lc_func.display(lc_copy, [spline], style="cosmograil_microlensing", ax=ax, showspldp= True, verbose=True)
+        figure.savefig('spline_wi_ml7.png')
 
         delay_th = [-6.380928, -26.039074, -70.74382, -19.658146, -64.362892,
                     -44.704746]  # delay not accurately recover but this is because the poor ml model
@@ -224,6 +247,23 @@ class TestLightCurve(unittest.TestCase):
         lc_ECAM = lc_func.flexibleimport(os.path.join(self.path, "data", "DES0408_ECAM.rdb"), jdcol=1,startline=3,
                                          magcol=12, errcol=13, flagcol=11, propertycols={"fwhm":6}, absmagerrs=True)
 
+
+    def test_display(self):
+        txt = 'Trial curves'
+        colour = 'black'
+        kwargs = {"fontsize": 22, "color": 'black'}
+        disptext = [(0.8, 0.8, txt, kwargs)]
+        lc_func.display(self.lcs, [], showlogo=True, logopos='center', showgrid=True, showdates=False, magrange=3, showdelays=True,
+                        figsize=(15,10),
+                        filename=os.path.join(self.outpath, 'display_test.png'))
+        lc_func.display(self.lcs_WFI, [], colourprop=('fwhm', 'Seeing', 0,3), hidecolourbar=True,
+                        filename=os.path.join(self.outpath, 'display_test2.png'), title='DES0408', titlexpos=0.3)
+        lc_func.display(self.lcs_WFI, [], colourprop=('fwhm', 'Seeing', 0,3), hidecolourbar=False,  figsize=(12,9),
+                        filename=os.path.join(self.outpath, 'display_test2.png'), title='DES0408')
+
+    def test_linintp(self):
+        lc_func.linintnp(self.lcs_WFI[0].copy(), self.lcs_ECAM[0].copy(), usemask=False, weights=False, plot=True,
+                         filename=os.path.join(self.outpath, 'test_linintp.png'))
 
     def clean_trace(self):
         pkls = glob.glob(os.path.join(self.outpath, "??????.pkl"))

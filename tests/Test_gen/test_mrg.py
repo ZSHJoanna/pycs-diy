@@ -36,22 +36,28 @@ class TestMrg(unittest.TestCase):
         mrg.colourise(self.lcs_WFI)
 
     def test_merge(self):
-        n_ecam =  len(self.lcs_ECAM[0].jds)
-        n_wfi =  len(self.lcs_WFI[0].jds)
+        lcs_ECAM_copy = [lc.copy() for lc in self.lcs_ECAM]
+        lcs_WFI_copy = [lc.copy() for lc in self.lcs_WFI]
+        n_ecam =  len(lcs_ECAM_copy[0].jds)
+        n_wfi =  len(lcs_WFI_copy[0].jds)
         print("Datapoints ECAM : ",n_ecam)
         print("Datapoints WFI: ", n_wfi)
-        test_stat_WFI = self.lcs_WFI[0].samplingstats()
+        test_stat_WFI = lcs_WFI_copy[0].samplingstats()
 
-        lc_func.display(self.lcs_ECAM, style="homepagepdf",
+        lc_func.display(lcs_ECAM_copy, style="homepagepdf",
                         filename=os.path.join(self.outpath, 'merged_0408_ECAM.png'), jdrange=[57550, 57900])
-        lc_func.display(self.lcs_WFI, style="homepagepdf",
+        lc_func.display(lcs_WFI_copy, style="homepagepdf",
                         filename=os.path.join(self.outpath, 'merged_0408_WFI.png'), jdrange=[57550, 57900])
-        pycs3.gen.mrg.matchtels(self.lcs_WFI, self.lcs_ECAM, pycs3.gen.lc_func.linintnp, fluxshifts=True)
-        merged_lcs = pycs3.gen.mrg.merge([self.lcs_WFI, self.lcs_ECAM])
+        pycs3.gen.mrg.matchtels(lcs_WFI_copy, lcs_ECAM_copy, pycs3.gen.lc_func.linintnp, fluxshifts=True)
+        merged_lcs = pycs3.gen.mrg.merge([lcs_WFI_copy, lcs_ECAM_copy])
         n_merged = len(merged_lcs[0].jds)
         print("Datapoints WFI+ECAM: ", n_merged)
         assert n_merged == n_wfi + n_ecam
         lc_func.display(merged_lcs, style="homepagepdf",filename=os.path.join(self.outpath, 'merged_0408_ECAM-WFI.png'), jdrange=[57550, 57900])
+
+        lcs_ECAM_copy2 = [lc.copy() for lc in self.lcs_ECAM]
+        lcs_WFI_copy2 = [lc.copy() for lc in self.lcs_WFI]
+        pycs3.gen.mrg.matchtels(lcs_ECAM_copy2, lcs_WFI_copy2, pycs3.gen.lc_func.linintnp, fluxshifts=False)
 
     def test_export(self):
         pycs3.gen.util.multilcsexport(self.lcs_ECAM, os.path.join(self.outpath,"lcs_export.rdb"), properties=["fwhm", "ellipticity", "airmass"])

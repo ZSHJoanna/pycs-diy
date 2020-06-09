@@ -57,7 +57,7 @@ def readidlist(filepath, verbose=True):
 	If this is a skiplist, id is a MJD.
 	"""
 
-    if not os.path.exists(filepath):
+    if not os.path.exists(filepath): # pragma : no cover
         raise RuntimeError("File does not exist : %s" % filepath)
 
     myfile = open(filepath, "r")
@@ -95,7 +95,7 @@ def trace(lclist=[], splist=[], tracedir="trace"):
         os.mkdir(tracedir)
     global tracei
     filepath = os.path.join(tracedir, "%06i.pkl" % tracei)
-    if os.path.exists(filepath):
+    if os.path.exists(filepath): # pragma : no cover
         raise RuntimeError("Sorry, I don't want to overwrite the existing trace inside '%s'." % tracedir)
 
     now = datetime.datetime.now()
@@ -158,11 +158,11 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
 
     for thislc in lclist:
         thislc.validate()  # Good idea to keep this here, as the code below is so ugly ...
-        if len(thislc) != lenlc:
+        if len(thislc) != lenlc: # pragma : no cover
             print("First lightcurve has %i points" % len(commonjds))
             raise RuntimeError("Lightcurve %s has not the same length !" % str(thislc))
 
-        if not np.allclose(thislc.getjds(), commonjds, rtol=0.0, atol=1e-5):
+        if not np.allclose(thislc.getjds(), commonjds, rtol=0.0, atol=1e-5):# pragma : no cover
             raise RuntimeError("Lightcurve %s has different epochs !" % str(thislc))
 
     # Now we check the properties. At least a minimal check : they should be available for all the
@@ -172,13 +172,13 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
 
     for property in properties:
         for l in lclist:
-            if not property in l.commonproperties():
+            if not property in l.commonproperties():# pragma : no cover
                 raise RuntimeError("Lightcurve %s has no property %s" % (l, property))
 
             # We also have to check that all those properties are identical for all lcs !
         firstprops = [p[property] for p in lclist[0].properties]
         for l in lclist:
-            if not firstprops == [p[property] for p in l.properties]:
+            if not firstprops == [p[property] for p in l.properties]:# pragma : no cover
                 raise RuntimeError("Properties not identical !")
 
     # Ok, now we prepare the data to write into that file.
@@ -238,7 +238,7 @@ def datetimefromjd(JD):
 	
 	"""
 
-    if JD < 0:
+    if JD < 0:# pragma : no cover
         raise ValueError('Julian Day must be positive')
 
     (F, Z) = math.modf(JD + 0.5)
@@ -301,27 +301,6 @@ def datetimefromjd(JD):
     return datetime.datetime(year, month, int(days), int(hours), int(minutes), int(seconds))
 
 
-def flatten(x):
-    """
-	Source : http://kogs-www.informatik.uni-hamburg.de/~meine/python_tricks
-	flatten(sequence) -> list
-
-	Returns a single, flat list which contains all elements retrieved
-	from the sequence and all recursively contained sub-sequences
-	(iterables).
-	
-	"""
-
-    result = []
-    for el in x:
-        # if isinstance(el, (list, tuple)):
-        if hasattr(el, "__iter__") and not isinstance(el, str):
-            result.extend(flatten(el))
-        else:
-            result.append(el)
-    return result
-
-
 def strtd(td):
     """
 	To print out time differences ...
@@ -329,27 +308,3 @@ def strtd(td):
 	"""
     strdiff = str(td)  # looks like 0:02:04.43353
     return strdiff.split(".")[0]
-
-
-def zipdirs(pattern="rrs_*"):
-    """
-	I will tgz all directories matching the pattern, except if the tgz already exists.
-	(handy to transfert multirun output to another computer ...)
-	"""
-    matches = sorted(glob.glob(pattern))
-    for match in matches:
-        if not os.path.isdir(match):
-            continue
-        if os.path.islink(match):
-            continue
-
-        zipdirpath = match + ".tgz"
-        if os.path.exists(zipdirpath):
-            continue
-
-        nfiles = len(glob.glob(os.path.join(match, "*")))
-
-        print("%s (%i) -> %s" % (match, nfiles, zipdirpath))
-
-        cmd = "tar zcvf %s %s" % (zipdirpath, match)
-        os.system(cmd)

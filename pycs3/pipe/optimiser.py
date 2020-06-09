@@ -20,14 +20,14 @@ import pycs3.spl.topopt
 class Optimiser(object):
     def __init__(self, lcs, fit_vector, spline, attachml_function, attachml_param, knotstep=None,
                  savedirectory="./", recompute_spline=True, max_core=None, theta_init=None,
-                 n_curve_stat=32, shotnoise="magerrs", tweakml_type='colored_noise', display=False, verbose=False,
+                 n_curve_stat=32, shotnoise="magerrs", tweakml_type='PS_from_residuals', display=False, verbose=False,
                  tweakml_name='', correction_PS_residuals=True, tolerance=0.75):
 
-        if len(fit_vector) != len(lcs):
+        if len(fit_vector) != len(lcs): # pragma : no cover
             raise RuntimeError("Your target vector and list of light curves must have the same size !")
-        if recompute_spline is True and knotstep is None:
+        if recompute_spline is True and knotstep is None: # pragma : no cover
             raise  RuntimeError(" I can't recompute spline if you don't give me the knotstep ! ")
-        if tweakml_type != 'colored_noise' and tweakml_type != 'PS_from_residuals':
+        if tweakml_type != 'colored_noise' and tweakml_type != 'PS_from_residuals': # pragma : no cover
             raise RuntimeError("I don't recognize your tweakml type, choose either colored_noise or PS_from_residuals.")
 
         self.lcs = lcs
@@ -133,8 +133,8 @@ class Optimiser(object):
 
         chi2 = 0.0
         count = 0.0
-        if self.n_curve_stat == 1:
-            print("Warning : I cannot compute statistics with one single curves !!")
+        if self.n_curve_stat == 1: # pragma : no cover
+            raise RuntimeError(" I cannot compute statistics with one single curves !! Increase n_curve_stat.")
 
         if self.para:
             mean_zruns, mean_sigmas, std_zruns, std_sigmas, _, _ = self.make_mocks_para(theta)
@@ -229,7 +229,7 @@ class Optimiser(object):
             self.attachml_function(mocklc[i], self.attachml_param)  # adding the microlensing here
 
             if self.recompute_spline:
-                if self.knotstep is None:
+                if self.knotstep is None: # pragma : no cover
                     raise RuntimeError("You must give a knotstep to recompute the spline")
                 spline_on_mock = pycs3.spl.topopt.opt_fine(mocklc[i], nit=5, knotstep=self.knotstep,
                                                            verbose=self.verbose, bokeps=self.knotstep / 3.0,
@@ -269,7 +269,7 @@ class Optimiser(object):
         return mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas
 
     def check_success(self):
-        if any(self.rel_error_zruns_mini[i] is None for i in range(self.ncurve)):
+        if any(self.rel_error_zruns_mini[i] is None for i in range(self.ncurve)): # pragma : no cover
             raise RuntimeError("Error you should run analyse_plot_results() first !")
         else:
             if all(self.rel_error_zruns_mini[i] < self.tolerance for i in range(self.ncurve)) \
@@ -279,7 +279,7 @@ class Optimiser(object):
                 return False
 
     def report(self):
-        if self.chain_list is None:
+        if self.chain_list is None: # pragma : no cover
             raise RuntimeError("You should run optimise() first ! I can't write the report")
 
         f = open(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt'), 'a')
@@ -455,7 +455,7 @@ class DicOptimiser(Optimiser):
             return False
 
     def get_best_param(self):
-        if self.chain_list is None:
+        if self.chain_list is None: # pragma : no cover
             raise RuntimeError("I don't have the best parameters yet. You should run optimise() first !")
         else:
             ind_min = np.argmin(self.chain_list[1][:])
@@ -492,7 +492,7 @@ class DicOptimiser(Optimiser):
             fig1.savefig(os.path.join(self.savedirectory, self.tweakml_name + '_zruns_' + l.object + '.png'))
             fig2.savefig(os.path.join(self.savedirectory, self.tweakml_name + '_std_' + l.object + '.png'))
 
-            if self.display:
+            if self.display: # pragma : no cover
                 plt.show()
             plt.clf()
             plt.close('all')

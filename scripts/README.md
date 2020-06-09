@@ -34,7 +34,7 @@ This is the tricky part of the process. We will need to adjust two parameters to
  - `n_curve_stat` : number of curves to compute statistics. A large number of curves will reduce the random fluctuations and accelerate the convergence but this comes at the price of heavy computation. Curves are computed in parallel, so you might want to choose a multiple of the number of cores available. For example, 16 is usually good number. 
  - `max_iter` : maximum number of iteration before stopping. If the algorithm finds a good solution before that, it will stop automatically. 
  
- The algorithm will try to find parameters that produced curves with the  mean *rms residuals* $\sigma$ and the mean *number of runs* $z_{run}$ that falls within 0.75-$\sigma$ from the real curves. This script will save the functions and optimal parameters in a python file named `tweakml_ps.py`. Now, you can run :
+ The algorithm will try to find parameters that produces curves with the  mean *rms residuals* $\sigma$ and the mean *number of runs* $z_{run}$ that falls within 0.75-$\sigma$ from the real curves. This script will save the functions and optimal parameters in a python file named `tweakml_ps.py`. Now, you can run :
  
     python3 3a_generate_tweakml.py lensname dataset --dir='path_to_working_directory
  

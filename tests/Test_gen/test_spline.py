@@ -69,5 +69,20 @@ class TestDatapoints(unittest.TestCase):
         coef = spline.getco()
         spline.setco(coef)
 
+    def test_updatedp(self):
+        myspline = spl_func.fit(self.lcs, bokmethod = 'BF')
+        newdp = spl_func.merge(self.lcs, stab=False)  # Indeed we do not care about stabilization points here.
+        myspline.updatedp(newdp, dpmethod="leave")
+        r2 = myspline.r2(nostab=True)
+        print(r2)
+
+        myspline.updatedp(newdp, dpmethod="stretch")
+        r2 = myspline.r2(nostab=True)
+        print(r2)
+
+        myspline.updatedp(newdp, dpmethod="extadj")
+        r2 = myspline.r2(nostab=True)
+        print(r2)
+
 if __name__ == '__main__':
     pytest.main()
