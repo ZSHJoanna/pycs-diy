@@ -83,7 +83,7 @@ colored_noise_param = [[-2.95,0.001],[-2.95,0.001],[-2.95,0.001],[-2.95,0.001]] 
 PS_param_B = [[1.0],[1.0],[1.0],[1.0]] #if you don't want the algorithm fine tune the high cut frequency (given in unit of Nymquist frequency)
 
 #if you chose to optimise the tweakml automatically, you might want to change this
-optimiser = 'DIC' # dichotomic optimser, only DIC is available for the moment
+optimiser = 'DIC' # dichotomic optimiser, only DIC is available for the moment
 n_curve_stat =16# Number of curve to compute the statistics on, (the larger the better but it takes longer... 16 or 32 are good, 8 is still OK) .
 max_iter = 15 # this is used in the DIC optimiser, 10 is usually enough.
 
