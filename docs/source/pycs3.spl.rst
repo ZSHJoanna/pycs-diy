@@ -1,4 +1,4 @@
-pycs3\.regdiff package
+pycs3\.spl package
 ==================
 
 Submodules
