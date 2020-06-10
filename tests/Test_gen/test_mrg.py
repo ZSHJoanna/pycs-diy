@@ -52,6 +52,7 @@ class TestMrg(unittest.TestCase):
         merged_lcs = pycs3.gen.mrg.merge([lcs_WFI_copy, lcs_ECAM_copy])
         n_merged = len(merged_lcs[0].jds)
         print("Datapoints WFI+ECAM: ", n_merged)
+        print(merged_lcs[0].longinfo())
         assert n_merged == n_wfi + n_ecam
         lc_func.display(merged_lcs, style="homepagepdf",filename=os.path.join(self.outpath, 'merged_0408_ECAM-WFI.png'), jdrange=[57550, 57900])
 
