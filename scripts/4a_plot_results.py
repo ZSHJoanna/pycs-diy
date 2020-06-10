@@ -8,6 +8,7 @@ import pycs3.sim.run
 import pycs3.sim.plot
 import pycs3.gen.util
 import pycs3.mltd.plot
+import pycs3.mltd.comb
 import sys
 import os
 import importlib
