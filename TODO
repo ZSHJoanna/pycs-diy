@@ -1,6 +1,4 @@
 Martin :
-
-- integrate the MCMC_pycs module (check what we need for matplotlib Backend on a cluster)
 - Remove handling for the colored noise in the optimiser or restore it.
 - complete the coverage
 - repair multiCPU

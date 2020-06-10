@@ -17,7 +17,7 @@ PyCS3 is a software toolbox to estimate time delays between multiple images of s
 
 To measure time delays with ``pycs3``, you'll typically write a script calling some high-level functions provided by the package. PyCS3 allows you to compare different point estimators (including your own), without much code integration. You can follow the `example notebooks <https://gitlab.com/vbonvin/PyCS3/-/tree/master/notebook>`_ to learn how to use the core functionnality of PyCS3.
 
-If you have already read our :doc:`papers<citing>`, you might want to proceed with :doc:`installation`, or the :doc:`Tutorial/tutorial`.
+If you have already read our :doc:`papers<citing>`, you might want to proceed with :doc:`installation`, or the :doc:`Tutorial <tutorial/index>`.
 
 .. warning:: Please read this :doc:`important warning about using PyCS3<warning>`.
 
@@ -35,7 +35,7 @@ Contents
    :maxdepth: 2
 
 	A word of warning <warning>
-	Installation <installation>
+	Download & Installation <installation>
 	Tutorial<tutorial/index>
     Intra-dependency chart <chart>
 	Citing <citing>source
