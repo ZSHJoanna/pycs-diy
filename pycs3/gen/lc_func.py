@@ -1007,7 +1007,7 @@ def objsort(lcs, ret=False, verbose=True):
 
     # Maybe we start with some checks :
     diff_objects = set([l.object for l in lcs])
-    if len(diff_objects) != len(lcs): # pragma : no cover
+    if len(diff_objects) != len(lcs): # pragma: no cover
         raise RuntimeError("Cannot sort these objects : %s" % ", ".join([l.object for l in lcs]))
 
     # The actual sorting ...
@@ -1039,7 +1039,7 @@ def applyshifts(lcs, timeshifts, magshifts):
     :param magshifts: list of magnitude shifts, must have the same length as lcs
     :return: Nothing, I modify the LightCurve objects.
     """
-    if not len(lcs) == len(timeshifts) and len(lcs) == len(magshifts):# pragma : no cover
+    if not len(lcs) == len(timeshifts) and len(lcs) == len(magshifts):# pragma: no cover
         raise RuntimeError("Hey, give me arrays of the same lenght !")
 
     for lc, timeshift, magshift in zip(lcs, timeshifts, magshifts):
@@ -1154,7 +1154,7 @@ def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False, 
         plt.xlabel("Days", fontsize=16)
         plt.ylabel("Magnitude", fontsize=16)
         plt.title("%i interpolations" % n, fontsize=16)
-        if filename is None : # pragma : no cover
+        if filename is None : # pragma: no cover
             plt.show()
         else :
             plt.savefig(filename)

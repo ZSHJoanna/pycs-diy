@@ -12,3 +12,12 @@ Subpackages
     pycs3.spl
     pycs3.pipe
     pycs3.mltd
+
+
+Module contents
+---------------
+
+.. automodule:: pycs3
+    :members:
+    :undoc-members:
+    :show-inheritance:

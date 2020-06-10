@@ -68,7 +68,7 @@ class Spline:
         try:
             if self.t is None:
                 self.uniknots(2)  # This also puts self.c to 0s
-        except: # pragma : no cover
+        except: # pragma: no cover
             if len(self.t) == 0:
                 self.uniknots(2)  # This also puts self.c to 0s
 
@@ -202,10 +202,10 @@ class Spline:
             self.datapoints = newdatapoints
 
             # We quickly check the boundaries
-            if (knots[0] >= self.datapoints.jds[0]) or (knots[-1] <= self.datapoints.jds[-1]): # pragma : no cover
+            if (knots[0] >= self.datapoints.jds[0]) or (knots[-1] <= self.datapoints.jds[-1]): # pragma: no cover
                 raise RuntimeError("Your newdatapoints are to wide for the current knots !")
 
-        else: # pragma : no cover
+        else: # pragma: no cover
             raise RuntimeError("Don't know this updatedp method !")
 
         # We reset any bounds just to be sure.
@@ -235,7 +235,7 @@ class Spline:
         else:
             intt = np.linspace(a, b, int(float(b - a) / float(nint)))[1:-1]
 
-        if len(intt) == 0: # pragma : no cover
+        if len(intt) == 0: # pragma: no cover
             raise RuntimeError("I am uniknots, and I have only 0 (zero) internal knots ! Increase this number !")
 
         self.setintt(intt)
@@ -282,13 +282,13 @@ class Spline:
 
         # We start by checking the knot spacing
         knotspacings = knots[1:] - knots[:-1]
-        if not np.alltrue(knotspacings > 0.0): # pragma : no cover
+        if not np.alltrue(knotspacings > 0.0): # pragma: no cover
             raise RuntimeError("Ouch, your knots are not sorted !")
         minspace = np.min(knotspacings)
         if verbose:
             print("Minimal knot spacing : %.3f" % minspace)
 
-        if minspace < self.bokeps - 0.00001: # pragma : no cover  # Rounding errors, we decrease epsilon a bit...
+        if minspace < self.bokeps - 0.00001: # pragma: no cover  # Rounding errors, we decrease epsilon a bit...
             # If this does still happens, then it was not just a rounding error ...
             # Yes it still happens, due to updatedp stretch ...
             raise RuntimeError("Knot spacing min = %f, epsilon = %f" % (minspace, self.bokeps))
@@ -488,12 +488,12 @@ class Spline:
 
         # Ok a quick test for consisency :
 
-        if len(intt) == 0: # pragma : no cover
+        if len(intt) == 0: # pragma: no cover
             raise RuntimeError("Your list of internal knots is empty !")
 
-        if not self.datapoints.jds[0] < intt[0]: # pragma : no cover
+        if not self.datapoints.jds[0] < intt[0]: # pragma: no cover
             raise RuntimeError("Ouch.")
-        if not self.datapoints.jds[-1] > intt[-1]: # pragma : no cover
+        if not self.datapoints.jds[-1] > intt[-1]: # pragma: no cover
             raise RuntimeError("Ouch.")
         # assert self.datapoints.jds[0] < intt[0] # should we put <= here ?
         # assert self.datapoints.jds[-1] > intt[-1]
@@ -633,7 +633,7 @@ class Spline:
         out = si.splrep(self.datapoints.jds, self.datapoints.mags, w=1.0 / self.datapoints.magerrs, xb=None, xe=None,
                         k=self.k, task=-1, s=None, t=self.getintt(), full_output=1, per=0, quiet=1)
         # We check if it worked :
-        if not out[2] <= 0: # pragma : no cover
+        if not out[2] <= 0: # pragma: no cover
             raise RuntimeError("Problem with spline representation, message = %s" % (out[3]))
 
         self.c = out[0][1]  # save the coeffs

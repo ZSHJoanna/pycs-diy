@@ -77,11 +77,11 @@ def transfershifts(lcs, reflcs, transferml=True):
     :param lcs: list of LightCurve
     :param reflcs: lsit of the reference LightCurve
     """
-    if len(lcs) != len(reflcs): #pragma : no cover
+    if len(lcs) != len(reflcs): # pragma: no cover
         raise RuntimeError("Not the same lengths !")
 
     for (l, refl) in zip(lcs, reflcs):
-        if l.object != refl.object: #pragma : no cover
+        if l.object != refl.object: # pragma: no cover
             raise RuntimeError("Seems that you mixed up the curves !")
 
         l.timeshift = refl.timeshift
@@ -221,7 +221,7 @@ def draw(lcs, spline, shotnoise=None, shotnoisefrac=1.0, tweakml=None, scaletwea
             # print np.std(tweakresis)
 
             # We scale them using previously saved residuals :
-            if not hasattr(l, 'residuals'): #pragma : no cover
+            if not hasattr(l, 'residuals'): # pragma: no cover
                 raise RuntimeError("Save the residuals first !")
 
             scalings = np.fabs(l.residuals)
@@ -243,24 +243,24 @@ def draw(lcs, spline, shotnoise=None, shotnoisefrac=1.0, tweakml=None, scaletwea
         elif shotnoise == "none" or shotnoise is None:
             pass
         elif shotnoise == "res":
-            if not hasattr(l, 'residuals'): #pragma : no cover
+            if not hasattr(l, 'residuals'): # pragma: no cover
                 raise RuntimeError("Save the residuals first !")
             l.mags += shotnoisefrac * l.residuals.copy()
             l.commentlist.append("Added previously saved residuals !")
         elif shotnoise == "mcres":
             # We use the residuals as 1 sigma of a gaussian to draw the shotnoise from.
-            if not hasattr(l, 'residuals'): #pragma : no cover
+            if not hasattr(l, 'residuals'): # pragma: no cover
                 raise RuntimeError("Save the residuals first !")
             l.mags += l.residuals * shotnoisefrac * np.random.randn(len(l))
             l.commentlist.append("Monte Carlo with previously saved residuals as sigma !")
         elif shotnoise == "sigma":
             # We use the std of the residuals as 1-sigma amplitude of white noise to add.
-            if not hasattr(l, 'residuals'): #pragma : no cover
+            if not hasattr(l, 'residuals'): # pragma: no cover
                 raise RuntimeError("Save the residuals first !")
             sigma = np.std(l.residuals)
             l.mags += sigma * shotnoisefrac * np.random.randn(len(l))
             l.commentlist.append("White noise with std of residuals as sigma !")
-        else: #pragma : no cover
+        else: # pragma: no cover
             raise RuntimeError("Couldn't understand your shotnoise.")
 
         # Usually we won't want to return the tweaked ML.
@@ -286,7 +286,7 @@ def draw(lcs, spline, shotnoise=None, shotnoisefrac=1.0, tweakml=None, scaletwea
             fakel.timeshift = l.timeshift
             fakel.fluxshift = l.fluxshift
             fakel.magshift = l.magshift
-            if keeporiginalml and keeptweakedml: #pragma : no cover
+            if keeporiginalml and keeptweakedml: # pragma: no cover
                 raise RuntimeError('I cannot keep both the tweaked ML and the original ML in your mock curve ! ')
             if keeptweakedml:
                 fakel.ml = tweakedml  # Yes, it's that simple ! fakel and l have the same jds, after all.
@@ -482,7 +482,7 @@ def shareflux(lc1, lc2, frac=0.01):
     :param frac: The stddev of the gaussian "noise" in flux, with respect to the minimum flux in the curves.
 
     """
-    if not np.all(lc1.jds == lc2.jds): # pragma : no cover
+    if not np.all(lc1.jds == lc2.jds): # pragma: no cover
         raise RuntimeError("I do only work on curves with identical jds !")
 
     minshift = np.fabs(max(lc1.getminfluxshift(), lc2.getminfluxshift()))
