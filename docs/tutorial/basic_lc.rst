@@ -1,8 +1,8 @@
 The lightcurve object
 =====================
 
-The module :py:mod:`pycs.gen.lc` defines the class :py:class:`~pycs.gen.lc.lightcurve` that constitutes the backbone of pycs.
-First step is to learn about this fundamental object, and the functions to manipulate lightcurve instances.
+The module :py:mod:`pycs3.gen.lc` defines the class :py:class:`~pycs3.gen.lc.LightCurve` that constitutes the backbone of PyCS3.
+First step is to learn about this fundamental object, and the functions to manipulate lightcurve instances. The module :py:mod:`pycs3.gen.lc_func` is now gathering all the higher level functions to manipulate lists of :py:class:`~pycs3.gen.lc.LightCurve`
 
 
 
@@ -16,7 +16,7 @@ Importing from cosmouline/lcmanip or similar rdb files
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Cosmouline and lcmanip write their lightcurves as rdb files (i.e., lots of tab-separated collumns, and a short header).
-By *importing* such data into pycs, I mean *reading such rdb files* and turning them into the mentionned lightcurve objects.
+By *importing* such data into PyCS3, I mean *reading such rdb files* and turning them into the mentionned lightcurve objects.
 Here are some lines of a cosmouline/lcmanip output file (for a double lens) :
 
 ::
@@ -38,14 +38,14 @@ This will give us 4 lightcurve objects; here is how :
 
 	filename = "data/Mercator.rdb"
 	lcs = [
-		pycs.gen.lc.rdbimport(filename, object="A", magcolname="mag_A", magerrcolname="magerr_A_4", telescopename="Mercator", plotcolour="red", mhjdcolname="mhjd", flagcolname = "flag", propertycolnames = ["fwhm", "ellipticity", "airmass", "relskylevel", "normcoeff"], verbose = True),
-		pycs.gen.lc.rdbimport(filename, object="B", magcolname="mag_B", magerrcolname="magerr_B_4", telescopename="Mercator", plotcolour="red", mhjdcolname="mhjd", flagcolname = "flag", propertycolnames = ["fwhm", "ellipticity", "airmass", "relskylevel", "normcoeff"], verbose = True),
-		pycs.gen.lc.rdbimport(filename, object="C", magcolname="mag_C", magerrcolname="magerr_C_4", telescopename="Mercator", plotcolour="red", mhjdcolname="mhjd", flagcolname = "flag", propertycolnames = ["fwhm", "ellipticity", "airmass", "relskylevel", "normcoeff"], verbose = True),
-		pycs.gen.lc.rdbimport(filename, object="D", magcolname="mag_D", magerrcolname="magerr_D_4", telescopename="Mercator", plotcolour="red", mhjdcolname="mhjd", flagcolname = "flag", propertycolnames = ["fwhm", "ellipticity", "airmass", "relskylevel", "normcoeff"], verbose = True)
+		pycs3.gen.lc_func.rdbimport(filename, object="A", magcolname="mag_A", magerrcolname="magerr_A_4", telescopename="Mercator", plotcolour="red", mhjdcolname="mhjd", flagcolname = "flag", propertycolnames = ["fwhm", "ellipticity", "airmass", "relskylevel", "normcoeff"], verbose = True),
+		pycs3.gen.lc_func.rdbimport(filename, object="B", magcolname="mag_B", magerrcolname="magerr_B_4", telescopename="Mercator", plotcolour="red", mhjdcolname="mhjd", flagcolname = "flag", propertycolnames = ["fwhm", "ellipticity", "airmass", "relskylevel", "normcoeff"], verbose = True),
+		pycs3.gen.lc_func.rdbimport(filename, object="C", magcolname="mag_C", magerrcolname="magerr_C_4", telescopename="Mercator", plotcolour="red", mhjdcolname="mhjd", flagcolname = "flag", propertycolnames = ["fwhm", "ellipticity", "airmass", "relskylevel", "normcoeff"], verbose = True),
+		pycs3.gen.lc_func.rdbimport(filename, object="D", magcolname="mag_D", magerrcolname="magerr_D_4", telescopename="Mercator", plotcolour="red", mhjdcolname="mhjd", flagcolname = "flag", propertycolnames = ["fwhm", "ellipticity", "airmass", "relskylevel", "normcoeff"], verbose = True)
 	]
 	
 
-So this uses the function :py:func:`pycs.gen.lc.rdbimport` (click on such links to jump to detailed documentation of the function).
+So this uses the function :py:func:`pycs3.gen.lc_func.rdbimport` (click on such links to jump to detailed documentation of the function).
 In the example above I've put all the options to illustrate them. Not all these options are required !
 The option ``propertycolnames`` allows to read in extra columns of data, that can for instance be used to make colour-coded plots, or custom stuff.
 If you omit this option, the function will by default import all the fields specified in the above example, if these are available in the rdb file. 
@@ -55,7 +55,7 @@ Here is a more concise example that you could use as "default" to import lightcu
 
 ::
 	
-	mercatorlcs = [pycs.gen.lc.rdbimport("data/2013-04-02_config_J1001_mercator_lcmanip.rdb", 
+	mercatorlcs = [pycs3.gen.lc_func.rdbimport("data/2013-04-02_config_J1001_mercator_lcmanip.rdb",
 		magcolname="mag_%s"%e, magerrcolname="magerr_%s_5"%e, flagcolname = "flag",
 		telescopename="Mercator", object=e, plotcolour="blue") for e in ["A", "B"]]
 
@@ -79,12 +79,12 @@ A list of lightcurves (as we have just imported above) is usually named ``lcs``.
 Importing from simple tab-separated files
 """""""""""""""""""""""""""""""""""""""""
 
-The function :py:func:`pycs.gen.lc.flexibleimport` does essentially the same as :py:func:`pycs.gen.lc.rdbimport`, but for simpler input files that do not have headers :
+The function :py:func:`pycs3.gen.lc_func.flexibleimport` does essentially the same as :py:func:`pycs.gen.lc_func.rdbimport`, but for simpler input files that do not have headers :
 
 ::
 	
-	l = pycs.gen.lc.flexibleimport("curve.dat", jdcol=1, magcol=2, errcol=3, startline=1,
-		telescopename="Unknown", object="Unknown", plotcolour="red", verbose = True)
+	l = pycs3.gen.lc_func.flexibleimport("curve.dat", , jdcol=1, magcol=2, errcol=3, startline=1, flagcol=None, propertycols=None,
+                   telescopename="Unknown", object="Unknown", plotcolour="crimson", verbose=True, absmagerrs=False)
 	
 
 The shown arguments values are the defaults.
@@ -97,7 +97,7 @@ After such an import, and before plotting the curves to see if it went well, you
 
 ::
 	
-	pycs.gen.mrg.colourise(lcs)
+	pycs3.gen.mrg.colourise(lcs)
 	
 	
 them. This function sets the attribute ``plotcolour`` of each lightcurve to a different colour.
@@ -116,7 +116,7 @@ Plotting lightcurves
 --------------------
 
 It's time to see these colours.
-Many functions of pycs work with lists of lightcurves, instead of individual lightcurves. These lists usually contain simply one curve for every QSO image. But be aware that all this works in the same way if you use lists that contain curves from different telescopes, or "identical" curves with different settings, or simulated curves, etc.
+Many functions of pycs3 work with lists of lightcurves, instead of individual lightcurves. These lists usually contain simply one curve for every QSO image. But be aware that all this works in the same way if you use lists that contain curves from different telescopes, or "identical" curves with different settings, or simulated curves, etc.
 
 As mentionned, in the tutorials we will usually call such lists ``lcs``; *s* is a plural s.
 The single most important function that uses such a list of curves as argument is the function that displays them :
@@ -125,13 +125,13 @@ The single most important function that uses such a list of curves as argument i
 
 	lcs = [lca, lcb, lcc, lcd] # So that's a list 
 
-	pycs.gen.lc.display(lcs)
+	pycs3.gen.lc_func.display(lcs)
 	
 
-This function has lots of options, it can be used for many tasks. As we will see in this tutorial, the same function is used to plot microlensing, splines, etc. Here is a link to the full documentation for this function: :py:func:`pycs.gen.lc.display` (have a look).
+This function has lots of options, it can be used for many tasks. As we will see in this tutorial, the same function is used to plot microlensing, splines, etc. Here is a link to the full documentation for this function: :py:func:`pycs3.gen.lc_func.display` (have a look).
 For now, just as an example, try these options ::
 
-	pycs.gen.lc.display(lcs, title=r"$\mathrm{SDSS\,J1234-5678}$", nicefont=True, showlogo=True)
+	pycs3.gen.lc.display(lcs, title=r"$\mathrm{SDSS\,J1234-5678}$", nicefont=True, showlogo=True)
 	# The option nicefont is your friend if you like serif fonts
 	# (I don't, except for the title in LaTeX which is always in serif)
 
@@ -141,17 +141,6 @@ For now, just as an example, try these options ::
 	:align: center
 
 
-And another example:
-::
-
-	pycs.gen.lc.display(lcs, showdates=True, colourprop=["fwhm", "FWHM [arcsec]", 1.0, 2.2])
-	# For this to work, your points must have the property "fwhm", which should be the
-	# case if they come from cosmouline/lcmanip, and if you imported these properties.
-
-
-.. image:: ../_static/tutorial/property_colour.png
-	:align: center
-
 
 Manually shifting lightcurves in time, magnitude, and flux
 ----------------------------------------------------------
@@ -159,9 +148,9 @@ Manually shifting lightcurves in time, magnitude, and flux
 
 We have 3 elementary methods to do this :
 
-* :py:meth:`pycs.gen.lc.lightcurve.shifttime`
-* :py:meth:`pycs.gen.lc.lightcurve.shiftmag`
-* :py:meth:`pycs.gen.lc.lightcurve.shiftflux`
+* :py:meth:`pycs3.gen.lc.lightcurve.shifttime`
+* :py:meth:`pycs3.gen.lc.lightcurve.shiftmag`
+* :py:meth:`pycs3.gen.lc.lightcurve.shiftflux`
 
 ::
 	
@@ -187,13 +176,13 @@ Displaying info about lightcurves
 
 ::
 	
-	print l # Short oneliner; corresponds to str(l), that is also used in plot legends, etc. 
+	print(l) # Short oneliner; corresponds to str(l), that is also used in plot legends, etc.
 
 The ouput might come with a paranthesis containing 3 numbers, like for instance ``[Mercator/A](10.000,-0.500,1200)``. This would mean that the curve is shifted by 10 days in time, -0.5 mag in magnitude, and 1200 counts in flux.
 
 ::
 	
-	print l.longinfo()
+	print(l.longinfo())
 
 
 Gives you a wider picture. Try it !
@@ -202,8 +191,8 @@ To display time delays between some curves, try this :
 
 ::
 	
-	print pycs.gen.lc.getnicetimedelays(lcs, separator = " | ")
-	print pycs.gen.lc.getnicetimedelays(lcs, separator = " | ", sorted = True) # Sorts according to object names
+	print(pycs3.gen.lc.getnicetimedelays(lcs, separator = " | "))
+	print(pycs3.gen.lc.getnicetimedelays(lcs, separator = " | ", sorted = True)) # Sorts according to object names
 	
 
 About "properties"
@@ -215,17 +204,17 @@ Properties are stored as entries of dictionnaries in a list as long as your curv
 
 ::
 	
-	print l.properties   # That's a long list of dicts.
+	print (l.properties)   # That's a long list of dicts.
 	
 	l.properties[0]["fwhm"] = "10.0"   # Tweak fwhm of first point
 	
-	for point in lcs.properties:
+	for point in l.properties:
 		point["w"] =  ... # Add your own properties !
 
 
 .. note:: To keep all the import/export functionality, store your custom properties as strings. Indeed all the stuff like "fwhm" and "ellipticity" is stored as strings as well.
 
-.. warning:: Some functions of ``pycs`` might get significantly slower when you use properties. For instance stuff that requires merging of curves.
+.. warning:: Some functions of ``pycs3`` might get significantly slower when you use properties. For instance stuff that requires merging of curves.
 
 
 
@@ -233,7 +222,7 @@ Properties are stored as entries of dictionnaries in a list as long as your curv
 Cutting seasons
 ---------------
 
-The module :py:mod:`pycs.gen.sea` contains a class and functions to handle seasons.
+The module :py:mod:`pycs3.gen.sea` contains a class and functions to handle seasons.
 You can define seasons "by hand", but usually for cosmograil curves the default automatic season detection is fine.
 
 The concept of seaons can be important when defining microlensing representations.
@@ -242,16 +231,16 @@ Seasons are also handy to cut curves. There is a very easy function to do just t
 ::
 
 	lcs = [lca, lcb] # That's a list of long lightcurves...
-	pycs.gen.lc.display(lcs)
+	pycs3.gen.lc_func.display(lcs)
 	
-	pycs.gen.sea.easycut(lcs, keep=(1, 2))
+	pycs3.gen.sea.easycut(lcs, keep=[1, 2])
 	
 	# Each lightcurve is processed individually. Check your results :
 
-	pycs.gen.lc.display(lcs)
+	pycs3.gen.lc_func.display(lcs)
 	
 
-If you are not happy with how the seasons where identified, try to add the option ``seasongap = 100`` to your call of :py:func:`pycs.gen.sea.easycut`.
+If you are not happy with how the seasons where identified, try to add the option ``seasongap = 100`` to your call of :py:func:`pycs3.gen.sea.easycut`.
 This is the number of days without points that start a new season. Default is 60.
 
 
@@ -268,7 +257,7 @@ Copying lightcurves
 	testl.plotcolour = "blue"
 	testl.shiftflux(5000)
 	
-	pycs.gen.lc.display([l, testl])
+	pycs3.gen.lc_func.display([l, testl])
 	
 
 
@@ -277,7 +266,7 @@ Copying lightcurves
 Masking points
 --------------
 
-Each lightcurve object has a mask. This is simply a boolean numpy array of the same length as the curve. That's convenient, as such boolen arrays can be used to index normal numpy arrays. In the mask array, ``True`` means that the point is ok, ``False`` means that the point is masked.
+Each lightcurve object has a mask. This is simply a boolean numpy array of the same length as the curve. That's convenient, as such boolean arrays can be used to index normal numpy arrays. In the mask array, ``True`` means that the point is ok, ``False`` means that the point is masked.
 Some demo of the flexibility :
 
 ::
@@ -285,7 +274,7 @@ Some demo of the flexibility :
 	l.mask[17] = False # Manual way of masking a point
 	l.mask[17:22] = False # Yes, it's a numpy array after all
 	
-	print l.jds[l.mask] # This gives you only the non-masked raw jds
+	print(l.jds[l.mask]) # This gives you only the non-masked raw jds
  
  	l.mask = l.magerrs < 0.1 # Sets the mask to be False for all points with large errorbars.
 	# Note that this would also set the mask of all other points to True.
@@ -295,29 +284,24 @@ Some demo of the flexibility :
 
 Some methods of lightcurve objects related to masks :
 
-* :py:meth:`pycs.gen.lc.lightcurve.hasmask`
-* :py:meth:`pycs.gen.lc.lightcurve.clearmask`
-* :py:meth:`pycs.gen.lc.lightcurve.cutmask`
-* :py:meth:`pycs.gen.lc.lightcurve.maskskiplist`
-* :py:meth:`pycs.gen.lc.lightcurve.maskinfo`
+* :py:meth:`pycs3.gen.lc.lightcurve.hasmask`
+* :py:meth:`pycs3.gen.lc.lightcurve.clearmask`
+* :py:meth:`pycs3.gen.lc.lightcurve.cutmask`
+* :py:meth:`pycs3.gen.lc.lightcurve.maskskiplist`
+* :py:meth:`pycs3.gen.lc.lightcurve.maskinfo`
 
 
 Buiding a mask "by hand"
 """"""""""""""""""""""""
 
-The best way to do this is to write a "skiplist" of the dates that you want to mask (this is much better than just specifying array indexes, as your skiplist will stay valid even if you merge/cut/tweak your curves). To help you writing such a list, use the function :py:func:`pycs.gen.lc.setjdlabels`. What are lables ? Labels are a bit like properties (see below), you can use them to attach any string to data points, and show them on plots. This particular functions puts the observation epochs as label to each point. 
+The best way to do this is to write a "skiplist" of the dates that you want to mask (this is much better than just specifying array indexes, as your skiplist will stay valid even if you merge/cut/tweak your curves). To help you writing such a list, use the function :py:meth:`pycs3.gen.lc.LightCurve.setjdlabels`. What are labels ? Labels are a bit like properties (see below), you can use them to attach any string to data points, and show them on plots. This particular functions puts the observation epochs as label to each point.
 ::
 
 	for l in lcs:
 		l.setjdlabels() # Sets the approximate epoch as label of each point.
 		l.showlabels = True # Show the labels on plots
-	pycs.gen.lc.display(lcs)
+	pycs3.gen.lc_func.display(lcs)
 
-
-The resulting plot will look like this (note that some points are already masked here) :
-
-.. image:: ../_static/tutorial/setjdlabels.png
-	:align: center
 
 Now you can write your skiplist; it's just a plain textfile with one line per data point to mask.
 Any text following the MHJD is considered as a comment. One decimal is sufficient.
@@ -326,7 +310,7 @@ Any text following the MHJD is considered as a comment. One decimal is sufficien
 	# Some comment
 	55111.3		Bad night
 
-To apply this list to mask points of a curve, use the method :py:meth:`pycs.gen.lc.lightcurve.maskskiplist` (click for details).
+To apply this list to mask points of a curve, use the method :py:meth:`pycs3.gen.lc.LightCurve.maskskiplist` (click for details).
 Of course you can use one file to set the same mask on A and B, or define separate masks.
 ::
 	
@@ -353,20 +337,20 @@ When you import lightcurves from several telescopes, you might want to *merge* t
 
 .. note:: The operation described here is about merging any two lightcurve objects *as they are*. It does not involve optimizing any shifts between the curves so that they *match*. This is described later, in section :ref:`matchtels`. For now let's assume that you have for instance shifted your curves by hand (in magnitude and flux, not in time, usually...) so that they match.
 
-There is a low-level method to merge one lightcurve into another one : :py:meth:`pycs.gen.lc.lightcurve.merge` :
+There is a low-level method to merge one lightcurve into another one : :py:meth:`pycs3.gen.lc.LightCurve.merge` :
 ::
 
 	# l and otherl are 2 lightcurve objects.
 	
 	otherl.shiftmag(0.23)
 	
-	pycs.gen.lc.display([l, otherl])
+	pycs3.gen.lc_func.display([l, otherl])
 	
 	l.merge(otherl)
 	
-	print l.longinfo()
+	print(l.longinfo())
 	
-	pycs.gen.lc.display([l])
+	pycs3.gen.lc_func.display([l])
 	
 
 .. note:: Any lightcurve, at any time, has to be sorted according to its mhjds. We require that the jds
@@ -374,13 +358,13 @@ There is a low-level method to merge one lightcurve into another one : :py:meth:
 
 .. warning:: Any shifts of ``l`` or ``otherl`` will be *applied* to the data arrays, i.e. the resulting curve is no longer aware of previous shifts.
 
-Often we want to merge a *list* of lightcurve from telescope 1 with a corresponding list of curves from telescope 2 and so on. :py:func:`pycs.gen.mrg.merge` is a wrapper to do exactly this.
+Often we want to merge a *list* of lightcurve from telescope 1 with a corresponding list of curves from telescope 2 and so on. :py:func:`pycs3.gen.mrg.merge` is a wrapper to do exactly this.
 ::
 	
 	# You have imported two lists of lightcurves : eulerlcs and mercatorlcs
 	# Both lists contain n corresponding lightcurve objects, in the same order (image A, B, C and D).
 	
-	lcs = pycs.gen.mrg.merge([eulerlcs, mercatorlcs])
+	lcs = pycs3.gen.mrg.merge([eulerlcs, mercatorlcs])
 
 
 
@@ -395,10 +379,10 @@ You will do this all the time, mostly with lightcurve objects. It allows to spli
 	# Say you have some lightcurves (perhaps just imported, or already heavily processed) :
 	lcs = [lca, lcb, lcc, lcd]
 	
-	pycs.gen.util.writepickle(lcs, "data/lcs_v2_merged.pkl") # Choose your own file name ...
+	pycs3.gen.util.writepickle(lcs, "data/lcs_v2_merged.pkl") # Choose your own file name ...
 	
 	# And "later", in the next script :
-	lcs = pycs.gen.util.readpickle("data/lcs_v2_merged.pkl")
+	lcs = pycs3.gen.util.readpickle("data/lcs_v2_merged.pkl")
 
 
 If you don't like these "``lcs``" lists, you are free to use other "containers" of your choice, like for instance dicts. Or just directly store one single lightcurve object into your pkl file.
@@ -406,39 +390,39 @@ You can of course also store other stuff using these same functions. If working 
 
 ::
 	
-	pycs.gen.util.writepickle((lcs, spline), "opt_test4.pkl")
+	pycs3.gen.util.writepickle((lcs, spline), "opt_test4.pkl")
 
 	# And later ...
 	
-	(lcs, spline) = pycs.gen.util.readpickle("opt_test4.pkl")
+	(lcs, spline) = pycs3.gen.util.readpickle("opt_test4.pkl")
 
 
-.. note:: Avoid relying on such pickle files to store actual data for eternity. Indeed the definitions of e.g. the lightcurve class might change, and this would make your pickles incompatible.
+.. note:: Avoid relying on such pickle files to store actual data for eternity. Indeed the definitions of e.g. the LightCurve class might change, and this would make your pickles incompatible.
 
 
 Writing lightcurves into rdb/ascii files
 ----------------------------------------
 
 We come to the last point of this first chapter : what to do if your colleague doesn't accept pickle files ?
-It is easy to write lightcurve objects into plain rdb files, using :py:meth:`pycs.gen.lc.lightcurve.rdbexport` (click for details). This method nicely works together with :py:func:`pycs.gen.lc.rdbimport`, in the sense that "written" lightcurves can then be "read" again :
+It is easy to write lightcurve objects into plain rdb files, using :py:meth:`pycs3.gen.lc.LightCurve.rdbexport` (click for details). This method nicely works together with :py:func:`pycs3.gen.lc_func.rdbimport`, in the sense that "written" lightcurves can then be "read" again :
 ::
 	
 	l.rdbexport(filename="test.txt", properties=["fwhm", "ellipticity"]) # l is a lightcurve object.
 	
-	imported_l = pycs.gen.lc.rdbimport(filepath="test.txt", telescopename="Test", object="A", plotcolour="blue")
+	imported_l = pycs3.gen.lc_func.rdbimport(filepath="test.txt", telescopename="Test", object="A", plotcolour="blue")
 
-	pycs.gen.lc.display([l, imported_l])
+	pycs3.gen.lc_func.display([l, imported_l])
 
 
 Both of these functions can handle properties. If you want to store properties in your exported file, you will have to specify them as optional arguments, as shown.
 To see what properties are available, remember that you can use
 ::
 	
-	print l.longinfo()
+	print (l.longinfo())
 	
 
-.. note:: As suggested by these functions, you should always write one file per lightcurve, when working with pycs. This is indeed natural, as you might have deleted or masked different points of a lightcurve. PyCS can perfectly process lightcurves of different lengths ! But on some occasions, you may want to to write several lightcurves into one single flat ascii file. For instance to submit to CDS... See function :py:func:`pycs.gen.util.multilcsexport`.
+.. note:: As suggested by these functions, you should always write one file per lightcurve, when working with PyCS3. This is indeed natural, as you might have deleted or masked different points of a lightcurve. PyCS3 can perfectly process lightcurves of different lengths ! But on some occasions, you may want to to write several lightcurves into one single flat ascii file. For instance to submit to CDS... See function :py:func:`pycs3.gen.util.multilcsexport`.
 
-As you probably expect, when writing a lightcurve object into an ASCII file, all "shifts" (and also microlensing models which we will see later) get applied to the datapoints before these are written to disk. Of course, when you then read the lightcurve again from this ASCII file, PyCS will no longer be aware that your lightcurve has previously been shifted.
+As you probably expect, when writing a lightcurve object into an ASCII file, all "shifts" (and also microlensing models which we will see later) get applied to the datapoints before these are written to disk. Of course, when you then read the lightcurve again from this ASCII file, PyCS3 will no longer be aware that your lightcurve has previously been shifted.
 
 
