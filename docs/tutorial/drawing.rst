@@ -246,7 +246,7 @@ Define a function to tweak the ml, as above (for instance in ``myopt.py``) :
 ::
 
 	def tweakml(lcs):
-        return pycs3.sim.twk.tweakml(lcs, beta=-2.0, sigma=0.03, fmin=1/300.0, fmax=None, psplot=False)
+	    return pycs3.sim.twk.tweakml(lcs, beta=-2.0, sigma=0.03, fmin=1/300.0, fmax=None, psplot=False)
 
 .. warning:: You will probably want to add some spline microlensing to **all** your lcs before calling ``multidraw`` or ``draw``, as they will tweak the microlensing only of those curves that have microlensing !
 
