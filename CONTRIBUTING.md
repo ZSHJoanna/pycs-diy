@@ -3,7 +3,7 @@
 
 You can contribute to PyCS3 in many ways and this is very appreciated. 
 
-##Report bugs 
+## Report bugs 
 
 Please use GitLab issues to report bug.If you report a bug, please include:
 
