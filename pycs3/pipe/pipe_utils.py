@@ -79,7 +79,7 @@ def generate_regdiffparamskw(pointdensity, covkernel, pow, errscale):
         for pts in pointdensity:
             for p in pow:
                 for e in errscale:
-                    out_kw.append("_pd%i_ck%s_pow%.1f_errsc%i_" % (
+                    out_kw.append("_pd%.1f_ck%s_pow%.1f_errsc%i_" % (
                         pts, c, p, e))
     return out_kw
 
@@ -96,10 +96,10 @@ def read_preselected_regdiffparamskw(file):
         dic = json.load(f)
         for d in dic:
             if d['covkernel'] == 'RBF':  # no pow parameter, RBF correspond to Mattern with pow --> inf
-                out_kw.append("_pd%i_ck%s_errsc%i_" % (
+                out_kw.append("_pd%.1f_ck%s_errsc%i_" % (
                 d['pointdensity'], d['covkernel'], d['errscale']))
             else:
-                out_kw.append("_pd%i_ck%s_pow%.1f_errsc%i_" % (
+                out_kw.append("_pd%.1f_ck%s_pow%.1f_errsc%i_" % (
                 d['pointdensity'], d['covkernel'], d['pow'], d['errscale']))
     return out_kw
 
