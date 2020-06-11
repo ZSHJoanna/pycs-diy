@@ -11,10 +11,6 @@ import numpy as np
 import pycs3.gen.util as ut
 
 
-def normal(x, mu, sigma):
-    return (1.0 / np.sqrt(2.0 * np.pi * sigma * sigma)) * np.exp(- (x - mu) ** 2 / (2 * sigma * sigma))
-
-
 def sf(l, binsize=200, ssf=False):
     """
     Structure function of a lightcurve
@@ -147,13 +143,9 @@ def compute_chi2(rls, kn, knml):
     chi2 = 0.0
     for rl in rls:
         chi2_c = np.mean((rl.getmags() ** 2) / rl.getmagerrs() ** 2)
-        print("Chi2 for light curve %s : %2.2f" % (rl.object, chi2_c))
         chi2 += chi2_c
 
-    # chi2 =chi2 / count
     chi2_red = chi2 / compute_dof_spline(rls, kn, knml)
-    print("DoF :", compute_dof_spline(rls, kn, knml))
-    print("Final chi2 reduced: %2.5f" % chi2_red)
     return chi2_red
 
 

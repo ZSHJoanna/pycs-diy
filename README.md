@@ -4,7 +4,7 @@
 [![Documentation Status](https://vbonvin.gitlab.io/PyCS3/doc_status.svg)](https://vbonvin.gitlab.io/PyCS3/)
 [![pipeline status](https://gitlab.com/vbonvin/PyCS3/badges/master/pipeline.svg)](https://gitlab.com/vbonvin/PyCS3/commits/master)
 [![coverage report](https://gitlab.com/vbonvin/PyCS3/badges/master/coverage.svg)](https://vbonvin.gitlab.io/PyCS3/coverage/)
-![python3.7](https://img.shields.io/badge/python-3.7-blue.svg)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 
@@ -45,10 +45,6 @@ Example notebooks are located in the [notebook](https://gitlab.com/vbonvin/PyCS3
 If you use this code, please cite [the papers](https://vbonvin.gitlab.io/PyCS3/citing.html) indicated in the documentation.
 
 ## License
-
-Copyright (©) 2011-2016 EPFL (Ecole Polytechnique Fédérale de Lausanne)
-Laboratory of Astrophysics (LASTRO)
-
 PyCS3 is a free software ; you can redistribute it and/or modify it under the terms of the 
 GNU General Public License as published by the Free Software Foundation ; either version 3 
 of the License, or (at your option) any later version.

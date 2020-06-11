@@ -7,6 +7,7 @@ import pycs3.gen.mrg as mrg
 import pycs3.gen.stat as stat
 import pycs3.gen.lc_func as lc_func
 import pycs3.gen.polyml
+import pycs3.gen.splml
 from tests import utils
 from numpy.testing import assert_almost_equal
 
@@ -35,6 +36,7 @@ class TestStat(unittest.TestCase):
         ]
         mrg.colourise(self.lcs_ECAM)
         mrg.colourise(self.lcs_WFI)
+        self.lcs, self.spline = pycs3.gen.util.readpickle(os.path.join(self.path, "data", "optcurves.pkl"))
 
     def test_structure_function(self):
         stat.sf(self.lcs_WFI[0])
@@ -63,6 +65,14 @@ class TestStat(unittest.TestCase):
         for i,r in enumerate(resistat) :
             for key in r.keys():
                 assert_almost_equal(r[key], resistat_th[i][key], decimal=4)
+
+        stats = pycs3.gen.stat.runstest(rls[0].mags, autolevel=True, verbose=True)
+
+    def test_dof(self):
+        rls = pycs3.gen.stat.subtract(self.lcs, self.spline)
+        chi2_ml_dof = pycs3.gen.stat.compute_chi2(rls, 20, 200)
+        chi2_noml_dof = pycs3.gen.stat.compute_chi2(rls, 20, 0)
+        print(chi2_ml_dof, chi2_noml_dof)
 
 
 if __name__ == '__main__':
