@@ -105,7 +105,7 @@ def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=
     minjd = np.round(jds[0] - pad)
     maxjd = np.round(jds[-1] + pad)
 
-    npts = int(maxjd - minjd) * pd
+    npts = int(int(maxjd - minjd) * pd)
 
     rsjds = np.linspace(minjd, maxjd, npts)  # rs for regularly sampled
 

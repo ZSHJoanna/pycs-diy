@@ -1,4 +1,4 @@
-[{"name":"Set 1", "pow": 1.5, "errscale": 1.0, "covkernel": "matern", "pointdensity": 2},
-{"name":"Set 2", "pow": 2.5, "errscale": 1.0, "covkernel": "matern",  "pointdensity": 2},
- {"name":"Set 3", "pow": 1.5, "errscale": 1.0, "covkernel": "RBF", "pointdensity": 2},
- {"name":"Set 4", "pow": 1.5, "errscale": 1.0, "covkernel": "RatQuad", "pointdensity": 2}]
+[{"name":"Set 1", "pow": 1.5, "errscale": 1.0, "covkernel": "matern", "pointdensity": 1},
+{"name":"Set 2", "pow": 2.5, "errscale": 1.0, "covkernel": "matern",  "pointdensity": 1},
+ {"name":"Set 3", "pow": 1.5, "errscale": 1.0, "covkernel": "RBF", "pointdensity": 1},
+ {"name":"Set 4", "pow": 1.5, "errscale": 1.0, "covkernel": "RatQuad", "pointdensity": 1}]

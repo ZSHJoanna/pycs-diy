@@ -34,7 +34,7 @@ def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, er
         kernel =  ConstantKernel() + amp*RBF(length_scale=scale) + WhiteKernel()
     elif covkernel == "RatQuad": #alpha is the scale mixture parameter
         kernel = ConstantKernel() + amp*RationalQuadratic(length_scale=scale) + WhiteKernel()
-    else:
+    else: # pragma: no cover
         raise RuntimeError("I do not know the covariance kernel you gave me ! %s" % covkernel)
     obs_v *= errscale
 

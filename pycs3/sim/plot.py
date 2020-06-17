@@ -995,7 +995,7 @@ def measvstrue(rrlist, r=10.0, nbins=10, plotpoints=True, alphapoints=1.0, plotr
     if title is not None:
         plt.figtext(x=xtitle, y=ytitle, s=title, horizontalalignment="center", color="black", fontsize=titlesize)
 
-    if filename is None:
+    if filename is None: # pragma: no cover
         plt.show()
     else:
         plt.savefig(filename)

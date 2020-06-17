@@ -94,7 +94,7 @@ class SeasonFct:
         """
 
         # Some basic checks :
-        if len(params) != len(mask):
+        if len(params) != len(mask): # pragma: no cover
             raise RuntimeError("I want params and mask to be of the same length !")
 
         self.season = season
@@ -145,7 +145,7 @@ class SeasonFct:
         """
         if len(p) == len(self.params):
             self.params = p  # no further testing ...
-        else:
+        else:# pragma: no cover
             raise RuntimeError("Wrong number of parameters !")
 
     def getparams(self):
@@ -159,7 +159,7 @@ class SeasonFct:
         """
         if len(p) == self.nfree:
             self.params[self.mask] = p  # no further testing ...
-        else:
+        else:# pragma: no cover
             raise RuntimeError("Wrong number of free parameters !")
 
     def getfreeparams(self):
@@ -293,7 +293,7 @@ class Microlensing:
                 else:
                     sfct.setfreeparams(p[startindex: stopindex])
                 startindex += sfct.nfree
-        else:
+        else: # pragma: no cover
             raise RuntimeError("Wrong number of free parameters !")
 
     def reset(self):
@@ -373,7 +373,7 @@ def multisetfreeparams(lclist, params):
                 curve.ml.setfreeparams(params[startindex: startindex + curve.ml.nfree])
             startindex += curve.ml.nfree
 
-    if startindex != len(params):
+    if startindex != len(params): # pragma: no cover
         raise RuntimeError("You provided too many params !")
 
 
@@ -392,7 +392,7 @@ def factory(seasons, nparams):
 
     """
 
-    if len(nparams) != len(seasons):
+    if len(nparams) != len(seasons): # pragma: no cover
         raise RuntimeError("Give as many nparams as they are seasons !")
 
     mllist = []

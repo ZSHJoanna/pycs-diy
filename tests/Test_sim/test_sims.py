@@ -65,6 +65,9 @@ class TestSims(unittest.TestCase):
         pycs3.sim.plot.measvstrue(simresults, errorrange=3.5, r=5.0, nbins=10, binclip=True, binclipr=20.0,
                                   plotpoints=True, filename=os.path.join(self.outpath, "fig_measvstrue.png"),
                                   dataout=True, outdir=self.outpath)
+        pycs3.sim.plot.measvstrue(simresults, errorrange=3.5, r=5.0, nbins=10, binclip=True, binclipr=20.0,
+                                  plotpoints=True, filename=os.path.join(self.outpath, "fig_measvstrue2.png"),
+                                  dataout=True, outdir=self.outpath, tweakeddisplay=True, blindness=True)
         pycs3.sim.plot.newcovplot(simresults, filepath=self.outpath, showplots=False, printcovmat=True)
         pycs3.sim.plot.newcovplot(simresults, filepath=self.outpath, showplots=False, printcovmat=True, detailplots=True, method='depbin',
                                   printdetails=False)
@@ -86,6 +89,8 @@ class TestSims(unittest.TestCase):
         lc_func.display(fakelcs, [], filename=os.path.join(self.outpath, 'fakelcs2.png'))
         fakelcs = pycs3.sim.draw.draw(self.lcs, self.spline, shotnoise='sigma', keepshifts= True, keeporiginalml=True, keeptweakedml=False)
         lc_func.display(fakelcs, [], filename=os.path.join(self.outpath, 'fakelcs3.png'))
+        fakelcs = pycs3.sim.draw.draw(self.lcs, self.spline, shotnoise='mcres')
+        lc_func.display(fakelcs, [], filename=os.path.join(self.outpath, 'fakelcs4.png'))
 
     def clear_sims(self):
         if os.path.exists(os.path.join(self.outpath, "sims_mocks_opt_spl")):

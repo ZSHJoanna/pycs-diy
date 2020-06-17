@@ -46,6 +46,10 @@ pycs
         --------------
         - removing support of Lengendre polynomial for microlensing.
 
+        splml.py
+        --------
+        - removing targetlc argument in addml() function.
+
     regdiff
     ---
         scikitgp.py

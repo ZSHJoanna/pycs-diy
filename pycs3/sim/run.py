@@ -45,7 +45,7 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
         for i, lcs in enumerate(lcslist):
             try:
                 optout = optfct(lcs, **kwargs_vec[i])
-            except Exception as e:
+            except Exception as e: # pragma: no cover
                 print("WARNING : I have a problem with the curve number %i." % i)
                 print(e)
                 sucess_dic['failed_id'].append(i)
@@ -55,7 +55,7 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
                 optfct_outs.append(optout)
 
 
-    else:
+    else: # pragma: no cover # Multithreading version. Cannot be tested on CI server.
         # auxilliary function for using map_async() with arguments and keyword arguments :
         def optfct_aux(argument):
             arg, id, kwargs = argument
@@ -126,13 +126,13 @@ class RunResults:
         """
         if qs is not None:
             self.qs = qs
-            if qs.shape[0] != len(lcslist):
+            if qs.shape[0] != len(lcslist): # pragma: no cover
                 raise RuntimeError("These qs don't have the right length !")
         else:
             # We put zeros...
             self.qs = np.zeros(len(lcslist))
 
-        if len(lcslist) == 0:
+        if len(lcslist) == 0:# pragma: no cover
             raise RuntimeError("Should this happen ?")
 
         self.tsarray = np.vstack(np.array([l.timeshift for l in lcs]) for lcs in lcslist)
@@ -142,7 +142,7 @@ class RunResults:
 
         # We check the ordering of the lcs in lcslist
         objectstringsasset = set(["/".join([l.object for l in lcs]) for lcs in lcslist])
-        if len(objectstringsasset) != 1:
+        if len(objectstringsasset) != 1:# pragma: no cover
             raise RuntimeError("Ouch, your lcs in lcslist are not identical/ordered !")
 
         self.labels = [l.object for l in lcslist[0]]
@@ -177,9 +177,9 @@ class RunResults:
 
     def check(self):
 
-        if self.qs.shape[0] != len(self):
+        if self.qs.shape[0] != len(self):# pragma: no cover
             raise RuntimeError("qs length error")
-        if self.tsarray.shape != self.truetsarray.shape:
+        if self.tsarray.shape != self.truetsarray.shape:# pragma: no cover
             raise RuntimeError("tsarray shape error")
 
     def applymask(self, mask):
@@ -253,7 +253,7 @@ def joinresults(rrlist):
     Give me a list of runresults objects, I join those into a single one an return the latter.
     """
 
-    if len(rrlist) == 0:
+    if len(rrlist) == 0:# pragma: no cover
         raise RuntimeError("Your rrlist is empty !")
 
     joined = rrlist[0].copy()  # Just to get an object, with labels from the first rr.
@@ -278,10 +278,10 @@ def collect(directory="./test", plotcolour="#008800", name=None):
     and returns the joined runresults.
 
     """
-    if not os.path.isdir(directory):
+    if not os.path.isdir(directory):# pragma: no cover
         raise RuntimeError("I cannot find the directory %s" % directory)
     pklfiles = sorted(glob(os.path.join(directory, "*_runresults.pkl")))
-    if len(pklfiles) == 0:
+    if len(pklfiles) == 0:# pragma: no cover
         raise RuntimeError("I couldn't find pkl files in directory %s" % directory)
     print("Reading %i runresult pickles..." % (len(pklfiles)))
     rrlist = [pycs3.gen.util.readpickle(pklfile, verbose=False) for pklfile in pklfiles]

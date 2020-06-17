@@ -169,5 +169,5 @@ def psplot(pslist, nbins=0, filename=None, figsize=(12, 8), showlegend=True):
 
     if filename:
         plt.savefig(filename)
-    else:
+    else: # pragma: no cover
         plt.show()

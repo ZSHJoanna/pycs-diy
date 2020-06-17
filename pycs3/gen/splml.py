@@ -54,7 +54,7 @@ class SplineML:
         (i.e. same "relative" jds)
         """
         if not np.all(np.fabs(self.spline.datapoints.jds[self.spline.datapoints.mask] - (
-                lightcurve.jds - lightcurve.jds[0])) < 0.001):
+                lightcurve.jds - lightcurve.jds[0])) < 0.001): # pragma: no cover
             raise RuntimeError("Ouch, this lightcurve is no longer compatible with its SplineML datapoints !")
 
     def settargetmags(self, lightcurve, sourcespline):
@@ -164,7 +164,7 @@ class SplineML:
 
         return {"n": n, "jds": smoothtime, "ml": smoothml, "refmag": refmag, "knotjds": knotjds, "knotmags": knotmags}
 
-def addtolc(lc, targetlc=None, n=5, knotstep=None, stab=True, stabgap=30.0, stabstep=3.0, stabmagerr=1.0,
+def addtolc(lc, n=5, knotstep=None, stab=True, stabgap=30.0, stabstep=3.0, stabmagerr=1.0,
             bokeps=10.0, boktests=10, bokwindow=None):
     """
     Adds a SplineML to the lightcurve.
@@ -189,17 +189,8 @@ def addtolc(lc, targetlc=None, n=5, knotstep=None, stab=True, stabgap=30.0, stab
     jdoffset = lcjds[0]  # We can do this, as jds is sorted.
     lcjds -= jdoffset  # so the first true datapoint of a ML spline is at 0.0
 
-    if targetlc is None:
-        dpmags = np.zeros(len(lcjds))
-        dpmagerrs = np.ones(len(lcjds))
-
-    else:
-        targetml = targetlc.ml
-        assert targetml.mltype == "spline"
-        dpmags = targetml.spline.eval(lcjds)
-        dpmags -= np.mean(dpmags)
-        dpmagerrs = np.ones(len(lcjds)) * np.median(
-            targetml.spline.datapoints.magerrs)  # This is a bit arbitrary...but seems we don't really care
+    dpmags = np.zeros(len(lcjds))
+    dpmagerrs = np.ones(len(lcjds))
 
     dp = DataPoints(lcjds, dpmags, dpmagerrs, splitup=True, sort=True,
                     stab=stab, stabext=0.0, stabgap=stabgap, stabstep=stabstep, stabmagerr=stabmagerr)
@@ -214,6 +205,3 @@ def addtolc(lc, targetlc=None, n=5, knotstep=None, stab=True, stabgap=30.0, stab
     # And we add the SplineML to our curve :
     lc.addml(SplineML(s))
 
-    # Update the knots coeffs if you copied the ml from targetlc
-    if targetlc is not None:
-        lc.ml.spline.optc()

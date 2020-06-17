@@ -330,7 +330,7 @@ def write_delays(group, write_dir=None, mode="GLEE"):
             # assert constant step
             try:
                 assert len(list(set(["%.3f" % (xs[i + 1] - xs[i]) for i in range(len(xs) - 1)]))) == 1
-            except AssertionError:
+            except AssertionError: # pragma: no cover
                 print(list(set(["%.3f" % (xs[i + 1] - xs[i]) for i in range(len(xs) - 1)])))
                 raise AssertionError(
                     "The delay values step is not constant. This might be due to a rounding error: either change the digit precision of your delays, or use a different binning when linearizing.")

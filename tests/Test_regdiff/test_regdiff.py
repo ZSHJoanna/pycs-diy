@@ -1,6 +1,7 @@
 import os
 import pytest
 import unittest
+import time
 from tests import TEST_PATH
 import pycs3.gen.mrg as mrg
 import pycs3.gen.lc_func as lc_func
@@ -60,6 +61,17 @@ class TestRegdiff(unittest.TestCase):
         delays_th = [-4.37, -20.23, -69.98, -15.86, -65.62, -49.75]
         assert_allclose(delays, delays_th, atol=0.5)
         assert error_fct <= 0.015
+
+    def test_benchmark(self):
+        lc_copy = [lc.copy() for lc in self.lcs]
+        lc_func.settimeshifts(lc_copy, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess
+        regdiff_param = {'pd': 1, 'covkernel': 'matern', 'pow': 1.5, 'amp': 1., 'scale': 200., 'errscale': 1.,
+                         'verbose': True, 'method': "weights"}
+
+        start = time.time()
+        myrslcs, error_fct = utils.regdiff(lc_copy, **regdiff_param)  # good set for mattern
+        exec_time = time.time() - start
+        print("Took %2.6f seconds for pd = %2.1f"%(exec_time, regdiff_param['pd'])) #takes 2.07 seconds on my laptop
 
 
 if __name__ == '__main__':

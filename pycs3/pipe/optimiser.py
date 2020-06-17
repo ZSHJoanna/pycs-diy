@@ -18,17 +18,50 @@ import pycs3.spl.topopt
 
 
 class Optimiser(object):
+    """
+    Class to optimise the parameters of the generative noise model. This currently works only for the 'PS_from_residuals'
+    generative noise model. For now, we removed the PSOOptimiser and MCMCOptimiser children class because they were
+    they were very unefficient. We keep only the DicOptimiser children class.
+    """
+
     def __init__(self, lcs, fit_vector, spline, attachml_function, attachml_param, knotstep=None,
                  savedirectory="./", recompute_spline=True, max_core=None, theta_init=None,
-                 n_curve_stat=32, shotnoise="magerrs", tweakml_type='PS_from_residuals', display=False, verbose=False,
-                 tweakml_name='', correction_PS_residuals=True, tolerance=0.75):
+                 n_curve_stat=32, shotnoise=None, tweakml_type='PS_from_residuals', display=False, verbose=False,
+                 tweakml_name='', correction_PS_residuals=True, tolerance=0.75, debug=False):
 
-        if len(fit_vector) != len(lcs): # pragma: no cover
+        """
+
+        :param lcs: list of LightCurves
+        :param fit_vector: list, target vector containing the target value of zruns and sigma for each LightCurve
+        :param spline: Spline, intrinsic Spline corresponding to your lcs
+        :param attachml_function: function, can be pycs3.gen.splml.addtolc() or pycs3.gen.polyml.addtolc()
+        :param attachml_param: float, argument to be passed to the attachml_function. It is a float for the moment as
+        atachml functions typically requires only one argument. This is typically the mlknostep of your microlensing model.
+        :param knotstep: float, knotstep of the intrinsic spline
+        :param savedirectory: string, name of the directory to save the output
+        :param recompute_spline: boolean, this should stay to True unless you know what you are doing
+        :param max_core: integer, number of cores used for the computation if using multhreading.
+        :param theta_init: list, starting point of the optimisation
+        :param n_curve_stat: float, number of trial curves to compute the statistics
+        :param shotnoise: string, shotnoise type, should be left to None, unless you know what you are doing.
+        :param tweakml_type: srting, only 'PS_from_residuals' implemented so far
+        :param display: boolean, to display the figure
+        :param verbose: boolean, Verbosity
+        :param tweakml_name: string, Name of the tweakml function, in case you try several type.
+        :param correction_PS_residuals: boolean, to add an additionnal correction for the scaling of the Power Spectrum,
+        should be set to True
+        :param tolerance: float, tolerance in unit of sigma. I stop the optimisation if I found a set of parameters
+        matching the data within the tolerance limit.
+        :param debug: boolean, debug mode, not using multithreading
+        """
+
+        if len(fit_vector) != len(lcs):  # pragma: no cover
             raise RuntimeError("Your target vector and list of light curves must have the same size !")
-        if recompute_spline is True and knotstep is None: # pragma: no cover
-            raise  RuntimeError(" I can't recompute spline if you don't give me the knotstep ! ")
-        if tweakml_type != 'colored_noise' and tweakml_type != 'PS_from_residuals': # pragma: no cover
-            raise RuntimeError("I don't recognize your tweakml type, choose either colored_noise or PS_from_residuals.")
+        if recompute_spline is True and knotstep is None:  # pragma: no cover
+            raise RuntimeError(" I can't recompute spline if you don't give me the knotstep ! ")
+        if tweakml_type != 'PS_from_residuals':  # pragma: no cover
+            raise NotImplementedError(
+                "Other tweakml_type are not yet implemented in the optimiser, choose PS_from_residuals.")
 
         self.lcs = lcs
         self.ncurve = len(lcs)
@@ -37,10 +70,7 @@ class Optimiser(object):
         self.attachml_function = attachml_function
         self.attachml_param = attachml_param
         if theta_init is None:
-            if tweakml_type == 'colored_noise':
-                theta_init = [[-2.0, 0.1] for i in range(self.ncurve)]
-            elif tweakml_type == 'PS_from_residuals':
-                theta_init = [[0.5] for i in range(self.ncurve)]
+            theta_init = [[0.5] for i in range(self.ncurve)]
         if len(theta_init) != len(lcs):
             raise RuntimeError("Your init vector and list of light curves must have the same size !")
         self.theta_init = theta_init
@@ -65,11 +95,11 @@ class Optimiser(object):
             self.max_core = multiprocess.cpu_count()
             print("You will run on %i cores." % self.max_core)
 
-        if self.max_core > 1:
-            self.para = True
-        else:
+        if debug:
             self.para = False
-            print("I won't compute the mock curves in parallel.")
+        else:
+            self.para = True
+            print("Debug mode, I won't compute the mock curves in parallel.")
 
         self.n_curve_stat = n_curve_stat
         self.shotnoise = shotnoise
@@ -89,6 +119,13 @@ class Optimiser(object):
         self.magshifts = [l.magshift for l in self.lcs]
 
     def make_mocks_para(self, theta):
+        """
+        Draw mock curves, optimise them, and compute the zrun and sigma statistics.  This is used in debug mode.
+        It does the same than make_mocks but using multithreading.
+
+        :param theta: list, containing the parameter of the generative noise model.
+        :return: tuple (mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas)
+        """
         stat = []
         zruns = []
         sigmas = []
@@ -128,17 +165,21 @@ class Optimiser(object):
         return mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas
 
     def compute_chi2(self, theta):
-        # theta : proposed step
-        # fit vector : target vector to fit in terms of [zruns, sigma], zruns are a list of the target zruns
+        """
+        Likelihood function of the fit. Return chi2 metric between the current fit vector and the target vector.
+
+        :param theta: list, containing the parameter of the generative noise model.
+        :return:
+        """
 
         chi2 = 0.0
         count = 0.0
-        if self.n_curve_stat == 1: # pragma: no cover
+        if self.n_curve_stat == 1:  # pragma: no cover
             raise RuntimeError(" I cannot compute statistics with one single curves !! Increase n_curve_stat.")
 
         if self.para:
             mean_zruns, mean_sigmas, std_zruns, std_sigmas, _, _ = self.make_mocks_para(theta)
-        else:
+        else:  # pragma: no cover #Used in debug mode
             mean_zruns, mean_sigmas, std_zruns, std_sigmas, _, _ = self.make_mocks(theta)
 
         for i in range(self.ncurve):
@@ -150,6 +191,12 @@ class Optimiser(object):
         return chi2, np.asarray(mean_zruns), np.asarray(mean_sigmas), np.asarray(std_zruns), np.asarray(std_sigmas)
 
     def fct_para(self, theta):
+        """
+        Auxilliary function to optimise the mock curves in parallel. See make_mocks_para().
+
+        :param theta: list, containing the parameter of the generative noise model.
+        :return:
+        """
 
         tweak_list = self.get_tweakml_list(theta)
         mocklc = pycs3.sim.draw.draw(self.lcs, self.spline,
@@ -182,30 +229,43 @@ class Optimiser(object):
             return {'stat': stat, 'error': None}
 
     def get_tweakml_list(self, theta):
+        """
+        Define the tweakml function for the corresponding fit vector
+
+        :param theta: list, containing the parameter of the generative noise model.
+        :return:
+        """
         tweak_list = []
-        if self.tweakml_type == 'colored_noise':
-            def tweakml_colored(lcs, spline, beta, sigma):
-                return pycs3.sim.twk.tweakml(lcs, spline, beta=beta, sigma=sigma, fmin=1.0 / 500.0, fmax=0.2,
-                                             psplot=False)
 
-            for i in range(self.ncurve):
-                tweak_list.append(partial(tweakml_colored, beta=theta[i][0], sigma=theta[i][1]))
-
-        elif self.tweakml_type == 'PS_from_residuals':
+        if self.tweakml_type == 'PS_from_residuals':
             def tweakml_PS(lcs, spline, B, A_correction):
                 return twk.tweakml_PS(lcs, spline, B, f_min=1 / 300.0, psplot=False, save_figure_folder=None,
                                       verbose=self.verbose, interpolation='linear', A_correction=A_correction)
 
             for i in range(self.ncurve):
                 tweak_list.append(partial(tweakml_PS, B=theta[i][0], A_correction=self.A_correction[i]))
+        else:  # pragma: no cover
+            raise NotImplementedError('Other Tweakml_type than PS_from_residuals are not yet implemented.')
+
         return tweak_list
 
     def fct_para_aux(self, args):
+        """
+        Auxilliary function for parallel computing
+        :param args:
+        :return:
+        """
         kwargs = args[-1]
         args = args[0:-1]
         return self.fct_para(*args, **kwargs)
 
-    def make_mocks(self, theta):
+    def make_mocks(self, theta):  # pragma: no cover #This is used only in debug mode
+        """
+        Draw mock curves, optimise them, and compute the zrun and sigma statistics.  This is used in debug mode.
+        It does the same than make_mocks_para but serially.
+        :param theta: list, containing the parameter of the generative noise model.
+        :return: tuple (mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas)
+        """
 
         mocklc = []
         mockrls = []
@@ -229,7 +289,7 @@ class Optimiser(object):
             self.attachml_function(mocklc[i], self.attachml_param)  # adding the microlensing here
 
             if self.recompute_spline:
-                if self.knotstep is None: # pragma: no cover
+                if self.knotstep is None:  # pragma: no cover
                     raise RuntimeError("You must give a knotstep to recompute the spline")
                 spline_on_mock = pycs3.spl.topopt.opt_fine(mocklc[i], nit=5, knotstep=self.knotstep,
                                                            verbose=self.verbose, bokeps=self.knotstep / 3.0,
@@ -269,7 +329,11 @@ class Optimiser(object):
         return mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas
 
     def check_success(self):
-        if any(self.rel_error_zruns_mini[i] is None for i in range(self.ncurve)): # pragma: no cover
+        """
+        Check if the optimiser found a set of parameter within the tolerance.
+        :return: boolean
+        """
+        if any(self.rel_error_zruns_mini[i] is None for i in range(self.ncurve)):  # pragma: no cover
             raise RuntimeError("Error you should run analyse_plot_results() first !")
         else:
             if all(self.rel_error_zruns_mini[i] < self.tolerance for i in range(self.ncurve)) \
@@ -279,7 +343,11 @@ class Optimiser(object):
                 return False
 
     def report(self):
-        if self.chain_list is None: # pragma: no cover
+        """
+        Write the optimisation report
+        :return:
+        """
+        if self.chain_list is None:  # pragma: no cover
             raise RuntimeError("You should run optimise() first ! I can't write the report")
 
         f = open(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt'), 'a')
@@ -314,22 +382,31 @@ class Optimiser(object):
         # Write the error report :
         g = open(os.path.join(self.savedirectory, 'errors_tweakml_optimisation.txt'), 'a')
         for mes in self.error_message:
-            if not len(mes) == 0 :
+            if not len(mes) == 0:
                 g.write(str(mes))
         g.close()
 
     def reset_report(self):
+        """
+        Delete the optimisation report
+        :return:
+        """
         if os.path.isfile(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt')):
             os.remove(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt'))
 
     def compute_set_A_correction(self, eval_pts):
-        # this function compute the sigma obtained after optimisation in the middle of the grid and return the correction that will be used for the rest of the optimisation
+        """
+        This function compute the sigma obtained after optimisation in the middle of the grid and return the correction
+         that will be used for the rest of the optimisation
 
+        :param eval_pts: vector containing the generative noise models parameter
+        :return: tuple (A_correction, mean_zruns, mean_sigmas, std_zruns, std_sigmas)
+        """
         self.A_correction = [1.0 for i in range(self.ncurve)]  # reset the A correction
 
         if self.para:
             mean_zruns, mean_sigmas, std_zruns, std_sigmas, _, _ = self.make_mocks_para(eval_pts)
-        else:
+        else:  # pragma: no cover #Used in debug mode
             mean_zruns, mean_sigmas, std_zruns, std_sigmas, _, _ = self.make_mocks(eval_pts)
 
         self.A_correction = self.fit_vector[:, 1] / mean_sigmas  # set the A correction
@@ -337,17 +414,22 @@ class Optimiser(object):
 
 
 class DicOptimiser(Optimiser):
+    """
+    Dichotomy search optimiser. It inherit from the Optimiser class.
+    """
+
     def __init__(self, lcs, fit_vector, spline, attachml_function, attachml_param, knotstep=None,
                  savedirectory="./", recompute_spline=True, max_core=None, theta_init=None,
                  n_curve_stat=32, shotnoise=None, tweakml_type='PS_from_residuals', tweakml_name='',
-                 display=False, verbose=False, step=0.1, correction_PS_residuals=True, max_iter=10, tolerance=0.75):
+                 display=False, verbose=False, step=0.1, correction_PS_residuals=True, max_iter=10, tolerance=0.75
+                 , debug=False):
 
         Optimiser.__init__(self, lcs, fit_vector, spline, attachml_function, attachml_param,
                            knotstep=knotstep, savedirectory=savedirectory, recompute_spline=recompute_spline,
                            max_core=max_core, n_curve_stat=n_curve_stat, shotnoise=shotnoise, theta_init=theta_init,
                            tweakml_type=tweakml_type, tweakml_name=tweakml_name,
                            correction_PS_residuals=correction_PS_residuals,
-                           verbose=verbose, display=display, tolerance=tolerance)
+                           verbose=verbose, display=display, tolerance=tolerance, debug=debug)
 
         self.chain_list = None
         self.step = [step for i in range(self.ncurve)]
@@ -357,6 +439,11 @@ class DicOptimiser(Optimiser):
         self.explored_param = []
 
     def optimise(self):
+        """
+        High-level function. Run the optimisation.
+        :return:
+        """
+
         self.time_start = time.time()
         sigma = []
         zruns = []
@@ -439,6 +526,10 @@ class DicOptimiser(Optimiser):
         return self.chain_list
 
     def check_if_stop(self):
+        """
+        Check if one of the stopping condition is met.
+        :return: boolean
+        """
         if self.iteration >= self.max_iter:
             self.message = "I stopped because I reached the max number of iteration.\n"
             print(self.message[:-2])
@@ -455,7 +546,11 @@ class DicOptimiser(Optimiser):
             return False
 
     def get_best_param(self):
-        if self.chain_list is None: # pragma: no cover
+        """
+        Return the best fit parameters of the generative noise model. To be called after optimise()
+        :return:
+        """
+        if self.chain_list is None:  # pragma: no cover
             raise RuntimeError("I don't have the best parameters yet. You should run optimise() first !")
         else:
             ind_min = np.argmin(self.chain_list[1][:])
@@ -463,9 +558,17 @@ class DicOptimiser(Optimiser):
             return self.chi2_mini, self.chain_list[0][ind_min]
 
     def analyse_plot_results(self):
+        """
+        This is currently only producing the plot. You might want to do some other fancy operation here in the future.
+        :return:
+        """
         self.plot_chain_grid_dic()
 
     def plot_chain_grid_dic(self):
+        """
+        Make the diagnostic plots
+        :return:
+        """
         for i, l in enumerate(self.lcs):
             x_param = np.asarray(self.explored_param)[:, i]
             z_runs = np.asarray(self.chain_list[2])[:, i]
@@ -492,7 +595,7 @@ class DicOptimiser(Optimiser):
             fig1.savefig(os.path.join(self.savedirectory, self.tweakml_name + '_zruns_' + l.object + '.png'))
             fig2.savefig(os.path.join(self.savedirectory, self.tweakml_name + '_std_' + l.object + '.png'))
 
-            if self.display: # pragma: no cover
+            if self.display:  # pragma: no cover
                 plt.show()
             plt.clf()
             plt.close('all')
@@ -506,9 +609,15 @@ class DicOptimiser(Optimiser):
 
 
 def get_fit_vector(lcs, spline):
+    """
+    Return the target vector containing the value of sigma and zruns for the original data.
+
+    :param lcs: list of LightCurves
+    :param spline: Spline, intrinsic Spline of you lcs, already optimised
+    :return: 2-D array, containing the target [z_run, sigma] for each LightCurve
+    """
     rls = pycs3.gen.stat.subtract(lcs, spline)
     fit_sigma = [pycs3.gen.stat.mapresistats(rls)[i]["std"] for i in range(len(rls))]
     fit_zruns = [pycs3.gen.stat.mapresistats(rls)[i]["zruns"] for i in range(len(rls))]
     fit_vector = [[fit_zruns[i], fit_sigma[i]] for i in range(len(rls))]
     return fit_vector
-

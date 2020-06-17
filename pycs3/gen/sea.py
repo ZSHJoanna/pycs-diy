@@ -58,7 +58,7 @@ class Season:
         if len(self.indices) > 1:
             first = self.indices[:-1]
             second = self.indices[1:]
-            if not alltrue(less_equal(first, second)):  # this is very fast, better then a loop
+            if not alltrue(less_equal(first, second)):  # this is very fast, better than a loop
                 raise RuntimeError("A season must be sorted !")
             if self.indices[-1] - self.indices[0] + 1 != len(self.indices):
                 print("WARNING : your season has holes !?")
@@ -105,7 +105,7 @@ def autofactory(l, seasongap=60, tpe='seas'):
     :return: list of season objects.
 
     """
-    if not isinstance(l, LightCurve):
+    if not isinstance(l, LightCurve): # pragma: no cover
         raise RuntimeError("Please give me a lightcurve, not something else.")
 
     # we find the indices just before season gaps
@@ -178,7 +178,7 @@ def manfactory(lc, jdranges):
     tempjds = lc.getjds()
     for i, jdrange in enumerate(jdranges):
         seasindices = indices[logical_and(tempjds > jdrange[0], tempjds < jdrange[1])]
-        if len(seasindices) == 0:
+        if len(seasindices) == 0: # pragma: no cover
             raise RuntimeError("Empty seasons, check your ranges !")
         newseas = Season(seasindices, "m%i" % (i + 1))
 
@@ -197,9 +197,9 @@ def validateseasons(seasons):
     """
 
     # First we check the general structure.
-    if type(seasons).__name__ != "list":
+    if type(seasons).__name__ != "list": # pragma: no cover
         raise RuntimeError("Your seasons are not even a list...")
-    if not len(seasons) >= 1:
+    if not len(seasons) >= 1: # pragma: no cover
         raise RuntimeError("Seasons are emtpy. No seasons = no sense, so I prefer to stop here.")
 
     for season in seasons:
@@ -208,7 +208,7 @@ def validateseasons(seasons):
     # Now some higher level properties :
 
     allindices = concatenate([s.indices for s in seasons])
-    if len(allindices) != len(list(set(list(allindices)))):
+    if len(allindices) != len(list(set(list(allindices)))): # pragma: no cover
         raise RuntimeError("No overlapping seasons please !")
 
 
@@ -241,7 +241,7 @@ def easycut(lclist, keep=[1], seasongap=60, mask=False, verbose=False):
 
         # We check user provided indices ...
         for humanindex in keep:
-            if humanindex - 1 not in list(range(len(seasons))):
+            if humanindex - 1 not in list(range(len(seasons))): # pragma: no cover
                 raise RuntimeError("There is no season %i !" % humanindex)
 
         seasonstomask = [season for (i, season) in enumerate(seasons) if i + 1 not in keep]
