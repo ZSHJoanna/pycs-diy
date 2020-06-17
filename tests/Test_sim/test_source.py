@@ -1,5 +1,4 @@
 import os
-import glob
 from tests import TEST_PATH
 
 import pycs3.gen.util
@@ -9,7 +8,6 @@ import pytest
 import unittest
 import numpy as np
 from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equal
-from tests import utils
 
 
 class TestSource(unittest.TestCase):

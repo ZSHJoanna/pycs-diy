@@ -130,7 +130,7 @@ def opt_fine(lcs, spline=None, nit=10, shifttime=True, crit="r2",
 
         if distribflux:
             # This works only for doubles
-            if len(lcs) != 2:
+            if len(lcs) != 2: # pragma: no cover
                 raise RuntimeError("I can only run redistribflux on double lenses !")
 
             redistribflux(lcs[0], lcs[1], spline, verbose=True)

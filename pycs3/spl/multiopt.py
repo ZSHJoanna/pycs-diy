@@ -258,7 +258,7 @@ def redistribflux(lc1, lc2, sourcespline, verbose=True, maxfrac=0.2):
     :param maxfrac: float, fraction of the maxium amplitude to set the optimisation bound
 
     """
-    if not np.all(lc1.jds == lc2.jds):
+    if not np.all(lc1.jds == lc2.jds): # pragma: no cover
         raise RuntimeError("I do only work on curves with identical jds !")
 
     if verbose:

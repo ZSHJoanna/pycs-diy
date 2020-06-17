@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pycs3.gen.lc
 import pycs3.gen.stat
+import pycs3.sim.power_spec
 import pycs3.sim.src
 import scipy.signal as sc
 
@@ -32,7 +33,7 @@ def tweakml(lcs, spline, beta=-2.0, sigma=0.05, fmin=1 / 500.0, fmax=None, psplo
         source = pycs3.sim.src.Source(spline, name=name, sampling=sampling)
 
         if psplot:
-            psspline = pycs3.sim.src.PS(source, flux=False)
+            psspline = pycs3.sim.power_spec.PowerSpectrum(source, flux=False)
             psspline.plotcolour = "black"
             psspline.calcslope(fmin=1 / 1000.0, fmax=1 / 100.0)
 
@@ -42,11 +43,11 @@ def tweakml(lcs, spline, beta=-2.0, sigma=0.05, fmin=1 / 500.0, fmax=None, psplo
         l.ml.replacespline(newspline)
 
         if psplot:
-            psnewspline = pycs3.sim.src.PS(source, flux=False)
+            psnewspline = pycs3.sim.power_spec.PowerSpectrum(source, flux=False)
             psnewspline.plotcolour = "red"
             psnewspline.calcslope(fmin=fmin, fmax=fmax)
 
-            pycs3.sim.src.psplot([psspline, psnewspline], nbins=50)
+            pycs3.sim.power_spec.psplot([psspline, psnewspline], nbins=50)
 
 
 def tweakspl(spline, beta=-2.5, sigma=0.03, fmin=1 / 30.0, fmax=1 / 5.0, hann=False, psplot=False):
@@ -61,7 +62,7 @@ def tweakspl(spline, beta=-2.5, sigma=0.03, fmin=1 / 30.0, fmax=1 / 5.0, hann=Fa
                                   sampling=0.2)  # No need to pass a copy, spline will not be modified, only evaluated.
 
     if psplot:
-        psspline = pycs3.sim.src.PS(source, flux=False)
+        psspline = pycs3.sim.power_spec.PowerSpectrum(source, flux=False)
         psspline.plotcolour = "black"
         psspline.calcslope(fmin=1 / 1000.0, fmax=1 / 30.0)
 
@@ -70,11 +71,11 @@ def tweakspl(spline, beta=-2.5, sigma=0.03, fmin=1 / 30.0, fmax=1 / 5.0, hann=Fa
     newspline = source.generate_spline()
 
     if psplot:
-        psnewspline = pycs3.sim.src.PS(source, flux=False)
+        psnewspline = pycs3.sim.power_spec.PowerSpectrum(source, flux=False)
         psnewspline.plotcolour = "red"
         psnewspline.calcslope(fmin=fmin, fmax=fmax)
 
-        pycs3.sim.src.psplot([psspline, psnewspline], nbins=50)
+        pycs3.sim.power_spec.psplot([psspline, psnewspline], nbins=50)
 
     return newspline
 
