@@ -37,7 +37,7 @@ class TestSeason(unittest.TestCase):
 
         # create the Season object:
         season = pycs3.gen.sea.autofactory(lc_copy[0], tpe='seas')
-        season[0].printinfo()
+        pycs3.gen.sea.printinfo(season)
         season_copy = season.copy()
         interseason = pycs3.gen.sea.autofactory(lc_copy[0], tpe='interseasons')
         pycs3.gen.sea.printinfo(season)
