@@ -24,6 +24,16 @@ class TestSource(unittest.TestCase):
         pycs3.sim.twk.tweakml(lc_copy, spline_copy, psplot=True)
 
     def test_tweakspl(self):
-        lc_copy = [lc.copy() for lc in self.lcs]
         spline_copy = self.spline.copy()
         pycs3.sim.twk.tweakspl(spline_copy, psplot=True)
+
+    def test_tweakmlPS(self):
+        lc_copy = [lc.copy() for lc in self.lcs]
+        for k, l in enumerate(lc_copy):
+            if l.ml == None:
+                print('I dont have ml, I have to introduce minimal extrinsic variation to generate the mocks. Otherwise I have nothing to modulate.')
+                pycs3.gen.splml.addtolc(l, n=2)
+
+        spline_copy = self.spline.copy()
+        pycs3.sim.twk.tweakml_PS(lc_copy,spline_copy, 1, psplot=True, verbose=True)
+

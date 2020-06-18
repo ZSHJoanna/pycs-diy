@@ -46,7 +46,7 @@ class TestOptim(unittest.TestCase):
                                                     verbose=True,
                                                     correction_PS_residuals=True, max_iter=5,
                                                     tolerance=1,
-                                                    theta_init=theta_init)
+                                                    theta_init=theta_init, debug=True)
 
         chain = dic_opt.optimise()
         dic_opt.analyse_plot_results()

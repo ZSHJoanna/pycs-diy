@@ -259,7 +259,7 @@ class Optimiser(object):
         args = args[0:-1]
         return self.fct_para(*args, **kwargs)
 
-    def make_mocks(self, theta):  # pragma: no cover #This is used only in debug mode
+    def make_mocks(self, theta):
         """
         Draw mock curves, optimise them, and compute the zrun and sigma statistics.  This is used in debug mode.
         It does the same than make_mocks_para but serially.
