@@ -1160,3 +1160,40 @@ def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False, 
             plt.savefig(filename)
 
     return {'n': n, 'd2': d2}
+
+def interpolate(x1, x2, interpolate='nearest'):
+    """
+    Take two light curve object and return the resampling of the second at the time of the first one
+
+
+    :param x1: LightCurve 1
+    :param x2: LightCurve 2
+    :param interpolate: string, choose between 'nearest' and 'linear'
+    :return: interpolated LightCurve
+    """
+    if interpolate == 'nearest':
+        new = x1.copy()
+        new_mags = []
+        for i, d in enumerate(x1.jds):
+            distance, ind = find_closest(d, x2.jds)
+            new_mags.append(x2.mags[ind])
+
+        new.jds = x1.jds.copy()
+        new.mags = np.asarray(new_mags)
+
+        return new
+
+    elif interpolate == 'linear':
+        new = x1.copy()
+        new.mags = np.interp(new.jds, x2.jds, x2.mags, left=0., right=0.)
+        return new
+
+
+def find_closest(a, x):
+    """
+    Nearest neighbor interolation
+    :param a: float, value where to interpolate
+    :param x: 1-D array, interpolated vector
+    :return: (minimum distance, index corresponding to the minimal distance)
+    """
+    return np.min(np.abs(x - a)), np.argmin(np.abs(x - a))

@@ -265,6 +265,15 @@ class TestLightCurve(unittest.TestCase):
         lc_func.linintnp(self.lcs_WFI[0].copy(), self.lcs_ECAM[0].copy(), usemask=False, weights=False, plot=True,
                          filename=os.path.join(self.outpath, 'test_linintp.png'))
 
+    def test_interpolate(self):
+        lc0 = self.lcs[0].copy()
+        lc1 = self.lcs[1].copy()
+        lc_interp = lc_func.interpolate(lc0, lc1, interpolate='nearest')
+        lc_interp2 = lc_func.interpolate(lc0, lc1, interpolate='linear')
+        lc_interp.plotcolour = 'black'
+        lc_interp2.plotcolour = 'purple'
+        lc_func.display([lc0,lc1,lc_interp,lc_interp2], [], filename=os.path.join(self.outpath, 'test_interp_nearest.png'))
+
     def clean_trace(self):
         pkls = glob.glob(os.path.join(self.outpath, "??????.pkl"))
         for pkl in pkls:

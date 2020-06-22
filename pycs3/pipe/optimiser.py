@@ -71,7 +71,7 @@ class Optimiser(object):
         self.attachml_param = attachml_param
         if theta_init is None:
             theta_init = [[0.5] for i in range(self.ncurve)]
-        if len(theta_init) != len(lcs):
+        if len(theta_init) != len(lcs): # pragma: no cover
             raise RuntimeError("Your init vector and list of light curves must have the same size !")
         self.theta_init = theta_init
         self.knotstep = knotstep
@@ -118,7 +118,7 @@ class Optimiser(object):
         self.timeshifts = [l.timeshift for l in self.lcs]
         self.magshifts = [l.magshift for l in self.lcs]
 
-    def make_mocks_para(self, theta):
+    def make_mocks_para(self, theta): # pragma: no cover #parralel computing, cannot be covered
         """
         Draw mock curves, optimise them, and compute the zrun and sigma statistics.  This is used in debug mode.
         It does the same than make_mocks but using multithreading.
@@ -190,7 +190,7 @@ class Optimiser(object):
         chi2 = chi2 / count
         return chi2, np.asarray(mean_zruns), np.asarray(mean_sigmas), np.asarray(std_zruns), np.asarray(std_sigmas)
 
-    def fct_para(self, theta):
+    def fct_para(self, theta): # pragma: no cover
         """
         Auxilliary function to optimise the mock curves in parallel. See make_mocks_para().
 
@@ -249,7 +249,7 @@ class Optimiser(object):
 
         return tweak_list
 
-    def fct_para_aux(self, args):
+    def fct_para_aux(self, args): # pragma: no cover
         """
         Auxilliary function for parallel computing
         :param args:

@@ -37,3 +37,8 @@ class TestSource(unittest.TestCase):
         spline_copy = self.spline.copy()
         pycs3.sim.twk.tweakml_PS(lc_copy,spline_copy, 1, psplot=True, verbose=True)
 
+    def test_bandnoise(self):
+        noise = pycs3.sim.twk.band_limited_noise(1./1000., 1.)
+        print(noise)
+
+

@@ -6,6 +6,7 @@ These are the function to pass them to draw.draw or draw.multidraw.
 import matplotlib.pyplot as plt
 import numpy as np
 import pycs3.gen.lc
+import pycs3.gen.lc_func
 import pycs3.gen.stat
 import pycs3.sim.power_spec
 import pycs3.sim.src
@@ -167,7 +168,7 @@ def tweakml_PS(lcs, spline, B, f_min = 1/300.0,psplot=False, save_figure_folder 
         noise_lcs_rescaled.mags = band_noise_rescaled
 
         #resampling of the generated noise :
-        noise_lcs_resampled = interpolate(rls, noise_lcs_rescaled, interpolate=interpolation)
+        noise_lcs_resampled = pycs3.gen.lc_func.interpolate(rls, noise_lcs_rescaled, interpolate=interpolation)
         if verbose :
             print("resampled :", pycs3.gen.stat.resistats(noise_lcs_resampled))
             print("target : ", pycs3.gen.stat.resistats(rls))
@@ -282,39 +283,3 @@ def band_limited_noise_withPS(freqs, PS, samples=1024, samplerate=1):
 
     f = np.ones(samples) * PS_interp
     return fftnoise(f)
-
-def find_closest(a, x):
-    """
-    Nearest neighbor interolation
-    :param a: float, value where to interpolate
-    :param x: 1-D array, interpolated vector
-    :return: (minimum distance, index corresponding to the minimal distance)
-    """
-    return np.min(np.abs(x - a)), np.argmin(np.abs(x - a))
-
-def interpolate(x1, x2, interpolate='nearest'):
-    """
-    Take two light curve object and return the resampling of the second at the time of the first one
-
-
-    :param x1: LightCurve 1
-    :param x2: LightCurve 2
-    :param interpolate: string, choose between 'nearest' and 'linear'
-    :return: interpolated LightCurve
-    """
-    if interpolate == 'nearest':
-        new = x1.copy()
-        new_mags = []
-        for i, d in enumerate(x1.jds):
-            distance, ind = find_closest(d, x2.jds)
-            new_mags.append(x2.mags[ind])
-
-        new.jds = x1.jds.copy()
-        new.mags = np.asarray(new_mags)
-
-        return new
-
-    elif interpolate == 'linear':
-        new = x1.copy()
-        new.mags = np.interp(new.jds, x2.jds, x2.mags, left=0., right=0.)
-        return new

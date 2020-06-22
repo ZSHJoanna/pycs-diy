@@ -79,7 +79,7 @@ A list of lightcurves (as we have just imported above) is usually named ``lcs``.
 Importing from simple tab-separated files
 """""""""""""""""""""""""""""""""""""""""
 
-The function :py:func:`pycs3.gen.lc_func.flexibleimport` does essentially the same as :py:func:`pycs.gen.lc_func.rdbimport`, but for simpler input files that do not have headers :
+The function :py:func:`pycs3.gen.lc_func.flexibleimport` does essentially the same as :py:func:`pycs3.gen.lc_func.rdbimport`, but for simpler input files that do not have headers :
 
 ::
 	
