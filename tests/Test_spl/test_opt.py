@@ -121,7 +121,7 @@ class TestOpt(unittest.TestCase):
         print(delays)
         lc_func.display(lc_copy, [spline], showlegend=False,
                         filename=os.path.join(self.outpath, 'trial_opt_distrib_flux_after_optim.png'))
-        assert_allclose(delays, self.true_delays[0], atol=3)
+        assert_allclose(delays, self.true_delays[0], atol=4)
 
     def clean_trace(self):
         pkls = glob.glob(os.path.join(self.outpath,  "??????.pkl"))
