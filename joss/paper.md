@@ -13,15 +13,12 @@ authors:
   - name: Malte Tewes
     orcid:
     affiliation: 1
-   - name: Bastian Lengen
+  - name: Bastian Lengen
     orcid:
     affiliation: 1
-
 affiliations:
   - name: Institute of Physics, Laboratory of Astrophysique, Ecole Polytechnique Fédérale de Lausanne (EPFL)
     index: 1
-
-
 date: 24 June 2020
 bibliography: paper.bib
 ---
