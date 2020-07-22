@@ -15,7 +15,7 @@ class PyTest(TestCommand):
 
 setup(
     name='PyCS3',
-    version='3.0.dev0',
+    version='3.0.1',
     author='Martin Millon',
     author_email='martin.millon@epfl.ch',
     description='Python Curve Shifting for python 3',

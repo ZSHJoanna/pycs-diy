@@ -33,7 +33,8 @@ PyCS3 requires the following standard python packages :
 If you want to use the regdiff optimiser, you will also need : 
 * `scikit-learn`
     
-## Example Notebooks 
+## Example Notebooks and Documentation
+The full documentation can be found [here](https://vbonvin.gitlab.io/PyCS3/). 
 
 Example notebooks are located in the [notebook](https://gitlab.com/vbonvin/PyCS3/-/tree/master/notebook) folder : 
 * [Importing, exporting and displaying light curves](https://gitlab.com/vbonvin/PyCS3/-/blob/master/notebook/Import_export_and_display.ipynb)
