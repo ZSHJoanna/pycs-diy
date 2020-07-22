@@ -749,7 +749,7 @@ def display(lclist=[], splist=[],
 
     if showdelays:
         txt = getnicetimedelays(lclist, separator="\n")
-        axes.annotate(txt, xy=(0.77, 0.77), xycoords='axes fraction', xytext=(6, -6),
+        axes.annotate(txt, xy=(0.87, 0.77), xycoords='axes fraction', xytext=(6, -6),
                       textcoords='offset points', ha='left', va='top')
         legendloc = 1
         if verbose:
