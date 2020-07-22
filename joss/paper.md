@@ -8,13 +8,10 @@ authors:
     orcid: 0000-0001-7051-497X
     affiliation: 1
   - name: Vivien Bonvin
-    orcid:
     affiliation: 1
   - name: Malte Tewes
-    orcid:
     affiliation: 1
   - name: Bastian Lengen
-    orcid:
     affiliation: 1
 affiliations:
   - name: Institute of Physics, Laboratory of Astrophysique, Ecole Polytechnique Fédérale de Lausanne (EPFL)
