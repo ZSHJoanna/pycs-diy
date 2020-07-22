@@ -29,7 +29,7 @@ Time-delay cosmography is now a competitive technique for measuring the current 
 
 ``PyCS3`` is a python package designed to adress the first of this three points. ``PyCS3`` allows us to measure time delays in lensed quasars in the presence of microlensing, which happens when stars of the lens galaxy are passing in front of the quasar images, also acting as gravitationnal lenses. This introduces some 'extrinsic' variation that are visible in only one image on top of the quasar 'intrinsic' variation visible in all multiple images. ``PyCS3`` provides a flexible modelling of the extrinsic variation with splines to account for microlensing and recover an unbiased estimate of the time delay. 
 
-The previous version of the package was first presented in `@Tewes:2013a` and succesfully applied to real data in `@Tewes:2013b; @Bonvin:2017; @Bonvin:2018; @Bonvin:2019`. The method was also tested on simulated light curves `[@Liao:2016; @Bonvin:2016]` and demonstrated that time delays can be measured accuratly with a systematic bias $\lesssim% 1%.   
+The previous version of the package was first presented in `@Tewes:2013a` and succesfully applied to real data in `@Tewes:2013b; @Bonvin:2017; @Bonvin:2018; @Bonvin:2019`. The method was also tested on simulated light curves `[@Liao:2016; @Bonvin:2016]` and demonstrated that time delays can be measured accuratly with a systematic bias $\lesssim$ 1%.   
 We also recently presented an automated pipeline based ``PyCS3`` to measure time delays in a large sample of lensed quasars `[@Millon:2020a; @Millon:2020b]`. Such improvements toward automation of the procedure will be necessary in the coming year with the increasing sample size. 
 
 
