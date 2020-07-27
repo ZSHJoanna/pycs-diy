@@ -32,7 +32,8 @@ def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", 
     :type verbose: bool
     :param verbose: verbosity of the function
 
-    :return LightCurve
+    :return:LightCurve
+    :rtype: :class:`pycs3.gen.LightCurve`
     """
 
     # Make a brand new lightcurve object :
@@ -48,7 +49,7 @@ def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", 
     else:
         newlc.magerrs = np.asarray(magerrs)
 
-    if len(newlc.jds) != len(newlc.mags) or len(newlc.jds) != len(newlc.magerrs): # pragma: no cover
+    if len(newlc.jds) != len(newlc.mags) or len(newlc.jds) != len(newlc.magerrs):  # pragma: no cover
         raise RuntimeError("lightcurve factory called with arrays of incoherent lengths")
 
     newlc.mask = newlc.magerrs >= 0.0  # This should be true for all !
@@ -91,7 +92,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
     :param propertycols: (default : None) is a dict : ``propertycols = {"fwhm":7, "skylevel":8}`` means that col 7 should be read in as property "fwhm" and 8 as "skylevel".
     :type propertycols: dictionary
 
-    :return LightCurve
+    :return:LightCurve
 
 
     """
@@ -122,7 +123,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
 
         # We check the consistency of the number of elements...
         if elsperline is not None:
-            if len(elements) != elsperline:# pragma: no cover
+            if len(elements) != elsperline:  # pragma: no cover
                 raise RuntimeError("Parsing error in line %i, check columns : \n%s" % (i + startline, repr(line)))
         elsperline = len(elements)
 
@@ -136,7 +137,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
                 flags.append(True)
             elif strflag == "False":
                 flags.append(False)
-            else:# pragma: no cover
+            else:  # pragma: no cover
                 print("Flag error in line %i : %s" % (i + startline, repr(line)))
                 flags.append(True)
         else:
@@ -203,7 +204,7 @@ def rdbimport(filepath, object="Unknown", magcolname="mag", magerrcolname="mager
     rdbfile.close()
     headers = rdbfilelines[0].split()
     underlines = rdbfilelines[1].split()
-    if list(map(len, headers)) != list(map(len, underlines)):# pragma: no cover
+    if list(map(len, headers)) != list(map(len, underlines)):  # pragma: no cover
         raise RuntimeError("Error in parsing headers")
     # headerindices = np.array(range(len(headers))) + 1 # +1 as we use human convention in flexibleimport
 
@@ -220,7 +221,7 @@ def rdbimport(filepath, object="Unknown", magcolname="mag", magerrcolname="mager
     if propertycolnames:
         checknames.extend(propertycolnames)
     for name in checknames:
-        if name not in headers: # pragma: no cover
+        if name not in headers:  # pragma: no cover
             raise RuntimeError('I cannot find a column named "%s" in your file !' % name)
 
     jdcol = headers.index(mhjdcolname) + 1  # +1 as we use human convention in flexibleimport
@@ -275,9 +276,9 @@ def display(lclist=[], splist=[],
 
     :param title: Adds a title to the plot, center top of the axes, usually used for lens names.
         To nicely write a lens name, remember to use raw strings and LaTeX mathrm, e.g. :
-        ``title = r"$\mathrm{RX\,J1131-1231}$"``
-    :type title: string If you want to use a preset of parameter. Choose between "homepagepdf", "homepagepdfnologo",
+        ``title = r"$\mathrm{RX\,J1131-1231}$"``. If you want to use a preset of parameter. Choose between "homepagepdf", "homepagepdfnologo",
     "2m2", "posterpdf", "cosmograil_dr1", "cosmograil_dr1_microlensing", I overwrite other keyword arguments.
+    :type title: string
 
     :param titlexpos: Specify where you want your to anchor the center of your title in the x axis. the value is in the x-axis fraction.  Default is center. (x = 0.5)
     :type titlexpos: float
@@ -421,7 +422,7 @@ def display(lclist=[], splist=[],
 
     if style is None:
         pass
-    elif "homepagepdf" in style :
+    elif "homepagepdf" in style:
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = True
         if "nologo" in style:
@@ -462,7 +463,7 @@ def display(lclist=[], splist=[],
         transparent = False
         show_ylabel = True
 
-    elif "posterpdf" in style :
+    elif "posterpdf" in style:
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = False
         nicefont = False
@@ -509,7 +510,7 @@ def display(lclist=[], splist=[],
         transparent = False
         show_ylabel = True
 
-    elif "cosmograil_microlensing" in style :
+    elif "cosmograil_microlensing" in style:
         plotsize = (0.09, 0.97, 0.10, 0.95)
         showlogo = False
         nicefont = True
@@ -524,10 +525,10 @@ def display(lclist=[], splist=[],
         showgrid = False
         transparent = False
         show_ylabel = False
-    else: # pragma: no cover
+    else:  # pragma: no cover
         raise RuntimeError("I do not know the style %s" % style)
 
-    if not (isinstance(lclist, list) or isinstance(lclist, tuple)): # pragma: no cover
+    if not (isinstance(lclist, list) or isinstance(lclist, tuple)):  # pragma: no cover
         raise TypeError("Hey, give me a LIST of lightcurves !")
 
     if colourprop is not None:
@@ -565,7 +566,7 @@ def display(lclist=[], splist=[],
                 actualcurve = curve[0]
                 curveseasons = curve[1]
 
-                if not isinstance(curveseasons, list): # pragma: no cover
+                if not isinstance(curveseasons, list):  # pragma: no cover
                     raise TypeError("lc.display wants LISTs of seasons, not individual seasons !")
                 for curveseason in curveseasons:
                     # the x lims :
@@ -589,8 +590,9 @@ def display(lclist=[], splist=[],
 
             if colourprop is not None:
                 scattervalues = np.array([float(propertydict[colourpropname]) for propertydict in curve.properties])
-                mappable = axes.scatter(tmpjds, tmpmags, s=markersize, c=scattervalues, vmin=colourminval, vmax=colourmaxval,
-                             edgecolors="None")
+                mappable = axes.scatter(tmpjds, tmpmags, s=markersize, c=scattervalues, vmin=colourminval,
+                                        vmax=colourmaxval,
+                                        edgecolors="None")
             else:
                 if curve.ploterrorbars and showerrorbars:
                     axes.errorbar(tmpjds, tmpmags, curve.magerrs, fmt=".", markersize=markersize,
@@ -852,7 +854,7 @@ def display(lclist=[], splist=[],
     if ax is not None:
         return
 
-    if filename == "screen": # pragma: no cover
+    if filename == "screen":  # pragma: no cover
         plt.show()
     else:
         plt.savefig(filename, transparent=transparent)
@@ -866,7 +868,7 @@ def displayrange(lcs, margin=0.05):
     :param lcs: LightCurve object
     :param margin: float
 
-    :return tuple of tuple of float : ((min_jds, max_jds),(min_magnitude, max_magnitude))
+    :return:tuple of tuple of float : ((min_jds, max_jds),(min_magnitude, max_magnitude))
     """
     mags = []
     jds = []
@@ -900,7 +902,7 @@ def getnicetimedelays(lcs, separator="\n", to_be_sorted=False):
         Other places where this is hard-coded :
         :py:func:`pycs3.sim.plot.hists`
 
-    :return string to be printed
+    :return:string to be printed
 
     """
     n = len(lcs)
@@ -911,6 +913,7 @@ def getnicetimedelays(lcs, separator="\n", to_be_sorted=False):
     couples = [(worklcs[i], worklcs[j]) for i in range(n) for j in range(n) if i < j]
     return separator.join(
         ["%s%s = %+7.2f" % (lc1.object, lc2.object, lc2.timeshift - lc1.timeshift) for (lc1, lc2) in couples])
+
 
 def getdelays(lcs, to_be_sorted=False):
     """
@@ -933,11 +936,12 @@ def getdelays(lcs, to_be_sorted=False):
     couples = [(worklcs[i], worklcs[j]) for i in range(n) for j in range(n) if i < j]
     return [lc2.timeshift - lc1.timeshift for (lc1, lc2) in couples]
 
+
 def getnicetimeshifts(lcs, separator="\n"):
     """
     I return the timeshifts as a text string, use mainly for checks and debugging.
     :param lcs: list of LightCurves
-    :return string to be printed
+    :return:string to be printed
     """
     return separator.join(["%s  %+7.2f" % (l.object, l.timeshift) for l in lcs])
 
@@ -952,7 +956,7 @@ def gettimeshifts(lcs, includefirst=True):
         For timeshift optimizers, it's indeed often ok not to move the first curve.
     :type includefirst: boolean
 
-    :return array of timesshift
+    :return:array of timesshift
 
     """
     if includefirst:
@@ -1007,7 +1011,7 @@ def objsort(lcs, ret=False, verbose=True):
 
     # Maybe we start with some checks :
     diff_objects = set([l.object for l in lcs])
-    if len(diff_objects) != len(lcs): # pragma: no cover
+    if len(diff_objects) != len(lcs):  # pragma: no cover
         raise RuntimeError("Cannot sort these objects : %s" % ", ".join([l.object for l in lcs]))
 
     # The actual sorting ...
@@ -1018,6 +1022,7 @@ def objsort(lcs, ret=False, verbose=True):
         return
     if ret:
         return sorted(lcs, key=operator.attrgetter('object'))
+
 
 def resetlcs(lcs):
     """
@@ -1030,6 +1035,7 @@ def resetlcs(lcs):
         lc.resetml()
         lc.resetshifts(keeptimeshift=False)
 
+
 def applyshifts(lcs, timeshifts, magshifts):
     """
     Apply an array of time shifts and magshifts to the curves
@@ -1039,13 +1045,14 @@ def applyshifts(lcs, timeshifts, magshifts):
     :param magshifts: list of magnitude shifts, must have the same length as lcs
     :return: Nothing, I modify the LightCurve objects.
     """
-    if not len(lcs) == len(timeshifts) and len(lcs) == len(magshifts):# pragma: no cover
+    if not len(lcs) == len(timeshifts) and len(lcs) == len(magshifts):  # pragma: no cover
         raise RuntimeError("Hey, give me arrays of the same lenght !")
 
     for lc, timeshift, magshift in zip(lcs, timeshifts, magshifts):
         lc.resetshifts()
         lc.shiftmag(magshift)
         lc.shifttime(timeshift)
+
 
 def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False, filename=None):
     """
@@ -1062,7 +1069,7 @@ def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False, 
     :param usemask: boolean, to mask some data
     :param plot: boolean, display plot of the interpolated curves
 
-    :return dictionary containing the number of interpolation and the d2 "distance".
+    :return:dictionary containing the number of interpolation and the d2 "distance".
 
     """
     if usemask:
@@ -1154,12 +1161,13 @@ def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False, 
         plt.xlabel("Days", fontsize=16)
         plt.ylabel("Magnitude", fontsize=16)
         plt.title("%i interpolations" % n, fontsize=16)
-        if filename is None : # pragma: no cover
+        if filename is None:  # pragma: no cover
             plt.show()
-        else :
+        else:
             plt.savefig(filename)
 
     return {'n': n, 'd2': d2}
+
 
 def interpolate(x1, x2, interpolate='nearest'):
     """
