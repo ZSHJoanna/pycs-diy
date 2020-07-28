@@ -30,31 +30,28 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
     :param showbias: draws a little cross at the position of the delay "corrected" for the bias. Only if your group has a sys_errors attribute.
     :param showran: draws "minor" error bar ticks using the random error only. Only if your group has a ran_errors attribute.
     :param showerr: To show the error on the delay measurement on the plot
-    :param text:
-        Text that you want to display, in the form : [line1, line2, line3 ...]
-        where line_i is (x, y, text, kwargs) where kwargs is e.g. {"fontsize":18} and x and y are relative positions (from 0 to 1).
-    :param figsize : tuple, containing the figure dimension
+    :param text: Text that you want to display, in the form : [line1, line2, line3 ...] where line_i is (x, y, text, kwargs) where kwargs is e.g. {"fontsize":18} and x and y are relative positions (from 0 to 1).
+    :param figsize: tuple, containing the figure dimension
     :param left: float. Given to plt.adjust_subplot for adjusting the subplot on the figure
     :param right: float. Given to plt.adjust_subplot for adjusting the subplot on the figure
     :param top: float. Given to plt.adjust_subplot for adjusting the subplot on the figure
     :param bottom: float. Given to plt.adjust_subplot for adjusting the subplot on the figure
     :param wspace: float. Given to plt.adjust_subplot for adjusting the subplot on the figure
     :param hspace: float. Given to plt.adjust_subplot for adjusting the subplot on the figure
-    :param txtstep float. Separation between the legend element
-    :param majorticksstep float. Tick step on the time-delay axis
+    :param txtstep: float. Separation between the legend element
+    :param majorticksstep: float. Tick step on the time-delay axis
     :param blindness: Shift the measurements by their mean, so the displayed value are centered around 0
     :param horizontaldisplay: display the delay panels on a single line. Works only for three-delay containers.
     :param showxlabelhd: display or not the x label when horizontal display is True
-    :param auto_radius : automatically adjust the xlim, if true, radius won't be used.
-    :param tick_step_auto : automatically adjust the tickstep, if true, radius won't be used.
+    :param auto_radius: automatically adjust the xlim, if true, radius won't be used.
+    :param tick_step_auto: automatically adjust the tickstep, if true, radius won't be used.
     :param filename: string. Name to save the plot. Leave to None for displaying.
-    :param hide_technical_name : hide the technical name above the error bar but keep the delay value (only for double)
+    :param hide_technical_name: hide the technical name above the error bar but keep the delay value (only for double)
     :param showlegend: bool. To print the legend on the plot.
     :param centerdelays: Dictionnary containing the delay to center the plot for each pair of light curves. Leave to None for auto setting.
     :param ymin: float. Lower limit of the y-axis
     :param hlines: list containing the position to draw the horizontal lines
-    :param update_group_style: bool. To overwrite the style option defined in your Group class for 'markersize', 'labelfontsize' and 'legendfontsize'.
-            If true, I automatically update these sizes for a nice display, depending on the number of time-delay estimate to plot.
+    :param update_group_style: bool. To overwrite the style option defined in your Group class for 'markersize', 'labelfontsize' and 'legendfontsize'. If true, I automatically update these sizes for a nice display, depending on the number of time-delay estimate to plot.
     :param legendx: float, position to print the legend along x-axis
     :param legendy_offset: float, offset position to print the legend along y-axis, compared to default.
     :param xlabelfontsize: float. Fontsize of the x-label.
@@ -295,16 +292,10 @@ def write_delays(group, write_dir=None, mode="GLEE"):
     """
     Write the group linarized distributions into a txt file, to be used seamlessly by various modeling code. So far, only GLEE is implemented.
 
-    Parameters
-    ----------
-    :param group:
-    :param group : Group object
-    :param  write_dir : string or None (default=None)
-        Directory path of the output files. If None, use the current working directory (cwd)
+    :param group: Group object
+    :param write_dir: string or None (default=None). Directory path of the output files. If None, use the current working directory (cwd)
+    :param mode: string or None (default="GLEE"). Defines how the output has to be written. GLEE: no header, positively increasing values, constant step
 
-    :param mode: string or None (default="GLEE")
-        Defines how the output has to be written.
-        GLEE: no header, positively increasing values, constant step
     """
 
     if write_dir is None:

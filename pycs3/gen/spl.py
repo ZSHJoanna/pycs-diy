@@ -344,7 +344,7 @@ class Spline:
         and still respect epsilon at any time.
 
 
-        :param bokmethods : string
+        :param bokmethods: string
             - MCBF : Monte Carlo brute force with ntestpos trial positions for each knot
             - BF : brute force, deterministic. Call me twice
             - fminind : fminbound on one knot after the other.

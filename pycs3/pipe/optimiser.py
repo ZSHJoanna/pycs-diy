@@ -35,8 +35,7 @@ class Optimiser(object):
         :param fit_vector: list, target vector containing the target value of zruns and sigma for each LightCurve
         :param spline: Spline, intrinsic Spline corresponding to your lcs
         :param attachml_function: function, can be pycs3.gen.splml.addtolc() or pycs3.gen.polyml.addtolc()
-        :param attachml_param: float, argument to be passed to the attachml_function. It is a float for the moment as
-        atachml functions typically requires only one argument. This is typically the mlknostep of your microlensing model.
+        :param attachml_param: float, argument to be passed to the attachml_function. It is a float for the moment as atachml functions typically requires only one argument. This is typically the mlknostep of your microlensing model.
         :param knotstep: float, knotstep of the intrinsic spline
         :param savedirectory: string, name of the directory to save the output
         :param recompute_spline: boolean, this should stay to True unless you know what you are doing
@@ -44,14 +43,12 @@ class Optimiser(object):
         :param theta_init: list, starting point of the optimisation
         :param n_curve_stat: float, number of trial curves to compute the statistics
         :param shotnoise: string, shotnoise type, should be left to None, unless you know what you are doing.
-        :param tweakml_type: srting, only 'PS_from_residuals' implemented so far
+        :param tweakml_type: str, only 'PS_from_residuals' implemented so far
         :param display: boolean, to display the figure
         :param verbose: boolean, Verbosity
         :param tweakml_name: string, Name of the tweakml function, in case you try several type.
-        :param correction_PS_residuals: boolean, to add an additionnal correction for the scaling of the Power Spectrum,
-        should be set to True
-        :param tolerance: float, tolerance in unit of sigma. I stop the optimisation if I found a set of parameters
-        matching the data within the tolerance limit.
+        :param correction_PS_residuals: boolean, to add an additionnal correction for the scaling of the Power Spectrum,should be set to True
+        :param tolerance: float, tolerance in unit of sigma. I stop the optimisation if I found a set of parameters matching the data within the tolerance limit.
         :param debug: boolean, debug mode, not using multithreading
         """
 
@@ -416,6 +413,7 @@ class Optimiser(object):
 class DicOptimiser(Optimiser):
     """
     Dichotomy search optimiser. It inherit from the Optimiser class.
+
     """
 
     def __init__(self, lcs, fit_vector, spline, attachml_function, attachml_param, knotstep=None,
@@ -441,7 +439,7 @@ class DicOptimiser(Optimiser):
     def optimise(self):
         """
         High-level function. Run the optimisation.
-        :return:
+
         """
 
         self.time_start = time.time()
@@ -528,7 +526,8 @@ class DicOptimiser(Optimiser):
     def check_if_stop(self):
         """
         Check if one of the stopping condition is met.
-        :return: boolean
+        :return: bool
+
         """
         if self.iteration >= self.max_iter:
             self.message = "I stopped because I reached the max number of iteration.\n"
@@ -548,7 +547,7 @@ class DicOptimiser(Optimiser):
     def get_best_param(self):
         """
         Return the best fit parameters of the generative noise model. To be called after optimise()
-        :return:
+
         """
         if self.chain_list is None:  # pragma: no cover
             raise RuntimeError("I don't have the best parameters yet. You should run optimise() first !")
@@ -560,14 +559,14 @@ class DicOptimiser(Optimiser):
     def analyse_plot_results(self):
         """
         This is currently only producing the plot. You might want to do some other fancy operation here in the future.
-        :return:
+
         """
         self.plot_chain_grid_dic()
 
     def plot_chain_grid_dic(self):
         """
         Make the diagnostic plots
-        :return:
+
         """
         for i, l in enumerate(self.lcs):
             x_param = np.asarray(self.explored_param)[:, i]

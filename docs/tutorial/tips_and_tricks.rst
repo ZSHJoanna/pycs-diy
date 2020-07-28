@@ -17,7 +17,7 @@ If you have several copies, from SVN or installed...
 
 
 "Faking" PyCS3 delay or error measurements
------------------------------------------
+------------------------------------------
 
 This is useful if you want to include measurements from non-pycs techniques on the typical pycs3 plots
 ::

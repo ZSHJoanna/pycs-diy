@@ -58,6 +58,7 @@ def saveresiduals(lcs, spline):
     We have to keep this function separate from draw(), as you might want to shift the curves after saving the residuals...
 
     .. warning:: Call this function if your spline matches to the lcs !
+
     :param lcs: list of LightCurve objects
     :param spline: Spline object
     """

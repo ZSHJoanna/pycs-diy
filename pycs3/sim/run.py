@@ -333,7 +333,7 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
     :param destpath: string. Path to write the optimised curves and results.
     :param use_test_seed: boolean. Used for testing purposes. If you want to impose the random seed.
     :param ncpu: integer. Number of CPU tu use, if None I will use all available CPUs. Turn this to one if you use higher level of parallelisation
-    :return dictionary containing information about which curves optimisation failed.
+    :return: dictionary containing information about which curves optimisation failed.
     """
 
     # We look for the sims directory

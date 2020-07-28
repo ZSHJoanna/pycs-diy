@@ -13,8 +13,7 @@ def proquest(askquestions):
     """
     Asks the user if he wants to proceed. If not, exits python.
 
-    :param askquestions: boolean, askquestions is a switch, True or False, that allows to skip the
-    questions.
+    :param askquestions: boolean, askquestions is a switch, True or False, that allows to skip the questions.
     """
     if askquestions: # pragma: no cover
         answer = input("Tell me, do you want to go on ? (yes/no) ")

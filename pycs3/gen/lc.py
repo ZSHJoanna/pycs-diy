@@ -18,22 +18,52 @@ class LightCurve:
     usually all containing the same fields.
 
     Note that a lightcurve MUST always be chronologically ordered, this allows faster algorithms.
-    See methods sort() and validate().
+    See methods :meth:`pycs3.gen.lc.LightCurve.sort` and :meth:`pycs3.gen.lc.LightCurve.validate`.
     Importation functions should automatically sort().
 
-    .. note:: There is only one remaining philosophy about handling shifts of lightcurves:  use shifttime()
-    and cie, this is fast and you do not change the actual data (recommended)
+    .. note:: There is only one remaining philosophy about handling shifts of lightcurves:  use :meth:`pycs3.gen.lc.LightCurve.shifttime` and cie, this is fast and you do not change the actual data (recommended)
+
+    :param telescopename: name of the telescope that tooks this curve
+    :type telescopename: str
+    :param object: name of the astronomical object observed
+    :type object: str
+    :param plotcolour: recognized matplotlib colour. Used when plotting the light curve
+    :type plotcolour: str
+    :param jds: The "dates", as an array of floats, in HJD, MHJD, ... these jds should always be in chronological order please (and of course always correspond to the other arrays).
+    :type jds: numpy.ndarray
+    :param mags: observed magnitudes array
+    :type mags: numpy.ndarray
+    :param magerrs: magnitude errors array
+    :type magerrs: numpy.ndarray
+    :param mask: A boolean mask, allows to "switch off" some points. True means "included", False means "skip this one".
+    :type mask: numpy.ndarray
+    :param properties:  This is a list of dicts (exactly one per data point) in which you can put whatever you want to. You can use them to carry image names, airmasses, sky levels, telescope names etc. Of course this slows down a bit things like merging, etc.
+    :type properties: list of dictionnaries
+    :param ploterrorbars: A flag to show or hide errorbars in plots of this lightcurve (default : True)
+    :type ploterrorbars: bool
+    :param timeshift: A float giving the shift in time (same unit as jds) that was applied to the lightcurve. This is updated at every shift, so that a lightcurve is always "aware" of its eventual shift.
+    :type timeshift: float
+    :param magshift: A float giving the shift in magnitude (similar to timeshift).
+    :type magshift: float
+    :param fluxshift:  A float giving the shift in flux (!). As we work with magnitudes, a shift in flux is a bit special. Note by the way that a flux shift does not commute with a magnitude shift !
+    :type fluxshift: float
+    :param ml: Optional, microlensing curve associated to the current LightCurve
+    :type ml: microlensing object, e.g. :class:`pycs3.gen.splml.SplineML` or :class:`pycs3.gen.polyml.Microlensing`
+    :param commentlist: Save all operation applied to the LightCurve in this list
+    :type commentlist: list
+    :param labels: String if you want to associate a label to each data point
+    :type labels: str
+    :param showlabels: bool to plot a label for each datapoint
+    :type showlabels: bool
+
     """
 
     def __init__(self, telescopename="Telescope", object="Object", plotcolour="crimson"):
         """
-        The plain constructor, binding all the instance variables.
-        It gives a small default lightcurve with 5 points, labels, and a mask to play with.
 
-        :param telescopename: string, name of the telescope that took this curve
-        :param object: string, name of the astronomical object observed
-        :param plotcolour: string, recognized matplotlib colour. Used when plotting the light curve
+        By default the constructor, is creating a small default lightcurve with 5 points, labels, and a mask to play with.
         """
+
         # Some various simple attributes :
         self.telescopename = telescopename
         self.object = object
@@ -41,59 +71,28 @@ class LightCurve:
 
         # The data itself : here we give some default values for testing purposes :
         self.jds = np.array([1.1, 2.0, 3.2, 4.1, 4.9])  #
-        """ 
-        The "dates", as floats, in HJD, MHJD, ... these jds should always be in 
-        chronological order please (and of course always correspond to the other arrays)."""
 
         self.mags = np.array([-10.0, -10.1, -10.2, -10.3, -10.2])
         self.magerrs = np.array([0.1, 0.2, 0.1, 0.1, 0.1])
 
         # Other attributes:
         self.mask = np.array([True, True, False, True, True])
-        """
-        A boolean mask, allows to "switch off" some points.
-        True means "included", False means "skip this one".
-        """
-
         self.properties = [{"fwhm": 1.0}, {"fwhm": 1.0}, {"fwhm": 1.0}, {"fwhm": 1.0}, {"fwhm": 1.0}]
-        """
-        This is a list of dicts (exactly one per data point) in which you can put whatever you want to.
-        You can use them to carry image names, airmasses, sky levels, telescope names etc.
-        Of course this slows down a bit things like merging etc.
-        """
 
         # Other useful settings for plots
         self.ploterrorbars = True
-        """A flag to show or hide errorbars in plots of this lightcurve."""
 
         # Values of the two obvious possible shifts.
         self.timeshift = 0.0
-        """
-        A float giving the shift in time (same unit as jds) that was applied to the lightcurve. 
-        This is updated at every shift, so that a lightcurve is always "aware" of its eventual shift. 
-        """
-
         self.magshift = 0.0
-        """A float giving the shift in magnitude (similar to timeshift)."""
-
         self.fluxshift = 0.0
-        """
-        A float giving the shift in flux (!). As we work with magnitudes, a shift in flux is a bit special.
-        Note by the way that a flux shift does not commute with a magnitude shift !
-        """
 
         # And now the microlensing : by default there is none :
         self.ml = None
-        """Optional, microlensing curve associated to the current light curve"""
 
         self.commentlist = []
-        """Save all operation applied to the light curve in this list"""
-
         self.labels = [""] * len(self)
-        """String if you want to associate a label to each data point"""
-
         self.showlabels = False
-        """boolean to plot a label for each datapoint"""
 
     # I explicitly define how str(mylightcurve) will look. This allows a nice "print(mylightcurve)" for instance !
     def __str__(self):
@@ -127,8 +126,8 @@ class LightCurve:
         I do not take into account the mask !
 
         :param seasongap: Minimal interval in days to consider a gap to be a season gap.
-
-        I return a dict with the following keys :
+        :type seasongap: float
+        :return: I return a dict with the following keys :
 
         * nseas : number of seasons
         * meansg : mean length (in days, of course) of the season gaps
@@ -137,9 +136,11 @@ class LightCurve:
         * stdsg : standard deviation of the season gaps
         * med : the median sampling interval inside seasons
         * mean : the mean sampling interval inside seasons
-        * min : ...
-        * max
-        * std
+        * min : the minimum sampling interval inside seasons
+        * max : the maximum sampling interval inside seasons
+        * std : the standard deviation of the sampling intervals inside seasons
+
+        :rtype: dict
 
         """
 
@@ -176,8 +177,8 @@ class LightCurve:
         """
         Returns a list of strings containing the property field names that are common to
         all data points.
-        :param notonlycommon : boolean. If True, then I return all fields, not only the ones common to
-        all my data points.
+        :param notonlycommon: If True, then I return all fields, not only the ones common to all my data points.
+        :type notonlycommon: bool
         """
         propkeys = [set(props.keys()) for props in self.properties]
         if notonlycommon:
@@ -189,6 +190,9 @@ class LightCurve:
         """
         Returns a multi-line string (small paragraph) with information
         about the current state of a lightcurve.
+
+        :param title: Add a title for informations (Optional)
+        :type title: str
         """
 
         if title != "None":
@@ -297,7 +301,7 @@ class LightCurve:
                 shifts = 2.5 * np.log10((-self.fluxshift * np.ones(len(self)) / (10.0 ** (self.mags / -2.5))) + 1.0)
             else:
                 shifts = -2.5 * np.log10((self.fluxshift * np.ones(len(self)) / (10.0 ** (self.mags / -2.5))) + 1.0)
-            if np.all(np.isnan(shifts) is False) is False: # pragma: no cover  # If there is a nan in this...
+            if np.all(np.isnan(shifts) is False) is False:  # pragma: no cover  # If there is a nan in this...
                 print("Ouch, negative flux !")
                 return np.zeros(len(self))
             else:
@@ -313,7 +317,7 @@ class LightCurve:
         As this changes the actual self.mags, it cannot be undone !
         """
         # We check that we won't go into negative fluxes :
-        if not np.all(fluxes > self.getminfluxshift()): # pragma: no cover
+        if not np.all(fluxes > self.getminfluxshift()):  # pragma: no cover
             raise RuntimeError("That would give negative fluxes ...")
 
         newfluxes = self.getrawfluxes() + fluxes
@@ -330,11 +334,11 @@ class LightCurve:
         We "add" this stuff in this order, i.e. fluxshift always comes first.
         We always return a copy of the array, to prevent you from changing the actual lightcurve.
 
-
         lc.mags "+" fluxshift + magshift + microlensings if ml is present,
         and just lc.mags "+" fluxshift + magshift if not.
         You can overwrite this : if noml = True, I don't include the ml even if a microlensing is present !
         """
+
         if self.fluxshift != 0.0:
             if (self.ml is not None) and (noml is False):
                 return self.mags + self.calcfluxshiftmags() + self.magshift + self.ml.calcmlmags(self)
@@ -361,7 +365,7 @@ class LightCurve:
         the parameters here ! Note that we COPY the microlensing object, so that the one added is independent from yours.
         """
 
-        if self.ml is not None and verbose: # pragma: no cover
+        if self.ml is not None and verbose:  # pragma: no cover
             print("I replace an existing microlensing.")
 
         self.ml = microlensing.copy()  # this copy is important if you append the "same" new ml object to different lcs.
@@ -420,7 +424,7 @@ class LightCurve:
         Note that we do not touch microlensing here, it remains in place and does not change its meaning in any way.
         """
 
-        if self.fluxshift != 0.0: # pragma: no cover
+        if self.fluxshift != 0.0:  # pragma: no cover
             raise RuntimeError("Apply the fluxshift before applying the magshift !")
 
         self.mags += self.magshift
@@ -438,10 +442,10 @@ class LightCurve:
         But, if there is a *fluxshift*, we will have to make sure that it was "applied" before !
         """
 
-        if self.ml is None:# pragma: no cover
+        if self.ml is None:  # pragma: no cover
             raise RuntimeError("Hey, there is no ml associated to this lightcurve !")
 
-        if self.fluxshift != 0.0:# pragma: no cover
+        if self.fluxshift != 0.0:  # pragma: no cover
             raise RuntimeError("Apply the fluxshift before applying the ML !")
         # This is really important. One possibility would be that this function applies the fluxshift ?
 
@@ -470,16 +474,14 @@ class LightCurve:
         For each point from the skiplist, I will search for the corresponding point in the lightcurve
         within searchrange days. I will warn you in case of anything fishy.
 
-
         :param filepath: file to read
-        :type filepath: string or path
+        :type filepath: str or path
         :param searchrange: range in which I'll look for points (in days).
         :type searchrange: float
         :param accept_multiple_matches: control if many points can be masked at once
-        :type accept_multiple_matches: boolean
-        :param verbose :verbosity option
-        :type verbose: boolean
-
+        :type accept_multiple_matches: bool
+        :param verbose: verbosity option
+        :type verbose: bool
 
         """
         skippoints = readidlist(filepath, verbose=verbose)
@@ -569,8 +571,7 @@ class LightCurve:
 
         We use the copy module, imported as "pythoncopy" to avoid confusion with this method.
 
-        @rtype: lightcurve
-        @return: A copy of the lightcurve.
+        :return: A copy of the lightcurve.
 
         """
         return pythoncopy.deepcopy(self)
@@ -598,7 +599,7 @@ class LightCurve:
         # finally we change the mask itself :
         self.mask = self.magerrs >= 0.0  # This should be True for all !
 
-        if self.ml is not None: # pragma: no cover
+        if self.ml is not None:  # pragma: no cover
             print("WARNING : cutmask() just removed your microlensing !")
             self.rmml()
 
@@ -631,22 +632,23 @@ class LightCurve:
 
         ndates = len(self.jds)
         if len(self.mags) != ndates or len(self.magerrs) != ndates or len(self.mask) != ndates or len(
-                self.labels) != ndates or len(self.properties) != ndates:# pragma: no cover
+                self.labels) != ndates or len(self.properties) != ndates:  # pragma: no cover
             raise RuntimeError("Incoherence in the length of your lightcurve !")
 
         # I postulate that lightcurves shorter then 2 points make no sense (the next test, and seasons() etc would crash...)
-        if ndates < 2: # pragma: no cover
+        if ndates < 2:  # pragma: no cover
             raise RuntimeError("Your lightcurve is too short... give me at least 2 points.")
 
         # some algorithms have been optimized so that they NEED ordered lightcurves, i.e. values in self.jds must be increasing.
         # here we check if this is the case for a given lightcurve.
         first = self.jds[:-1]
         second = self.jds[1:]
-        if not np.alltrue(np.less_equal(first, second)):  # pragma: no cover # Note the less_equal : ok to have points with same JD.
+        if not np.alltrue(np.less_equal(first,
+                                        second)):  # pragma: no cover # Note the less_equal : ok to have points with same JD.
             raise RuntimeError("Your lightcurve is not sorted !")
 
         # we check if the errors are positive:
-        if not np.alltrue(self.magerrs > 0.0): # pragma: no cover
+        if not np.alltrue(self.magerrs > 0.0):  # pragma: no cover
             raise RuntimeError("Your lightcurve has negative or null errors !")
         # note that we use this sometimes in the code to generate masks etc... so don't just
         # remove this check.
@@ -674,7 +676,7 @@ class LightCurve:
         self.labels = [self.labels[i] for i in sortedindices]  # trick as labels is not a numpy array
         self.properties = [self.properties[i] for i in sortedindices]  # trick as properties is not a numpy array
 
-        if self.ml is not None: # pragma: no cover
+        if self.ml is not None:  # pragma: no cover
             print("WARNING : sort() just removed your microlensing !")
             self.rmml()
 
@@ -737,7 +739,7 @@ class LightCurve:
 
         indices = np.arange(len(self))[self.mask]  # the indices we want to bootstrap : only unmasked ones.
 
-        if indices.size == 1: # pragma: no cover
+        if indices.size == 1:  # pragma: no cover
             raise RuntimeError("Not enough points to bootstrap !")
 
         draws = np.random.randint(0, high=indices.size, size=indices.size)  # indexes of the indices that are drawn
@@ -770,15 +772,15 @@ class LightCurve:
 
         """
         # Let's warn the user if there are timeshifts in the curves :
-        if self.timeshift != 0.0 or otherlc.timeshift != 0.0: # pragma: no cover
+        if self.timeshift != 0.0 or otherlc.timeshift != 0.0:  # pragma: no cover
             print("WARNING : you ask me to merge time-shifted lightcurves !")
 
         # and microlensing :
-        if self.ml is not None or otherlc.ml is not None: # pragma: no cover
+        if self.ml is not None or otherlc.ml is not None:  # pragma: no cover
             print("WARNING : I am merging lightcurves with possible microlensing !")
 
         # for the magnitude shift, for otherlc it is quite common, but not for self :
-        if self.magshift != 0.0 or self.fluxshift != 0.0: # pragma: no cover
+        if self.magshift != 0.0 or self.fluxshift != 0.0:  # pragma: no cover
             print("WARNING : merging into a lightcurve with magshift or fluxshift : everything gets applied ! ")
 
         # Frist we just concatenate all the values into new numpy arrays :
@@ -821,24 +823,23 @@ class LightCurve:
 
         Includes mask column only if required (if there is a mask)
 
-
         :param filename: where to write the file
-        :type filename: string or path
+        :type filename: str or path
         :param separator: how to separate the collumns
-        :type separator: string
+        :type separator: str
         :param writeheader: include rdb header ?
-        :type writeheader: boolean
+        :type writeheader: bool
         :param properties: properties of the lightcurves to be include in the file.
         :type properties: list of strings, e.g. ["fwhm", "ellipticity"]
-        :param rdbunderline : If you want to have a separation between column title and the data
-        :type rdbunderline : boolean
+        :param rdbunderline: If you want to have a separation between column title and the data
+        :type rdbunderline: bool
 
         """
         import csv
 
         self.validate()  # Good idea to keep this here, as the code below is so ugly ...
 
-        if filename is None: # pragma: no cover
+        if filename is None:  # pragma: no cover
             filename = "%s_%s.rdb" % (self.telescopename, self.object)
 
         # We include a "mask" column only if mask is not True for all points

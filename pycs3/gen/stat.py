@@ -272,13 +272,13 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
     :param plots: boolean to choose if you want to produce the plots
     :param nplots: number of mock curves to plot for the residual plots
     :param r: radius around the mean to plot for the residuals histograms
-    :param plotjdrange : list, containing the two extremity of the period to plot
+    :param plotjdrange: list, containing the two extremity of the period to plot
     :param showplot: False to save the figure in png, True to show it on the screen
     :param plotpath: string, directory to save the pngs, used if showplot is False
     :param directory: path to look for the simulation
     :param resihist_figsize: tuple, containing the dimension of the residuals histograms
     :param id: string, to give an additionnal id name in the figure name.
-    :return dictionnary containing the statistics about your run
+    :return: dictionnary containing the statistics about your run
 
     """
     print("Analysing the residuals of simset %s" % simset)

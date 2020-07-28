@@ -9,7 +9,7 @@ First step is to learn about this fundamental object, and the functions to manip
 Importing lightcurves
 ---------------------
 
-You probably have some light curves in the form of simple text/csv/rdb files. If not, get the trial curves from :doc:`demo1`.
+You probably have some light curves in the form of simple text/csv/rdb files. If not, get the trial curves from <a href="trialcurves.txt" download> here </a>.
 
 
 Importing from cosmouline/lcmanip or similar rdb files

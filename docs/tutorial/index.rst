@@ -12,6 +12,5 @@ Tutorial
 	shifting
 	drawing
 	makehists
-	demo1
 	tips_and_tricks
 	

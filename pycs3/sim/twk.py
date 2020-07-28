@@ -95,9 +95,9 @@ def tweakml_PS(lcs, spline, B, f_min = 1/300.0,psplot=False, save_figure_folder 
     :param save_figure_folder: string. Path where to plot the figures
     :param verbose: boolean. Verbosity
     :param interpolation: string, interpolation type. Choose between 'nearest' and 'linear'
-    :param A_correction: Correction factor to the amplitude of the power spectrum. To produce the same rms standard deviation in the
-    residuals than the data I need a some small adjustement because the automatic adjustment of the amplitude is not sufficient.
+    :param A_correction: Correction factor to the amplitude of the power spectrum. To produce the same rms standard deviation in the residuals than the data I need a some small adjustment because the automatic adjustment of the amplitude is not sufficient.
     :return: Nothing, I modify the lcs.
+
     """
     for l in lcs:
         # We check if the attached ml really is a spline, you should change that before calling the function if this is not the case

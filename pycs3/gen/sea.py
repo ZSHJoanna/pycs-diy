@@ -228,8 +228,8 @@ def easycut(lclist, keep=[1], seasongap=60, mask=False, verbose=False):
     Seasons are determined for each lightcurve individually
 
     :param lclist: list of LightCurve
-    :param keep : a list of "indices" (human convention, starting at 1) of seasons to keep.
-    :param mask : if True, I will not cut the seasons, but only mask them out.
+    :param keep: a list of "indices" (human convention, starting at 1) of seasons to keep.
+    :param mask: if True, I will not cut the seasons, but only mask them out.
     :param seasongap: minimum gap to detect a season
     :param verbose: verbosity
     """

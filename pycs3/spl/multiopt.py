@@ -92,7 +92,7 @@ def opt_source(lcs, sourcespline, dpmethod="extadj", bokit=0, bokmethod="BF", ve
     :param bokmethod: string, method to build the
     :param verbose: boolean, Verbosity
     :param trace: boolean, to keep a trace of the operation
-    :param tracedir : string, directory to save the trace
+    :param tracedir: string, directory to save the trace
     :return:
     """
 
@@ -127,6 +127,10 @@ def opt_fluxshift(lcs, sourcespline, verbose=True):
     Especially of the sourcespline, as we fit here even on regions not well constrained by the spline !
 
     The spline should typically well fit to the first curve.
+
+    :param lcs: list of LightCurves
+    :param sourcespline: Spline to fit the flux to.
+    :param verbose: Verbosity
     """
 
     for l in lcs[1:]:  # We don't touch the first one.
@@ -172,14 +176,16 @@ def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=Tr
     thus fast !
 
     Parameters for spline ML :
-    :param lcs : list of LightCurve
+    :param lcs: list of LightCurve
     :param sourcespline: source Spline object
     :param bokit: integer, number of iteration to build the BOK.
     :param bokmethod : string
+
         - MCBF : Monte Carlo brute force with ntestpos trial positions for each knot
         - BF : brute force, deterministic. Call me twice
         - fminind : fminbound on one knot after the other.
         - fmin :global fminbound
+
     :param splflat: boolean, if you want to optimise only the border coefficient after a first optimisation
     :param verbose: boolean, verbosity
     :param trace: boolean, trace all the operation applied to the LightCurve
@@ -189,7 +195,6 @@ def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=Tr
 
     None ! We just to a linear weighted least squares on each season !
     So for poly ML, all the params above are not used at all.
-
 
     We do not return anything. Returning a r2 would make no sense, as we do not touch the sourcepline !
 

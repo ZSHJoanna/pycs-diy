@@ -132,7 +132,7 @@ def subtract(rs1, rs2):
 
     :param rs1: Rslc Object
     :param rs2: Rslc Object
-    :return new subtracted Rslc object
+    :return: new subtracted Rslc object
 
     """
 

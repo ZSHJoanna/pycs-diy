@@ -32,8 +32,8 @@ def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", 
     :type verbose: bool
     :param verbose: verbosity of the function
 
-    :return:LightCurve
-    :rtype: :class:`pycs3.gen.LightCurve`
+    :return: LightCurve
+    :rtype: :class:`pycs3.gen.lc.LightCurve`
     """
 
     # Make a brand new lightcurve object :
@@ -88,7 +88,8 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
     :param object: name of the astronomical object
     :param plotcolour: colour of the lightcurve
     :param verbose: verbosity of the function
-    :param absmagerrs: boolean, allow to take the absolute value of the given errors
+    :param absmagerrs: allow to take the absolute value of the given errors
+    :type absmagerrs: bool
     :param propertycols: (default : None) is a dict : ``propertycols = {"fwhm":7, "skylevel":8}`` means that col 7 should be read in as property "fwhm" and 8 as "skylevel".
     :type propertycols: dictionary
 
@@ -261,8 +262,8 @@ def display(lclist=[], splist=[],
             showinsert=None, insertname=None, verbose=False, ax=None):
     """
     Function that uses matplotlib to plot a **list** of lightcurves/splines/GPRs, either on screen or into a file.
-    It uses lightcurve attributes such as ``lc.plotcolour`` and ``lc.showlabels``, and displays masked points
-    as black circles. It's certainly a key function of pycs.
+    It uses lightcurve attributes such as ``LightCurve.plotcolour`` and ``LightCurve.showlabels``, and displays masked points
+    as black circles. It's certainly a key function of PyCS3.
     You can also put tuples (lightcurve, listofseasons) in the lclist, and the seasons will be drawn.
     This function is intended both for interactive exploration and for producing publication plots.
 
@@ -276,8 +277,7 @@ def display(lclist=[], splist=[],
 
     :param title: Adds a title to the plot, center top of the axes, usually used for lens names.
         To nicely write a lens name, remember to use raw strings and LaTeX mathrm, e.g. :
-        ``title = r"$\mathrm{RX\,J1131-1231}$"``. If you want to use a preset of parameter. Choose between "homepagepdf", "homepagepdfnologo",
-    "2m2", "posterpdf", "cosmograil_dr1", "cosmograil_dr1_microlensing", I overwrite other keyword arguments.
+        ``title = r"$\mathrm{RX\,J1131-1231}$"``. If you want to use a preset of parameter. Choose between "homepagepdf", "homepagepdfnologo", "2m2", "posterpdf", "cosmograil_dr1", "cosmograil_dr1_microlensing", I overwrite other keyword arguments.
     :type title: string
 
     :param titlexpos: Specify where you want your to anchor the center of your title in the x axis. the value is in the x-axis fraction.  Default is center. (x = 0.5)
@@ -286,7 +286,7 @@ def display(lclist=[], splist=[],
     :param style: A shortcut to produce specific kinds of stylings for the plots.
         Available styles:
 
-            * ``homepagepdf`` and "homepagepdfnologo" : for cosmograil homepage, ok also with long magnitude labels (like -13.2)
+            * ``homepagepdf`` and ``homepagepdfnologo`` : for cosmograil homepage, ok also with long magnitude labels (like -13.2)
             * ``2m2`` : for 2m2 data
             * ``posterpdf`` : for 2m2 data
             * ``internal`` : for 2m2 data
@@ -294,22 +294,22 @@ def display(lclist=[], splist=[],
     :type style: string
 
     :param showlegend: Automatic legend (too technical/ugly for publication plots, uses str(lightcurve))
-    :type showlegend: boolean
+    :type showlegend: bool
 
     :param showlogo: Adds an EPFL logo + www.cosmograil.org on the plot.
-    :type showlogo: boolean
+    :type showlogo: bool
 
     :param logopos: Where to put it, "left" or "right"
-    :type logopos: string
+    :type logopos: str
 
     :param showdates: If True, the upper x axis will show years and 12 month minor ticks.
-    :type showdates: boolean
+    :type showdates: bool
 
     :param showdelays: If True, the relative delays between the curves are written on the plot.
-    :type showdelays: boolean
+    :type showdelays: bool
 
     :param nicefont: Sets default to serif fonts (terrible implementation, but works)
-    :type nicefont: boolean
+    :type nicefont: bool
 
     :param text:
         Generic text that you want to display on top of the plot, in the form : [line1, line2, line3 ...]
@@ -331,26 +331,26 @@ def display(lclist=[], splist=[],
     :type plotsize: tuple
 
     :param showgrid: Show grid, that is vertical lines only, one for every year.
-    :type showgrid: boolean
+    :type showgrid: bool
 
     :param markersize: Size of the data points, default is 6
     :type markersize: float
 
     :param showerrorbars: If False, the ploterrorbar settings of the lightcurves are disregared and no error bars are shown.
-    :type showerrorbars: boolean
+    :type showerrorbars: bool
 
     :param showdatapoints: If False, no data points are shown. Useful if you want e.g. to plot only the microlensing
-    :type showerrorbars: boolean
+    :type showerrorbars: bool
 
     :param keeponlygrid: If True, keeps the yearly grid from showdates but do not display the dates above the plot.
-    :type keeponlygrid: boolean
+    :type keeponlygrid: bool
 
     :param showinsert: If True, display the insertname image in the top-right corner of the main image
-    :type showinsert: boolean
+    :type showinsert: bool
 
     :param insertname: path to the image you want to insert
     :param errorbarcolour: Color for the error bars
-    :type errorbarcolour: string
+    :type errorbarcolour: str
 
     :param capsize: Size of the error bar "ticks"
     :type capsize: float
@@ -374,10 +374,10 @@ def display(lclist=[], splist=[],
             * upper center	9
             * center	10
 
-    :type legendloc: string or int
+    :type legendloc: str or int
 
     :param showspldp: Show the acutal data points of spline objects (for debugging etc)
-    :type showspldp: boolean
+    :type showspldp: bool
 
     :param colourprop: If this is set I will make a scatter plot with points coloured according to the given property, disregarding the lightcurve attribute plotcolour.
         Format : (property_name, display_name, minval, maxval), where display_name is a "nice" version of property_name, like "FWHM [arcsec]" instead of "seeing".
@@ -385,15 +385,15 @@ def display(lclist=[], splist=[],
     :type colourprop: tuple
 
     :param hidecolourbar: Set to True to hide the colourbar for the colourprop
-    :type hidecolourbar: boolean
+    :type hidecolourbar: bool
 
     :param transparent: Set transparency for the plot, if saved using filename
-    :type transparent: boolean
+    :type transparent: bool
 
     :param collapseref: Plot one single dashed line as the reference for the microlensing.
         Use this if you would otherwise get ugly overplotted dashed lines nearly at the same level ...
         This option is a bit ugly, as it does not correct the actual microlensing curves for the collapse.
-    :type collapseref: boolean
+    :type collapseref: bool
 
     :param jdmintickstep: Minor tick step for jd axis
     :type jdmintickstep: float
@@ -402,13 +402,13 @@ def display(lclist=[], splist=[],
     :type magmintickstep: float
 
     :param filename: If this is not "screen", I will save the plot to a file instead of displaying it. Try e.g. "test.png" or "test.pdf". Success depends on your matplotlib backend.
-    :type filename: string
+    :type filename: str
 
     :param ax: if not None, I will return what I plot in the given matplotlib axe you provide me with instead of plotting it.
     :type ax: matplotlib axes
 
     :param verbose: Set to True if you want me to print some details while I process the curves
-    :type verbose: boolean
+    :type verbose: bool
 
 
     """
@@ -865,10 +865,12 @@ def display(lclist=[], splist=[],
 def displayrange(lcs, margin=0.05):
     """
     returns a plausible range of mags and hjds to plot, so that you can keep this fixed in your plots
-    :param lcs: LightCurve object
-    :param margin: float
 
-    :return:tuple of tuple of float : ((min_jds, max_jds),(min_magnitude, max_magnitude))
+    :param lcs: LightCurve object
+    :param margin: percentage of margin to set around your data
+    :type margin: float
+    :return: tuple of tuple of float : ((min_jds, max_jds),(min_magnitude, max_magnitude))
+
     """
     mags = []
     jds = []
@@ -895,7 +897,7 @@ def getnicetimedelays(lcs, separator="\n", to_be_sorted=False):
         By default this is False : if the curves are B, A, C and D in this order,
         I would return BA, BC, BD, AC, AD, CD
 
-    :type to_be_sorted: boolean
+    :type to_be_sorted: bool
 
     .. warning:: This is the function that **defines** the concept of "delay" (and its sign) used by
         pycs. **The delay AB corresponds to timeshift(B) - timeshift(A)**
@@ -918,15 +920,12 @@ def getnicetimedelays(lcs, separator="\n", to_be_sorted=False):
 def getdelays(lcs, to_be_sorted=False):
     """
     Return a list containing the relative time delay between curve
+
     :param lcs: list of LightCurve object
-    :param to_be_sorted: If True, I will sort my output according to l.object.
-        But of course I will **not** modify the order of your lcs !
-        By default this is False : if the curves are B, A, C and D in this order,
-        I would return BA, BC, BD, AC, AD, CD
-
-    :type to_be_sorted: boolean
-
+    :param to_be_sorted: If True, I will sort my output according to l.object. But of course I will **not** modify the order of your lcs ! By default this is False : if the curves are B, A, C and D in this order, I would return BA, BC, BD, AC, AD, CD
+    :type to_be_sorted: bool
     :return: list of time delays.
+
     """
     n = len(lcs)
     if to_be_sorted:
@@ -954,7 +953,7 @@ def gettimeshifts(lcs, includefirst=True):
     :param lcs: list of LightCurves
     :param includefirst: If False, I skip the first of the shifts.
         For timeshift optimizers, it's indeed often ok not to move the first curve.
-    :type includefirst: boolean
+    :type includefirst: bool
 
     :return:array of timesshift
 
@@ -971,8 +970,9 @@ def settimeshifts(lcs, shifts, includefirst=False):
     An do a little check.
 
     :param lcs: list of LightCurves
-    :param shifts : list of time shift to be applied
-    :param includefirst : boolean, to include a shift the first curve of the list or not.
+    :param shifts: list of time shift to be applied
+    :param includefirst: to include a shift the first curve of the list or not.
+    :type includefirst: bool
 
     :return
     """
@@ -1005,7 +1005,7 @@ def objsort(lcs, ret=False, verbose=True):
     :param lcs:
     :param verbose:
     :param ret: If True, I do not sort them in place, but return a new sorted list (containing the same objects).
-    :type ret: boolean
+    :type ret: bool
 
     """
 
@@ -1044,6 +1044,7 @@ def applyshifts(lcs, timeshifts, magshifts):
     :param timeshifts: list of time shift, must have the same length as lcs
     :param magshifts: list of magnitude shifts, must have the same length as lcs
     :return: Nothing, I modify the LightCurve objects.
+
     """
     if not len(lcs) == len(timeshifts) and len(lcs) == len(magshifts):  # pragma: no cover
         raise RuntimeError("Hey, give me arrays of the same lenght !")
@@ -1064,14 +1065,18 @@ def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False, 
 
     :param lc1: LightCurve of reference
     :param lc2: LightCurve that will get interpolated
-    :param interpdist: float, interpolation grid
-    :param weights: boolean, to weight the fit by the photometric error bars
-    :param usemask: boolean, to mask some data
-    :param plot: boolean, display plot of the interpolated curves
-
-    :return:dictionary containing the number of interpolation and the d2 "distance".
+    :param interpdist: interpolation grid
+    :type interpdist: float
+    :param weights: to weight the fit by the photometric error bars
+    :type weights: bool
+    :param usemask: to mask some data
+    :type usemask: bool
+    :param plot: display plot of the interpolated curves
+    :type plot: bool
+    :return: dictionary containing the number of interpolation and the d2 "distance".
 
     """
+
     if usemask:
         lc1jds = lc1.getjds()[lc1.mask]  # lc1 is the "reference" curve
         lc2jds = lc2.getjds()[lc2.mask]  # lc2 is the curve that will get interpolated.
@@ -1173,12 +1178,12 @@ def interpolate(x1, x2, interpolate='nearest'):
     """
     Take two light curve object and return the resampling of the second at the time of the first one
 
-
     :param x1: LightCurve 1
     :param x2: LightCurve 2
     :param interpolate: string, choose between 'nearest' and 'linear'
     :return: interpolated LightCurve
     """
+
     if interpolate == 'nearest':
         new = x1.copy()
         new_mags = []
@@ -1200,8 +1205,10 @@ def interpolate(x1, x2, interpolate='nearest'):
 def find_closest(a, x):
     """
     Nearest neighbor interolation
+
     :param a: float, value where to interpolate
     :param x: 1-D array, interpolated vector
     :return: (minimum distance, index corresponding to the minimal distance)
     """
+
     return np.min(np.abs(x - a)), np.argmin(np.abs(x - a))
