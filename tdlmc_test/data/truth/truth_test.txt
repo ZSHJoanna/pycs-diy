@@ -1,0 +1,5 @@
+test_double_pair1.txt     -57.53
+test_double_pair2.txt     -33.49
+test_double_pair4.txt     71.03
+test_double_pair5.txt     -33.82
+test_double_pair6.txt     -62.04

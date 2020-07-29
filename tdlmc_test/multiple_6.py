@@ -208,8 +208,7 @@ class Data:
 
 def summed_stats(data: Data, number_pair: int, print_txt: bool = True):
 	"""
-	return the metrics [f, precision, accuracy, chi2, X] from the TDC1 for a specific Data 
-	
+	return the metrics [f, precision, accuracy, chi2, X] from the TDC1 for a specific Data.	
 	:type	data: Data
 	:param	data: Data for which you want to compute the metrics from the tdc1
 	:type	number_pair: int
@@ -338,7 +337,7 @@ def load_Datalist(sample_name: str, full_truth: np.array, samplelist: np.array, 
 	             #low_SNR_spl_sigma_05, low_SNR_regdiff_sigma_05, low_SNR_both_baseline]
 	tmp='test, f, precision [%], accuracy[%], chi2, X'
 	for data in Data_list :
-		stats=summed_stats(data, number_pair)
+		stats = summed_stats(data, number_pair)
 		tmp += "\n" + data.name + "," + str(stats[0]) + "," + str(stats[1]*100) + "," + str(stats[2]*100) + "," + str(stats[3]) + "," + str(stats[4])
 	with open(Simulation_multiple_directory + '%s_statistics.csv'%sample_name, 'w') as f :
 		f.write(tmp)
@@ -626,13 +625,15 @@ def getColor(c, N, idx):
 	norm = mpl.colors.Normalize(vmin=0.0, vmax=N-1)
 	return cmap(norm(idx))
 
-def plot_tdc1(list_Datalist: np.array, figure_directory: str, compare_tdc1: bool, number_pair: int):
+def plot_tdc1(Datalist: np.array, sample_name: str, figure_directory: str, compare_tdc1: bool, number_pair: int):
 	"""
 	plot metrics for each sample and data in a summary plot inspired by the TDC1. 
 	There is also the possiblity to compare those results to the submissions from the TDC1.
 	
-	:type	list_Datalist: 1D array of 1D array of Data
-	:param	list_Datalist: Datalist for each of the sample ([FS_datalist, SS_datalist, GS_datalist])
+	:type	Datalist: 1D array of Data
+	:param	Datalist: Datalist for each of the sample ([FS_datalist, SS_datalist, GS_datalist])
+	:type	sample_name: string
+	:param	sample_name: Name of the sample (FS, SS or GS)
 	:type	figure_directory: string
     :param	figure_directory: path to the directory where the plot will be saved
     :type	compare_tdc1: bool
@@ -648,129 +649,129 @@ def plot_tdc1(list_Datalist: np.array, figure_directory: str, compare_tdc1: bool
 		total_A    = [ 0.000, -0.003,  0.037,  0.002, -0.020, -0.030, -0.004, -0.001,  0.007]
 		total_X    = [ 0.66,   0.96,   0.95,   0.98,   1.0,    1.0,    1.0,    1.0,    0.95]
 		author = ['Rumbaugh', 'Hojjati', 'Kumar', 'Jackson', 'Shafieloo', 'pyCS-D3CS', 'pyCS-SDI', 'pyCS-SPL', 'JPL']
+		markers = ['.', '.', '.', '.', '.', '.', '.', '.', '.']
 	else :
-		total_f, total_chi2, total_P, total_A, total_X, author, color, mark = [], [], [], [], [], [], [], []
+		total_f, total_chi2, total_P, total_A, total_X, author, color, markers = [], [], [], [], [], [], [], []
 	total_f, total_chi2, total_P, total_A, total_X = np.array(total_f), np.array(total_chi2), np.array(total_P), np.array(total_A), np.array(total_X)
 	
 	# load our results
-	count =1
-	for Datalist in list_Datalist :
-		if count == 1 : name = "FS "
-		if count == 2 : name = "SS "
-		if count == 3 : name = "GS "
+	count = -1
+	for Data in Datalist :
 		count += 1
-		for Data in Datalist :
-			[f, precision, accuracy, chi2, X] = summed_stats(Data, number_pair, False)
-			total_f = np.append(total_f, f)
-			total_P = np.append(total_P, precision)
-			total_A = np.append(total_A, accuracy)
-			total_chi2 = np.append(total_chi2, chi2)
-			total_X = np.append(total_X, X)
-			author.append(str(name + Data.name))		
+		if count in [3, 4, 5, 6] : continue
+		[f, precision, accuracy, chi2, X] = summed_stats(Data, number_pair, False)
+		total_f = np.append(total_f, f)
+		total_P = np.append(total_P, precision)
+		total_A = np.append(total_A, accuracy)
+		total_chi2 = np.append(total_chi2, chi2)
+		total_X = np.append(total_X, X)
+		author.append(str(sample_name + " " + Data.name))		
 	f, chi2, P, A, X = total_f, total_chi2, total_P, total_A, total_X
-	
+	markers = markers + ['v', 'v', 'v', '^', '^', '^', 'x']
+	colors = ["royalblue", "crimson", "seagreen", 'brown', 'black', 'violet', 'paleturquoise', 'palevioletred', 'olive', 'indianred', 'cyan', 'darkgoldenrod', 'chocolate', 'indigo', 'steelblue', 'gold']
+
 	#Do the plot
 	N = f.size
-	c = "viridis"
+	c = "hsv"
 	bx1=plt.subplot(4,4,1)
-	rect = patches.Rectangle((0.3,0), 1, 0.03, facecolor='Gainsboro')
+	rect = patches.Rectangle((0.3,0), 1, 0.03, facecolor='Gainsboro', zorder = 0)
 	rect.set_alpha(0.3)
 	bx1.add_patch(rect)
-	rect = patches.Rectangle((0.5,0), 1, 0.03, facecolor='Grey')
+	rect = patches.Rectangle((0.5,0), 1, 0.03, facecolor='Grey', zorder = 0)
 	rect.set_alpha(0.3)
 	bx1.add_patch(rect)
 	for i in range(f.size):
-	    bx1.scatter(f[i], P[i], color=getColor(c, N, i))
+	    bx1.scatter(f[i], P[i], color=colors[i], marker=markers[i])
 	plt.setp(bx1.get_xticklabels(), visible=False)
 	bx1.set_ylabel('$P$')
 
 	bx2=plt.subplot(4,4,5,sharex=bx1)
-	rect = patches.Rectangle((0.3,-0.03), 1, 0.06, facecolor='Gainsboro')
+	rect = patches.Rectangle((0.3,-0.03), 1, 0.06, facecolor='Gainsboro', zorder = 0)
 	rect.set_alpha(0.3)
 	bx2.add_patch(rect)
-	rect = patches.Rectangle((0.5,-0.03), 1, 0.06, facecolor='Grey')
+	rect = patches.Rectangle((0.5,-0.03), 1, 0.06, facecolor='Grey', zorder = 0)
 	rect.set_alpha(0.3)
 	bx2.add_patch(rect)
 	for i in range(f.size):
-		bx2.scatter(f[i], A[i], color=getColor(c, N, i))
+		bx2.scatter(f[i], A[i], color=colors[i], marker=markers[i])
 	plt.setp(bx2.get_xticklabels(), visible=False)
 	bx2.set_ylabel('A')
 
 
 	bx3=plt.subplot(4,4,6,sharey=bx2)
-	rect = patches.Rectangle((0,-0.03), 0.03, 0.06, facecolor='Grey')
+	rect = patches.Rectangle((0,-0.03), 0.03, 0.06, facecolor='Grey', zorder = 0)
 	rect.set_alpha(0.3)
 	bx3.add_patch(rect)
 	for i in range(P.size):
-		bx3.scatter(P[i], A[i], color=getColor(c, N, i))
+		bx3.scatter(P[i], A[i], color=colors[i], marker=markers[i])
 	plt.setp(bx3.get_xticklabels(), visible=False)
 	plt.setp(bx3.get_yticklabels(), visible=False)
 
 	bx4=plt.subplot(4,4,9,sharex=bx1)
-	rect = patches.Rectangle((0.3,0), 1, 1.5, facecolor='Gainsboro')
+	rect = patches.Rectangle((0.3,0), 1, 1.5, facecolor='Gainsboro', zorder = 0)
 	rect.set_alpha(0.3)
 	bx4.add_patch(rect)
-	rect = patches.Rectangle((0.5,0), 1, 1.5, facecolor='Grey')
+	rect = patches.Rectangle((0.5,0), 1, 1.5, facecolor='Grey', zorder = 0)
 	rect.set_alpha(0.3)
 	bx4.add_patch(rect)
 	for i in range(f.size):
-		bx4.scatter(f[i], chi2[i], color=getColor(c, N, i))
+		bx4.scatter(f[i], chi2[i], color=colors[i], marker=markers[i])
 	plt.setp(bx4.get_xticklabels(), visible=False)
 	bx4.set_ylabel('$\chi^2$')
 
 	bx5=plt.subplot(4,4,10,sharex=bx3,sharey=bx4)
-	rect = patches.Rectangle((0,0), 0.03, 1.5, facecolor='Grey')
+	rect = patches.Rectangle((0,0), 0.03, 1.5, facecolor='Grey', zorder = 0)
 	rect.set_alpha(0.3)
 	bx5.add_patch(rect)
 	for i in range(P.size):
-		bx5.scatter(P[i], chi2[i], color=getColor(c, N, i))
+		bx5.scatter(P[i], chi2[i], color=colors[i], marker=markers[i])
 	plt.setp(bx5.get_xticklabels(), visible=False)
 	plt.setp(bx5.get_yticklabels(), visible=False)
 
 	bx6=plt.subplot(4,4,11,sharey=bx4)
-	rect = patches.Rectangle((-0.03,0), 0.06, 1.5, facecolor='Grey')
+	rect = patches.Rectangle((-0.03,0), 0.06, 1.5, facecolor='Grey', zorder = 0)
 	rect.set_alpha(0.3)
 	bx6.add_patch(rect)
 	for i in range(A.size):
-		bx6.scatter(A[i], chi2[i], color=getColor(c, N, i))
+		bx6.scatter(A[i], chi2[i], color=colors[i], marker=markers[i])
 	plt.setp(bx6.get_xticklabels(), visible=False)
 	plt.setp(bx6.get_yticklabels(), visible=False)
 
 	bx7=plt.subplot(4,4,13,sharex=bx1)
 	for i in range(f.size):
-		bx7.scatter(f[i], X[i], color=getColor(c, N, i))
+		bx7.scatter(f[i], X[i], color=colors[i], marker=markers[i])
 	bx7.set_xlabel('f')
 	bx7.set_ylabel('X')
 
 	bx8=plt.subplot(4,4,14,sharex=bx3,sharey=bx7)
 	for i in range(P.size):
-		bx8.scatter(P[i], X[i], color=getColor(c, N, i))
+		bx8.scatter(P[i], X[i], color=colors[i], marker=markers[i])
 	plt.setp(bx8.get_yticklabels(), visible=False)
 	bx8.set_xlabel('P')
 
 	bx9=plt.subplot(4,4,15,sharex=bx6,sharey=bx7)
 	for i in range(A.size):
-		bx9.scatter(A[i], X[i], color=getColor(c, N, i))
+		bx9.scatter(A[i], X[i], color=colors[i], marker=markers[i])
 	plt.setp(bx9.get_yticklabels(), visible=False)
 	bx9.set_xlabel('A')
 	
 	bx10=plt.subplot(4,4,16,sharey=bx7)
 	for i in range(chi2.size):
-		bx10.scatter(chi2[i], X[i], color=getColor(c, N, i))
+		bx10.scatter(chi2[i], X[i], color=colors[i], marker=markers[i])
 	plt.setp(bx10.get_yticklabels(), visible=False)
 	bx10.set_xlabel('$\chi^2$')
 
 	#set ticks and limit
 	bx1.set_xlim([-0.02,1.02])
 	bx1.set_xticks([0.2, 0.4, 0.6, 0.8])
-	bx1.set_ylim([0, 0.20])
-	bx1.set_yticks([0.05, 0.10, 0.15])
+	bx1.set_ylim([0, 0.25])
+	bx1.set_yticks([0, 0.10, 0.20])
 	
 	bx2.set_ylim([-0.05, 0.05])
 	bx2.set_yticks([-0.03, -0.01, 0.01, 0.03])
 	
-	bx3.set_xlim([0, 0.20])
-	bx3.set_xticks([0.05, 0.10, 0.15])
+	bx3.set_xlim([0, 0.25])
+	bx3.set_xticks([0, 0.10, 0.20])
 	
 	bx4.set_ylim([0, 2])
 	bx4.set_yticks([0.5, 1, 1.5])
@@ -784,11 +785,14 @@ def plot_tdc1(list_Datalist: np.array, figure_directory: str, compare_tdc1: bool
 	bx10.set_xlim([0, 2])
 	bx10.set_xticks([0.5, 1, 1.5])		
 
+	if sample_name == "FS" : plt.suptitle('Results for the metrics for the Full Sample')
+	elif sample_name == "SS" : plt.suptitle('Results for the metrics for the Silver Sample')
+	elif sample_name == "GS" : plt.suptitle('Results for the metrics for the Golden Sample')
 	plt.subplots_adjust(wspace=0, hspace=0)
-	plt.subplots_adjust(bottom=0.4)
-	plt.legend(author, ncol=4, fontsize='xx-small', loc=1, bbox_to_anchor = [1.65, -0.75])
-	plt.suptitle('Results for the metrics')
-	plt.savefig(figure_directory + 'Final_Plot.png', dpi = 400)
+	plt.legend(author, ncol=2, fontsize='xx-small', loc=1, bbox_to_anchor = [1.51, 4])
+	plt.savefig(figure_directory + '%s_Final_Plot.png'%sample_name, dpi = 400)
+	
+	plt.close("all")
 	
 
 def main(name, name_type, number_pair = 1, work_dir = './'): 
@@ -924,8 +928,11 @@ def main(name, name_type, number_pair = 1, work_dir = './'):
 			for data in GS_Datalist : plot_ML("GS", data, figure_GS_directory, name, name_type, work_dir)
 
 	if (config_multiple_name.display_tdc1 == True) :
-		plot_tdc1(list_Datalist, figure_directory, config_multiple_name.compare_tdc1, number_pair)
-		
+		plot_tdc1(FS_Datalist, "FS", figure_directory, config_multiple_name.compare_tdc1, number_pair)
+		if (config_multiple_name.display_silver == True):
+			plot_tdc1(SS_Datalist, "SS", figure_directory, config_multiple_name.compare_tdc1, number_pair)
+		if (config_multiple_name.display_gold == True):
+			plot_tdc1(GS_Datalist, "GS", figure_directory, config_multiple_name.compare_tdc1, number_pair)
 
 	
 
