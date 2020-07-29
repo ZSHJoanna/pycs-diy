@@ -18,7 +18,7 @@ def merge(lcs, olddp=None, splitup=True, deltat=0.000001, sort=True, stab=False,
 
     If overlap is True, I will keep only points that are "covered" by all four lightcurves !
     This is useful when you want to build a first source spline, and your microlensing is messy at the borders.
-    NOT YET IMPLEMENTED ...
+
     """
 
     jds = np.concatenate([l.getjds() for l in lcs])
@@ -42,28 +42,40 @@ def fit(lcs, knotstep=20.0, n=None, knots=None, stab=True,
         bokit=1, bokeps=2.0, boktests=5, bokwindow=None, bokmethod = 'BF', k=3, verbose=True):
     """
     The highlevel function to make a spline fit.
+    Specify either knotstep (spacing of knots) or n (how many knots to place) or knots (give me actual initial knot locations, for instance prepared by seasonknots.)
 
-    lcs : a list of lightcurves (I will fit the spline through the merged curves)
+    :param lcs: a list of lightcurves (I will fit the spline through the merged curves)
+    :type lcs: list
+    :param knotstep: spacing of knots
+    :type knotstep: float
+    :param n: how many knots to place
+    :type n: int
+    :param knots: array of internal knots
+    :type knots: array
+    :param stab: do you want to insert stabilization points ?
+    :type stap: bool
+    :param stabext: number of days to the left and right to fill with stabilization points
+    :type stabext: float
+    :param stabgap: interval of days considered as a gap to fill with stab points.
+    :type stabgap: float
+    :param stabstep: step of stab points
+    :type stabstep: float
+    :param stabmagerr: if negative, absolute mag err of stab points. If positive, the error bar will be stabmagerr times the median error bar of the data points.
+    :type stabmagerr: float
+    :param bokit: number of BOK iterations (put to 0 to not move knots)
+    :type bokit: int
+    :param bokeps: epsilon of BOK
+    :type bokeps: float
+    :param boktests: number of test positions for each knot
+    :type boktests: int
+    :param bokmethod: string, choose from "BF", "MCBF", "fmin", "fminind". Recommanded default : "BF"
+    :type bokmethod: str
+    :param k: degree of the splines, default = cubic splines k=3, 3 means that you can differentiate twice at the knots.
+    :type k: int
+    :param verbose: verbosity
+    :type verbose: bool
 
-    Specify either
-    knotstep : spacing of knots
-    or
-    n : how many knots to place
-    or
-    knots : give me actual initial knot locations, for instance prepared by seasonknots.
-
-    stab : do you want to insert stabilization points ?
-    stabext : number of days to the left and right to fill with stabilization points
-    stabgap : interval of days considered as a gap to fill with stab points.
-    stabstep : step of stab points
-    stabmagerr : if negative, absolute mag err of stab points. If positive, the error bar will be stabmagerr times the median error bar of the data points.
-
-
-    bokit : number of BOK iterations (put to 0 to not move knots)
-    bokeps : epsilon of BOK
-    boktests : number of test positions for each knot
-    bokmethod : string, choose from "BF", "MCBF", "fmin", "fminind". Recommanded default : "BF"
-
+    :return: An optimised Spline object
 
     """
     dp = merge(lcs, stab=stab, stabext=stabext, stabgap=stabgap, stabstep=stabstep, stabmagerr=stabmagerr,
@@ -95,7 +107,9 @@ def seasonknots(lcs, knotstep, ingap, seasongap=60.0):
     :param lcs, list of LightCurves
     :param knotstep is for inside seasons
     :param ingap is the number of knots inside gaps.
-    :return 1D array containing the knots
+
+    :return: 1D array containing the knots
+
     """
     knots = []
 

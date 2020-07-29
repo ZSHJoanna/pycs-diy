@@ -192,7 +192,8 @@ class Optimiser(object):
         Auxilliary function to optimise the mock curves in parallel. See make_mocks_para().
 
         :param theta: list, containing the parameter of the generative noise model.
-        :return:
+
+        :return: dcitionnary containing the stats and eventual error message
         """
 
         tweak_list = self.get_tweakml_list(theta)
@@ -250,7 +251,7 @@ class Optimiser(object):
         """
         Auxilliary function for parallel computing
         :param args:
-        :return:
+
         """
         kwargs = args[-1]
         args = args[0:-1]
@@ -261,6 +262,7 @@ class Optimiser(object):
         Draw mock curves, optimise them, and compute the zrun and sigma statistics.  This is used in debug mode.
         It does the same than make_mocks_para but serially.
         :param theta: list, containing the parameter of the generative noise model.
+
         :return: tuple (mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas)
         """
 
@@ -328,7 +330,9 @@ class Optimiser(object):
     def check_success(self):
         """
         Check if the optimiser found a set of parameter within the tolerance.
+
         :return: boolean
+
         """
         if any(self.rel_error_zruns_mini[i] is None for i in range(self.ncurve)):  # pragma: no cover
             raise RuntimeError("Error you should run analyse_plot_results() first !")
@@ -342,7 +346,7 @@ class Optimiser(object):
     def report(self):
         """
         Write the optimisation report
-        :return:
+
         """
         if self.chain_list is None:  # pragma: no cover
             raise RuntimeError("You should run optimise() first ! I can't write the report")
@@ -386,7 +390,7 @@ class Optimiser(object):
     def reset_report(self):
         """
         Delete the optimisation report
-        :return:
+
         """
         if os.path.isfile(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt')):
             os.remove(os.path.join(self.savedirectory, 'report_tweakml_optimisation.txt'))
@@ -526,6 +530,7 @@ class DicOptimiser(Optimiser):
     def check_if_stop(self):
         """
         Check if one of the stopping condition is met.
+
         :return: bool
 
         """

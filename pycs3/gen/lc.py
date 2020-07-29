@@ -127,6 +127,7 @@ class LightCurve:
 
         :param seasongap: Minimal interval in days to consider a gap to be a season gap.
         :type seasongap: float
+
         :return: I return a dict with the following keys :
 
         * nseas : number of seasons
@@ -353,6 +354,7 @@ class LightCurve:
     def getmagerrs(self):
         """
         Return the magnitude errors
+
         :return: array of mag errors
         """
         return self.magerrs.copy()
@@ -523,8 +525,9 @@ class LightCurve:
         """
         Delete epochs in your LightCurve
 
-        :param integer or array of integer containing the position of the epoch to remove
-        :return:
+        :param index: integer or array of integer containing the position of the epoch to remove
+        :type index: int or list
+
         """
 
         self.jds = np.delete(self.jds, index)

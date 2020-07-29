@@ -9,12 +9,25 @@ import pycs3.gen.lc_func
 import pycs3.regdiff.rslc
 
 
-def opt_ts(lcs, method="weights", pd=2, covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=True):
+def opt_ts(lcs, method="weights", pd=2., covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=True):
     """
     Give me lightcurves (with more or less good initial time shifts)
     I run a regression on them, optimize regdiff, and set their delays to the optimal values.
 
+    :param method: optimisation method. Choose between "weights" and "simple" (default : "weights")
+    :type method: str
     :param pd: the point density, in points per days.
+    :type pd: float
+    :param covkernel: Choose between "matern","RatQuad" and "RBF". See scikit GP documentation for details
+    :type covkernel: str
+    :param pow: float, exponent coefficient of the covariance function
+    :type pow: float
+    :param amp: initial amplitude coefficient of the covariance function
+    :type amp: float
+    :param scale: float, initial characteristic time scale
+    :type scale: amp
+    :param errscale: additional scaling of the photometric error
+    :type errscale: float
 
     The parameters pow, amp, scale, errscale are passed to the GPR, see its doc (or explore their effect on the GPR before runnign this...)
     """

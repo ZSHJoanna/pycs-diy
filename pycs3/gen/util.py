@@ -141,15 +141,15 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
     :param lclist: A list of lightcurve objects to write
     :type lclist: list
     :param filepath: where to write
-    :type filepath: string
+    :type filepath: str
     :param separator: how to separate the collumns
-    :type separator: string
+    :type separator: str
     :param rdbunderline: do you want the "=====" underlining ?
-    :type rdbunderline: boolean
+    :type rdbunderline: bool
     :param properties: properties of the lightcurves to include in the file.
     :type properties: list of strings
     :param verbose: verbosity
-    :type verbose: boolean
+    :type verbose: bool
     """
 
     # We start with a few tests to see if it is possible to write these lcs into a single file ...

@@ -14,6 +14,7 @@ def proquest(askquestions):
     Asks the user if he wants to proceed. If not, exits python.
 
     :param askquestions: boolean, askquestions is a switch, True or False, that allows to skip the questions.
+
     """
     if askquestions: # pragma: no cover
         answer = input("Tell me, do you want to go on ? (yes/no) ")
@@ -27,6 +28,7 @@ def getdelays(lcs):
     Function to obtain the time delay pairs given a list of light curves.
     The function return a list of delay between the pai of images and a list containing the name of the image pairs.
     :param lcs: list of LightCurves
+
     :return: tuple containing (array of delay pairs, array of delay name)
     """
 
@@ -53,7 +55,7 @@ def write_func_append(fn, stream, **kwargs):
     :param fn: python function to be written in a file
     :param stream: Python File Object
     :param kwargs: dictionnary, containing the keyword argument to be written in the file
-    :return:
+
     """
     fn_as_string = getsource(fn)
     for var in kwargs:
@@ -71,6 +73,7 @@ def generate_regdiffparamskw(pointdensity, covkernel, pow, errscale):
     :param covkernel: string, covariance kernel to be passed to regdiff, Choose between 'RBF', 'Matern' and "RatQuad"
     :param pow: float, exponent of the Mattern function
     :param errscale: float, additionnal scaling of the photometric error bars.
+
     :return: list of string containing the keywords
     """
     out_kw = []
@@ -88,6 +91,7 @@ def read_preselected_regdiffparamskw(file):
     Read a text file readable with json and extract the keyword for regdiff.
 
     :param file: string, path to the file containing the preselected parameters
+
     :return: list of string containing the keywords
     """
     out_kw = []
@@ -111,6 +115,7 @@ def get_keyword_regdiff(pointdensity, covkernel, pow, errscale):
     :param covkernel: string, covariance kernel to be passed to regdiff, Choose between 'RBF', 'Matern' and "RatQuad"
     :param pow: float, exponent of the Matern function
     :param errscale: float, additionnal scaling of the photometric error bars.
+
     :return: list of dictionnary containing the argument to be given to the regdiff optimiser
     """
 
@@ -129,6 +134,7 @@ def get_keyword_regdiff_from_file(file):
     Read a text file readable with json and extract the keyword for regdiff.
 
     :param file: string, path to the file containing the preselected parameters
+
     :return: : list of dictionnary containing the argument to be given to the regdiff optimiser
     """
     with open(file, 'r') as f:
@@ -141,6 +147,7 @@ def get_keyword_spline(kn):
     Generate the dictionnary to be given to the spline optimiser.
 
     :param kn: integer, knotstep of the spline optimiser
+
     :return: dictionnary containing the argument to be given to the spline optimiser
     """
     return {'kn': kn}
@@ -150,6 +157,7 @@ def convert_delays2timeshifts(timedelay):
     """
     Convert the time-delays you can measure by eye into time-shifts for the individual curve
     :param timedelay: list of time delays (only AB,AC,AD in the case of a quad)
+
     :return: list of timeshifts
     """
     timeshift = np.zeros(len(timedelay) + 1)
@@ -161,7 +169,7 @@ def mkdir_recursive(path): # pragma: no cover
     """
     Create directory recursively if they subfolders do not exist
     :param path: folder to be created
-    :return:
+
     """
     sub_path = os.path.dirname(path)
     if not os.path.exists(sub_path):

@@ -93,7 +93,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
     :param propertycols: (default : None) is a dict : ``propertycols = {"fwhm":7, "skylevel":8}`` means that col 7 should be read in as property "fwhm" and 8 as "skylevel".
     :type propertycols: dictionary
 
-    :return:LightCurve
+    :return: LightCurve
 
 
     """
@@ -195,7 +195,7 @@ def rdbimport(filepath, object="Unknown", magcolname="mag", magerrcolname="mager
     :param propertycolnames: string, Name of the column containing any other properties (e.g., seeing, airmass, .. )
     :param verbose: boolean, verbosity
     :param absmagerrs: boolean, allow to take the absolute value of the given errors
-    :return:
+
     """
 
     if verbose:
@@ -864,7 +864,7 @@ def display(lclist=[], splist=[],
 
 def displayrange(lcs, margin=0.05):
     """
-    returns a plausible range of mags and hjds to plot, so that you can keep this fixed in your plots
+    Returns a plausible range of mags and hjds to plot, so that you can keep this fixed in your plots
 
     :param lcs: LightCurve object
     :param margin: percentage of margin to set around your data
@@ -888,23 +888,14 @@ def getnicetimedelays(lcs, separator="\n", to_be_sorted=False):
     """
     Returns a formatted piece of text of the time delays between a list of lc objects.
 
-    :param lcs:list of LightCurve object
+    :param lcs:list of LightCurve objects
+    :type lcs:list
     :param separator: try ``" | "`` to get all the delays in one line.
-    :type separator: string
-
-    :param to_be_sorted: If True, I will sort my output according to l.object.
-        But of course I will **not** modify the order of your lcs !
-        By default this is False : if the curves are B, A, C and D in this order,
-        I would return BA, BC, BD, AC, AD, CD
-
+    :type separator: str
+    :param to_be_sorted: If True, I will sort my output according to l.object. But of course I will **not** modify the order of your lcs ! By default this is False : if the curves are B, A, C and D in this order, I would return BA, BC, BD, AC, AD, CD
     :type to_be_sorted: bool
 
-    .. warning:: This is the function that **defines** the concept of "delay" (and its sign) used by
-        pycs. **The delay AB corresponds to timeshift(B) - timeshift(A)**
-        Other places where this is hard-coded :
-        :py:func:`pycs3.sim.plot.hists`
-
-    :return:string to be printed
+    :return: string to be printed
 
     """
     n = len(lcs)
@@ -924,6 +915,7 @@ def getdelays(lcs, to_be_sorted=False):
     :param lcs: list of LightCurve object
     :param to_be_sorted: If True, I will sort my output according to l.object. But of course I will **not** modify the order of your lcs ! By default this is False : if the curves are B, A, C and D in this order, I would return BA, BC, BD, AC, AD, CD
     :type to_be_sorted: bool
+
     :return: list of time delays.
 
     """
@@ -940,7 +932,8 @@ def getnicetimeshifts(lcs, separator="\n"):
     """
     I return the timeshifts as a text string, use mainly for checks and debugging.
     :param lcs: list of LightCurves
-    :return:string to be printed
+
+    :return: string to be printed
     """
     return separator.join(["%s  %+7.2f" % (l.object, l.timeshift) for l in lcs])
 
@@ -951,11 +944,10 @@ def gettimeshifts(lcs, includefirst=True):
     This is used by time shift optimizers, and usually not by the user.
 
     :param lcs: list of LightCurves
-    :param includefirst: If False, I skip the first of the shifts.
-        For timeshift optimizers, it's indeed often ok not to move the first curve.
+    :param includefirst: If False, I skip the first of the shifts. For timeshift optimizers, it's indeed often ok not to move the first curve.
     :type includefirst: bool
 
-    :return:array of timesshift
+    :return: array of timesshift
 
     """
     if includefirst:
@@ -974,7 +966,6 @@ def settimeshifts(lcs, shifts, includefirst=False):
     :param includefirst: to include a shift the first curve of the list or not.
     :type includefirst: bool
 
-    :return
     """
 
     if includefirst:
@@ -1002,8 +993,10 @@ def objsort(lcs, ret=False, verbose=True):
     """
     I sort the lightcurve objects in your list (in place) according to their object names.
 
-    :param lcs:
-    :param verbose:
+    :param lcs: list of LightCurve
+    :type lcs: list
+    :param verbose: Verbosity
+    :type verbose: bool
     :param ret: If True, I do not sort them in place, but return a new sorted list (containing the same objects).
     :type ret: bool
 
@@ -1029,7 +1022,7 @@ def resetlcs(lcs):
     Reset microlensing and shifts of all the curves in the list
 
     :param lcs: list of LightCurves
-    :return:
+
     """
     for i, lc in enumerate(lcs):
         lc.resetml()
@@ -1043,6 +1036,7 @@ def applyshifts(lcs, timeshifts, magshifts):
     :param lcs: list of LightCurves
     :param timeshifts: list of time shift, must have the same length as lcs
     :param magshifts: list of magnitude shifts, must have the same length as lcs
+
     :return: Nothing, I modify the LightCurve objects.
 
     """
@@ -1073,6 +1067,7 @@ def linintnp(lc1, lc2, interpdist=30.0, weights=True, usemask=True, plot=False, 
     :type usemask: bool
     :param plot: display plot of the interpolated curves
     :type plot: bool
+
     :return: dictionary containing the number of interpolation and the d2 "distance".
 
     """
@@ -1181,6 +1176,7 @@ def interpolate(x1, x2, interpolate='nearest'):
     :param x1: LightCurve 1
     :param x2: LightCurve 2
     :param interpolate: string, choose between 'nearest' and 'linear'
+
     :return: interpolated LightCurve
     """
 
@@ -1208,6 +1204,7 @@ def find_closest(a, x):
 
     :param a: float, value where to interpolate
     :param x: 1-D array, interpolated vector
+
     :return: (minimum distance, index corresponding to the minimal distance)
     """
 

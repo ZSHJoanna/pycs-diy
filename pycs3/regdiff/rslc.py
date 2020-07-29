@@ -35,15 +35,36 @@ class Rslc:
         return retstr
 
     def shifttime(self, timeshift):
+        """
+        Shift in time. I same the timeshift in the self.timeshift attribute.
+        :param timeshift: shift to apply
+        :type timeshift: float
+
+        """
         self.timeshift += timeshift
 
     def copy(self):
+        """
+        Return a copy of itself
+
+        """
         return pythoncopy.deepcopy(self)
 
     def getjds(self):
+        """
+        Return the self.jds array. I account for the timeshift.
+
+        """
         return self.jds + self.timeshift
 
     def mask(self, maxmagerr=0.1, target=20.0):
+        """
+        Change the magerrs if exceeding a threshold
+
+        :param maxmagerr: threshold error
+        :param target: value to replace the magerrs if the threshold is exceeded
+
+        """
         self.magerrs[self.magerrs > maxmagerr] = target
 
     def wtv(self, method="weights"):
@@ -67,7 +88,7 @@ class Rslc:
         return out
 
 
-def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0):
+def factory(l, pad=300., pd=2., plotcolour=None, covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0):
     """
     Give me a lightcurve, I return a regularly sampled light curve, by performing some regression.
     Amp and scale parameters are now fitted, it is just the starting point,
@@ -75,18 +96,25 @@ def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=
 
     :param l: LightCurve object
     :param pad: the padding, in days
+    :type pad: float
     :param pd: the point density, in points per days.
-    :param plotcolour: string, colour to plot the LightCurve
-    :param covkernel: string Choose between "matern","RatQuad" and "RBF". See scikit GP documentation for details
-    :param pow: float, exponent coefficient of the covariance function
-    :param amp: float, amplitude coefficient of the covariance function
-    :param scale: float, characteristic time scale
-    :param errscale: float, additional scaling of the photometric errors
+    :type pd: float
+    :param plotcolour: colour to plot the LightCurve
+    :type plotcolour: str
+    :param covkernel: Choose between "matern","RatQuad" and "RBF". See scikit GP documentation for details
+    :type covkernel: str
+    :param pow: exponent coefficient of the covariance function
+    :type pow: float
+    :param amp: amplitude coefficient of the covariance function
+    :type amp: float
+    :param scale: characteristic time scale
+    :type scale: float
+    :param errscale: additional scaling of the photometric errors
+    :type errscale: float
 
-    :return Rslc obeject
+    :return: Rslc object
 
     The points live on a regular grid in julian days, 0.0, 0.1, 0.2, 0.3 ...
-
     The parameters pow, amp, scale, errscale are passed to the GPR, see its doc.
 
     """
@@ -112,6 +140,7 @@ def factory(l, pad=300, pd=2, plotcolour=None, covkernel="matern", pow=1.5, amp=
     # The regression itself
     regfct = scikitgp.regression(jds, mags, magerrs, covkernel=covkernel, pow=pow, amp=amp, scale=scale,
                                errscale=errscale)
+
     """
     Alternative implementation using pymc3
     (rsmags, rsmagerrs) = pymc3gp.regression(jds, mags, magerrs, mean_mag, rsjds, covkernel=covkernel, pow=pow,
@@ -132,6 +161,7 @@ def subtract(rs1, rs2):
 
     :param rs1: Rslc Object
     :param rs2: Rslc Object
+
     :return: new subtracted Rslc object
 
     """

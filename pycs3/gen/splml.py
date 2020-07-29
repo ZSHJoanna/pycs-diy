@@ -12,31 +12,17 @@ from pycs3.gen.spl import Spline
 class SplineML:
     """
     A lightcurve can have such a microlensing object as attribute "ml".
-    For now we have only one spline per lightcurve (i.e., no seasons).
-
-    The splml.spline.datapoints are relative, first point is always at 0.0
-    That's why we store a jdoffset EDIT : No, we don't store it anymore.
-    The spline just starts at 0.0, nobody here cares about this offset... use the timeshift of my lightcurve,
-    if you want to know where I am located on an absolute time axis.
-
-    We don't use stabilization points for microlensing splines (not needed I hope)
-    Hence, the datapoints.jds are directly the jds - jdoffset from the associated lightcurve
-    (They will not change)
-    EDIT : we now use stab points, but still, the jds remain fixed.
+    We have only one spline per lightcurve (i.e., no seasons).
 
     The datapoint mags = what has to be added to the lightcurve so that it matches the sourcespline (or something else).
     This is the same convention set as for ML by polynoms.
-
     """
 
     def __init__(self, spline):
         """
-
-        EDIT : I do not store jdoffset anymore, makes no sense.
-        jdoffset = Offset to add to spline.datapoints so to get back jds as they were at the moment of the factory call.
-        Hmm, this is a bit stange, I think nobody needs to know this offset.
-        If you want to plot the ML for instance, you should not use it, but take the current lc.timeshift, as the curve
-        might have been shifted in time, and this jdoffset does not get updated !
+        :param spline: Spline object that represent the microlensing
+        :param mltype: Type of Microlensing
+        :type mltype: str
         """
 
         self.spline = spline
@@ -46,6 +32,10 @@ class SplineML:
         return "|" + str(self.spline) + "|"
 
     def copy(self):
+        """
+        Return a copy of itself
+
+        """
         return pythoncopy.deepcopy(self)
 
     def checkcompatibility(self, lightcurve):

@@ -15,21 +15,21 @@ class Season:
     """
     A season is essentially a numpy integer array containing the indexes of the lightcurve to consider.
     I made this class to allow for a bit more explicit error checking, and display capabilities etc.
+
+    :param indices: An array of indices (integer), that codes a season. You can use it like lc.jds[season.indices] to get the jds of that season.
+    :type indices: list
+    :param name: Name your season
+    :type name: str
+
     """
 
     def __init__(self, indices, name=""):
         """
-        Prefer to use the factory functions below.
+        It is better to use the factory functions below than this constructor.
 
-        :type	indices: int array
-        :param	indices: The included indices of the season
         """
 
         self.indices = indices
-        """@type: array of ints
-        @ivar: An array of indices, that codes a season. You can use it like lc.jds[season.indices] to get the jds of that season.
-        """
-
         self.name = name
 
         self.validate()
@@ -102,6 +102,7 @@ def autofactory(l, seasongap=60, tpe='seas'):
     :type seasongap : float
     :param tpe : 'seas' if you want to return the Season list, 'interseasons' if you want to return the season gaps.
     :type tpe : string
+
     :return: list of season objects.
 
     """
@@ -167,8 +168,9 @@ def manfactory(lc, jdranges):
     Example:
         >>> seas1 = sea.manfactory(lc1, [[2800, 3500], [3500, 4260]])
 
-    :param: lc: LightCurve object
+    :param lc: LightCurve object
     :param jdranges: list of list containing the JD range where you want to extract the Seasons
+
     :return: list of season objects.
 
     """
@@ -194,6 +196,9 @@ def validateseasons(seasons):
     This is typically called by the microlensing constructor.
     Seasons can well be "incomplete", i.e. you can give only one season for your 4 year lightcurve, but we do not allow for overlapping seasons,
     as this would -up microlensing.
+
+    :param seasons: list of Seasons
+    :type seasons: list
     """
 
     # First we check the general structure.
@@ -215,8 +220,10 @@ def validateseasons(seasons):
 def printinfo(seasons):
     """
     Print season info
+
     :param seasons: list of Season
-    :return:
+    :type seasons: list
+
     """
     for s in seasons:
         print(str(s))
@@ -228,10 +235,16 @@ def easycut(lclist, keep=[1], seasongap=60, mask=False, verbose=False):
     Seasons are determined for each lightcurve individually
 
     :param lclist: list of LightCurve
+    :type lclist: list
     :param keep: a list of "indices" (human convention, starting at 1) of seasons to keep.
+    :type keep: list
     :param mask: if True, I will not cut the seasons, but only mask them out.
+    :type mask: bool
     :param seasongap: minimum gap to detect a season
+    :type seasongap: float
     :param verbose: verbosity
+    :type verbose: bool
+
     """
 
     for l in lclist:

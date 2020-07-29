@@ -28,11 +28,12 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
     If one thread is failing, this should not impact the others, but the optfct_outs won't have the same length as the lcslist.
     Call clean_simlist if you want to remove the failed attempts from the lcslist.
 
-    :param optfct : function to apply to the LightCurves
-    :param lcslist : list of LightCurves
+    :param optfct: function to apply to the LightCurves
+    :param lcslist: list of LightCurves
     :param kwargs: dictionnary of kwargs to be transmitted to the optfct
-    :param ncpu : integer or None, None = I will use all CPUs, -1 = I will use all - 1 CPUs, and otherwise I will use ncpu CPUs.
-    :return optfct_outs: a list of the optimised LightCurves and a dictionnary containing the failed attempt to shift the curves.
+    :param ncpu: integer or None, None = I will use all CPUs, -1 = I will use all - 1 CPUs, and otherwise I will use ncpu CPUs.
+
+    :return: optfct_outs: a list of the optimised LightCurves and a dictionnary containing the failed attempt to shift the curves.
     """
     ncpuava = multiprocess.cpu_count()
     if ncpu == 1:
@@ -173,9 +174,17 @@ class RunResults:
         return "Runresults '%s' (%i)" % (getattr(self, "name", "untitled"), len(self))
 
     def copy(self):
+        """
+        Return a copy of itself
+
+        """
         return pythoncopy.deepcopy(self)
 
     def check(self):
+        """
+        Check that the RunResults object is correctly built.
+
+        """
 
         if self.qs.shape[0] != len(self):# pragma: no cover
             raise RuntimeError("qs length error")
@@ -211,6 +220,7 @@ class RunResults:
     def get_delays_from_ts(self):
         """
         Return the time delays, from the timeshifts. I do not account for the true timeshift.
+
         :return: dictionary containing the median, max, and min delays + delay labels
         """
         n = len(self.labels)
@@ -235,7 +245,7 @@ class RunResults:
     def print_shifts(self):
         """
         Print the shift from a list of RunResults object
-        :return:
+
         """
         labeltxt = "%s (%s, %i) " % (
             getattr(self, 'name', 'NoName'), "Truth" if self.plottrue else "Measured", self.tsarray.shape[0])
@@ -460,9 +470,11 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
 
 def clean_simlist(simlcslist, success_dic):
     """
-    Remove the Failed optimisation according to the provided success dictionary
+    Remove the failed optimisation according to the provided success dictionary
+
     :param simlcslist: list of LightCurves
-    :param success_dic: dictionary returned by pycs3.sim.run.applyopt
+    :param success_dic: dictionary returned by py:meth:`pycs3.sim.run.applyopt`
+
     :return: list of LightCurves where the failed optimisation has been removed
     """
     for i in reversed(success_dic['failed_id']):

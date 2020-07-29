@@ -1,7 +1,6 @@
 """
 Module defining the Spline class, something easy to wrap around SciPy splines.
-Includes BOK algorithms (Mollinari et al)
-
+Includes BOK algorithms (Mollinari et al.)
 Some rules of splrep (k = 3)
 	- do not put more then 2 knots between data points.
 	- splrep wants inner knots only, do not give extremal knots, even only "once".
@@ -26,16 +25,22 @@ class Spline:
     Spline.t are all the knots, including extremas with multiplicity.
     But splrep wants internal knots only ! By internal we mean : not even the data extremas !
     Spline.getintt() returns only these internal knots.
+
+    :param t: array of all the knots, not only internal ones !
+    :param c: array of coefficients
+    :param k: degree of the splines, default = cubic splines k=3, 3 means that you can differentiate twice at the knots.
+    :type k: int
+    :param bokeps: minimum allowed distance between knots
+    :type bokeps: float
+    :param boktests: spacing between knots during the test phase
+    :type boktests: int
+    :param bokwindow: window size to put the knots, by default (None), I'll take the full data lenght.
+    :type bokwindow: float
+    :param plotcolour: matplotlib color, when plotting the Spline
+
     """
 
     def __init__(self, datapoints, t=None, c=None, k=3, bokeps=2.0, boktests=5, bokwindow=None, plotcolour="black"):
-        """
-        t : all the knots (not only internal ones !)
-        c : corresponding coeffs
-        k : degree : default = cubic splines k=3 -> "order = 4" ???
-        whatever ... 3 means that you can differentiate twice at the knots.
-
-        """
 
         # self.origdatapoints = datapoints
         self.datapoints = datapoints
@@ -127,7 +132,7 @@ class Spline:
         Due to the splitup, this is needed even if you just tweaked the mags !
         And anyway in this case I have to rebuild the stab points.
 
-        .. warning :: IT'S UP TO YOU TO CHECK THAT YOU DON'T REPLACE DATATOINTS WITH DIFFERENT STAB SETTINGS
+        .. warning :: it's up to you to check that you don't replave datapoints with different stab settings.
             Anyway it would work, just look ugly !
 
         Replaces the datapoints (jds, mags, and magerrs) touching the knots and coeffs as less as possible.
@@ -363,7 +368,7 @@ class Spline:
             return \
                 si.splrep(self.datapoints.jds, self.datapoints.mags, w=weights, xb=None, xe=None, k=self.k, task=-1,
                           s=None,
-                          t=modifknots, full_output=1, per=0, quiet=1)[1]
+                          t=modifknots, full_output=True, per=False, quiet=True)[1]
 
         iniscore = score(intknots, 0, intknots[0])
         lastchange = 1
@@ -419,7 +424,7 @@ class Spline:
                 def target(value):
                     return score(intknots, i, value)
 
-                out = spopt.fminbound(target, self.l[i + 1], self.u[i + 1], xtol=0.01, maxfun=100, full_output=1,
+                out = spopt.fminbound(target, self.l[i + 1], self.u[i + 1], xtol=0.01, maxfun=100, full_output=True,
                                       disp=1)
                 # print out
                 optval = out[0]

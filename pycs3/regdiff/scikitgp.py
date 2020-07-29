@@ -1,5 +1,5 @@
 """
-Wrapper around pymc's GP module
+Wrapper around Sklearn GP module
 
 """
 import numpy as np
@@ -10,13 +10,29 @@ from sklearn.gaussian_process.kernels import RBF, Matern, WhiteKernel, RationalQ
 
 def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=False):
     """
-    Give me data points
-
-    yerr is the 1sigma error of each y
-
+    Give me data points and error. ``yerr`` is the 1sigma error of each ``y``
     I return a function : you pass an array of new x, the func returns (newy, newyerr)
-    WARNING : pow is not used for RBF, it is set by definition to inf, nor for RatQuad
-    amp and scale are now fitted to the data, you provide the starting point, it is better leave them to default value.
+
+    .. warning:: ``pow`` is not used for RBF, nor for Ratquad. ``amp`` and ``scale`` are now fitted to the data, you now provide the starting point, it is better leave them to default value.
+
+    :param x: array containing the time data
+    :param y: array containing the magnitude data
+    :param yerr: array containing the magnitude errors
+    :param covkernel: Choose between "matern", "RatQuad" and "RBF". See scikit GP documentation for details
+    :type covkernel: str
+    :param pow: exponent coefficient of the covariance function
+    :type pow: float
+    :param amp: amplitude coefficient of the covariance function
+    :type amp: float
+    :param scale: characteristic time scale
+    :type scale: float
+    :param errscale: additional scaling of the photometric errors
+    :type errscale: float
+    :param verbose: verbosity
+    :type verbose: bool
+
+    :return: A python function to make the prediction
+
     """
     obs_mesh = x.reshape(-1, 1)
     obs_vals = y

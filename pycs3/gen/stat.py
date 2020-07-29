@@ -80,7 +80,9 @@ def mad(data, axis=None):
     Median absolute deviation
     :param data: array from which to compute the MAD
     :param axis: axis along to compute the MAD
+
     :return: float, MAD of the array
+
     """
 
     return np.median(np.absolute(data - np.median(data, axis)), axis)
@@ -138,7 +140,9 @@ def compute_chi2(rls, kn, knml):
     :param rls: list of residuals LightCurves. Use the subtract() fucntion to generate them.
     :param kn: float, knotstep of the spline
     :param knml: float, knotstep of the microlensing splines
+
     :return: float, chi2 per degree of freedom of the fit.
+
     """
     chi2 = 0.0
     for rl in rls:
@@ -252,6 +256,12 @@ def resistats(rl):
 
 
 def mapresistats(rls):
+    """
+    Return resistats of each residual curve.
+
+    :param rls: list of residual LightCurve
+
+    """
     return [resistats(rl) for rl in rls]
 
 
@@ -264,20 +274,35 @@ def anaoptdrawn(optoriglcs, optorigspline, simset="simset", optset="optset", npk
     .. warning:: The simset must have been optimized using spline fits, with option keepopt=True
 
     :param optoriglcs: optimized original curves
+    :type optoriglcs: list
     :param optorigspline: spline that matches to these curves
+    :type optorigspline: Spline
     :param simset: name of your simulation set
+    :type simset: str
     :param optset: name of your optimisation
+    :type optset: str
     :param plotcurveindexes: allows you to plot only a subset of lcs (smaller plots). Give a tuple like eg (0, 2, 3)
+    :type plotcurveindexes: tuple
     :param npkl: I read only the first npkl pickle files.
-    :param plots: boolean to choose if you want to produce the plots
+    :type npkl: int
+    :param plots: To choose if you want to produce the plots
+    :type plots: bool
     :param nplots: number of mock curves to plot for the residual plots
+    :type nplots: int
     :param r: radius around the mean to plot for the residuals histograms
-    :param plotjdrange: list, containing the two extremity of the period to plot
+    :type r: float
+    :param plotjdrange: containing the two extremity of the period to plot
+    :type plotjdrange: list
     :param showplot: False to save the figure in png, True to show it on the screen
-    :param plotpath: string, directory to save the pngs, used if showplot is False
+    :type showplot: bool
+    :param plotpath: directory to save the pngs, used if showplot is False
+    :type plotpath: str
     :param directory: path to look for the simulation
-    :param resihist_figsize: tuple, containing the dimension of the residuals histograms
-    :param id: string, to give an additionnal id name in the figure name.
+    :type directory: str
+    :param resihist_figsize: containing the dimension of the residuals histograms
+    :type resihist_figsize: tuple
+    :param id: to give an additionnal id name in the figure name.
+    :type id: str
     :return: dictionnary containing the statistics about your run
 
     """

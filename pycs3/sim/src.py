@@ -75,6 +75,10 @@ class Source:
         return "%s (%i)" % (str(self.name), len(self.ijds))
 
     def copy(self):
+        """
+        Return a copy of itself.
+
+        """
         return pythoncopy.deepcopy(self)
 
     def setmean(self, mean=-12.0):

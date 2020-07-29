@@ -25,8 +25,10 @@ def sample(lc, spline):
     To do this, I have to do something like a reverse getmags().
 
     Note that I do not add any random noise here, this is sampling only.
+
     :param lc: LightCurve object to be modified
     :param spline: Spline object
+
     """
 
     lc.telescopename += "sim"
@@ -61,6 +63,7 @@ def saveresiduals(lcs, spline):
 
     :param lcs: list of LightCurve objects
     :param spline: Spline object
+
     """
 
     for l in lcs:
@@ -74,9 +77,14 @@ def transfershifts(lcs, reflcs, transferml=True):
     """
     I will put (copies) of all the shifts and ML from the reflcs onto the lcs.
     I will check that you didn't mix up any curves.
-    :param transferml: boolean. To also transfer the Microlensing to the new curve
+
+    :param transferml: To also transfer the Microlensing to the new curve
+    :type transferml: bool
     :param lcs: list of LightCurve
+    :type lcs: list
     :param reflcs: lsit of the reference LightCurve
+    :type reflcs: list
+
     """
     if len(lcs) != len(reflcs): # pragma: no cover
         raise RuntimeError("Not the same lengths !")
@@ -336,7 +344,7 @@ def multidraw(lcs, spline=None, optfctnots=None, onlycopy=False, n=20, npkl=5, s
 
     :param shotnoise: Select among None, "magerrs", "mcres", "res".
         See definitions in :py:func:`pycs3.sim.draw.draw`.
-    :type shotnoise: string
+    :type shotnoise: str
 
     :param shotnoisefrac: float. Additional scaling of the shotnoise level
 
@@ -478,6 +486,7 @@ def multidraw(lcs, spline=None, optfctnots=None, onlycopy=False, n=20, npkl=5, s
 def shareflux(lc1, lc2, frac=0.01):
     """
     I add "noise" to lc1 and lc2 by randomly sharing flux between the two sources.
+
     :param lc1: LightCurve object
     :param lc2: LightCurve object
     :param frac: The stddev of the gaussian "noise" in flux, with respect to the minimum flux in the curves.

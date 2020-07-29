@@ -23,8 +23,26 @@ def opt_rough(lcs, nit=5, shifttime=True, crit="r2",
 
     .. note:: This function is here to correct for shift errors in the order of 20 days, hence its name.
 
-    :param nit: a number of iterations (ok to leave default : 5)
-        100 is default. Lower this to eg 50 if your curve has very short term intrinsic variations, increase it if your curve is very noisy.
+    :param lcs: list of LightCurves
+    :type lcs: list
+    :param nit: a number of iterations (ok to leave default : 5) 100 is default. Lower this to eg 50 if your curve has very short term intrinsic variations, increase it if your curve is very noisy.
+    :type nit: int
+    :param shifttime: to apply a timeshift
+    :type shifttime: bool
+    :param crit: fitting metric
+    :type crit: str
+    :param knotstep: mean spacing between knots
+    :type knotstep: float
+    :param stabext: number of days to the left and right to fill with stabilization points
+    :type stabext: float
+    :param stabgap: interval of days considered as a gap to fill with stab points.
+    :type stabgap: float
+    :param stabstep: step of stab points
+    :type stabstep: float
+    :param stabmagerr: if negative, absolute mag err of stab points. If positive, the error bar will be stabmagerr times the median error bar of the data points.
+    :type stabmagerr: float
+    :param verbose: verbosity
+    :type verbose: bool
 
     """
     if verbose:
@@ -86,9 +104,40 @@ def opt_fine(lcs, spline=None, nit=10, shifttime=True, crit="r2",
 
     Default is True for the iterations, and we release the splines only at the end.
     If you put it to False, spline are left free at any stage. This should be fine if you leave one curve without ML.
+    See :py:class:`pycs3.gen.spl.Spline` for details of the parameters.
 
-    :param spline: If this is None, I will fit my own spline, but then I expect that your lcs already overlap (i.e., ML is set) !
-        If you give me a spline, I will use it (in this case I disregard your splstep setting !)
+    :param lcs: list of LightCurves
+    :type lcs: list
+    :param spline: If this is None, I will fit my own spline, but then I expect that your lcs already overlap (i.e., ML is set) ! If you give me a spline, I will use it (in this case I disregard your splstep setting !)
+    :type spline: Spline
+    :param nit: number of iteration
+    :type nit: int
+    :param shifttime: to apply a timeshift
+    :type shifttime: bool
+    :param crit: fitting metric
+    :type crit: str
+    :param knotstep: mean spacing between knots
+    :type knotstep: float
+    :param stabext: number of days to the left and right to fill with stabilization points
+    :type stabext: float
+    :param stabgap: interval of days considered as a gap to fill with stab points.
+    :type stabgap: float
+    :param stabstep: step of stab points
+    :type stabstep: float
+    :param stabmagerr: if negative, absolute mag err of stab points. If positive, the error bar will be stabmagerr times the median error bar of the data points.
+    :type stabmagerr: float
+    :param bokeps: epsilon of BOK
+    :type bokeps: float
+    :param boktests: number of test positions for each knot
+    :type boktests: int
+    :param bokwindow: window size to put the knots, by default (None), I'll take the full data lenght.
+    :type bokwindow: float
+    :param distribflux: allow for flux sharing between images during the optimisation
+    :type distribflux: bool
+    :param splflat: if you want to optimise only the border coefficient after a first optimisation
+    :type splflat: bool
+    :param verbose: verbosity
+    :type verbose: bool
 
     """
 

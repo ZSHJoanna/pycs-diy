@@ -191,7 +191,7 @@ def getresults(csc, useintrinsic=False):
     :return: a Group object
 
 
-    .. warning:: Although the code says I'm using the mean measured delay, I might be using median instead! This depends on how ``pycs3.sim.plot.hists`` was called! Be careful with this...
+    .. warning:: Although the code says I'm using the mean measured delay, I might be using median instead! This depends on how :py:func:`pycs3.sim.plot.hists` was called! Be careful with this...
 
 
     """

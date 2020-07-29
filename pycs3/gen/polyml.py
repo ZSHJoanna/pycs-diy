@@ -110,6 +110,10 @@ class SeasonFct:
         """
 
     def copy(self):
+        """
+        Return a copy of itself
+
+        """
         return pythoncopy.deepcopy(self)
 
     def __str__(self):
@@ -149,6 +153,10 @@ class SeasonFct:
             raise RuntimeError("Wrong number of parameters !")
 
     def getparams(self):
+        """
+        Return all params
+
+        """
         return self.params  # perhaps put a copy here ? Let's see how we use this.
 
     # it would be nice to return pointers one day...
@@ -163,17 +171,23 @@ class SeasonFct:
             raise RuntimeError("Wrong number of free parameters !")
 
     def getfreeparams(self):
+        """
+        Return the free parameters (those that are not masked)
+
+        """
         return self.params[self.mask]  # put a copy here ?
 
     def validate(self):
         """
+        Do nothing for the moment
         @todo: code this in case of ideas...
         """
         pass
 
     def checkcompatibility(self, lightcurve):
         """
-        Not sure if needed.
+        Check Season compatibility
+
         """
         self.season.checkcompatibility(lightcurve)
 
@@ -245,28 +259,44 @@ class Microlensing:
     """
 
     def __init__(self, mllist):
+        """
+
+        :param mllist: the list of seasonfct objects to be applied.
+        :type mllist: list
+        :param nfree: the number of free parameters.
+        :type nfree: float
+        :param mltype: type of microlensing. I take the first Microlensing object of mllist
+        :type mltype: str
+        """
         self.mllist = mllist
-        """@type: list
-        @ivar: The list of seasonfct objects to be applied.
-        """
-
         self.nfree = np.sum(np.array([sfct.nfree for sfct in self.mllist]))
-        """@type: int
-        @ivar: The number of free parameters.
-        """
-
         self.mltype = self.mllist[0].mltype
 
     def copy(self):
+        """
+        Return a copy of the Microlensing object
+
+        :return: A copy of itself
+        """
         return pythoncopy.deepcopy(self)
 
     def __str__(self):
         return "".join(["|%s/" % self.mltype] + ["%s" % m for m in self.mllist] + ["|"])
 
     def longinfo(self):
+        """
+        Return info about the object in the mllist
+
+        :return: string containing the info
+
+        """
         return "\n".join(["%s" % (m.longinfo()) for m in self.mllist])
 
     def printinfo(self):
+        """
+        Print info about the object in the mllist
+
+        """
         print(self.longinfo())
 
     def getfreeparams(self):

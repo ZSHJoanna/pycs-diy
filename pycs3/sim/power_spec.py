@@ -1,6 +1,6 @@
 """
 Module to define the PowerSpectrum class and associated functions. This can be used to measure the slope of the PowerSpectrum
-and adjust the argument in the pycs3.sim.twk.tweakspl function, when using 'colored_noise' for generating the mock curves.
+and adjust the argument in the py:mod:`pycs3.sim.twk.tweakspl` function, when using ``colored_noise`` for generating the mock curves.
 """
 import copy as pythoncopy
 
@@ -74,14 +74,16 @@ class PowerSpectrum:
             return "%s(mag)" % str(self.name)
 
     def copy(self):
+        """
+        Return a copy of itself.
+
+        """
         return pythoncopy.deepcopy(self)
 
     def calcslope(self, fmin=1. / 1000.0, fmax=1. / 2.0):
         """
         Measures the slope of the PS, between fmin and fmax.
         All info about this slope is sored into the dictionary self.slope.
-
-        Should this depend on self.flux ?? No, only the constructor depends on this !
         This is just fitting the powerspectrum as given by the constructor.
 
         """
