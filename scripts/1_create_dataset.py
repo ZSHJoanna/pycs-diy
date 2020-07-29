@@ -66,7 +66,7 @@ def main(lensname, dataname, work_dir='./'):
             cfile.close()
 
             print("Default config file created ! You might want to change the default parameters. ")
-            utils.proquest(True)
+            #utils.proquest(True)
 
         else:
             print(
