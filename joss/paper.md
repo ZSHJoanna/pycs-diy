@@ -13,6 +13,8 @@ authors:
     affiliation: 1
   - name: Bastian Lengen
     affiliation: 1
+  - name: Frederic Courbin
+    affiliation: 1
 affiliations:
   - name: Institute of Physics, Laboratory of Astrophysique, Ecole Polytechnique Fédérale de Lausanne (EPFL), Switzerland
     index: 1
