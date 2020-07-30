@@ -33,12 +33,14 @@ Time-delay cosmography is now a competitive technique for measuring the current 
 
 ![Light curves of the lensed quasar RXJ1131-1231 presented in @Millon1:2020 (left panel). The same quasar variations can be seen in image D 92 days after in image A, whereas images A, B, and C arrive approximately at the same time. The right panel shows an Hubble Space Telescope image of RXJ1131-1231 [@Suyu2017].\label{fig:lcs}](RXJ1131.png)
  
- # Statement of need
+ 
+# Statement of need
+ 
 ``PyCS3`` is a python package developed by the [COSMOGRAIL](www.cosmograil.org) collaboration and designed to address the first of the points listed above. ``PyCS3`` allows us to measure time delays in lensed quasars, even in the presence of microlensing, which happens when stars of the lens galaxy are passing in front of the quasar images, also acting as gravitational lenses. This introduces some 'extrinsic' variation that are visible in only one image on top of the quasar 'intrinsic' variation visible in all multiple images. ``PyCS3`` provides a flexible modelling of the extrinsic variation with splines to account for microlensing and recover an unbiased estimate of the time delays. Ignoring this effect might cause large error in the determination of the time delay, that directly propagate to the Hubble Constant. 
 
 The previous version of the package was first presented in @Tewes1:2013 and successfully applied to real data in @Tewes2:2013; @Bonvin:2017; @Bonvin:2018 and @Bonvin:2019. The method was also tested on simulated light curves of the Time-Delay Challenge [@Liao:2016; @Bonvin:2016] and demonstrated that time delays can be measured accurately with a systematic bias of less than 1%, even if the light curves are affected by microlensing.
    
-We also recently presented an automated pipeline based ``PyCS3`` to measure time delays in a large sample of lensed quasars [@Millon1:2020; @Millon2:2020]. Such improvements toward automation of the procedure will be soon necessary with the hundreds of new lensed quasars expected to be discovered in the near future. 
+We also recently presented an automated pipeline based ``PyCS3`` to measure time delays in a large sample of lensed quasars [@Millon1:2020; @Millon2:2020]. Such improvements toward automation of the procedure is necessary with the hundreds of new lensed quasars expected to be discovered in the near future. 
 
 # Functionality
 The basic functionality of ``PyCS3`` includes a LightCurve class to manipulate photometric monitoring data. It includes methods to import, shift, fit and export light curves. These are located in the `pycs3.gen` subpackage.
