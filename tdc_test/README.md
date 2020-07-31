@@ -1,6 +1,6 @@
 # PyCS3 multiple pipline
 
-This folder contains all the script to process multiple light curves. The complete description of the pipeline can be found in (ADD LINK TO THE PAPER).
+This folder contains all the script to process multiple light curves. The complete description of the pipeline can be found in [Millon et al. (2020)](https://arxiv.org/abs/2002.05736).
 
 You should first define a working directory that must contain your light curves in the sub-folder `data`. 
 Your data should have the naming convention `name_double_pairX_ECAM.rdb` with X the number of the light curve and must contain one column for the days of the observation and two columns per lens image for the measured magnitudes and its associated uncertainties. 
@@ -9,7 +9,7 @@ You also need to have the true time delay for your light curves in the sub-folde
         test_double_pair2     104.22
         test_double_pair3     56.59
 
-A list of light curves from the TDC1 (ADD LINK) that can be used with this sub-package can be downloaded at (ADD THE LINK)
+A list of light curves from the TDC1 [Liao et al. (2020)](https://arxiv.org/abs/1409.1254) that can be used with this sub-package can are availaible at https://lsstdesc.org/TimeDelayChallenge/downloads.html
 
 ## 0. Set up
  
