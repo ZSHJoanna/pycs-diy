@@ -9,7 +9,7 @@ You also need to have the true time delay for your light curves in the sub-folde
         test_double_pair2     104.22
         test_double_pair3     56.59
 
-A list of light curves from the TDC1 [Liao et al. (2020)](https://arxiv.org/abs/1409.1254) that can be used with this sub-package can are availaible at https://lsstdesc.org/TimeDelayChallenge/downloads.html)
+A list of light curves from the TDC1 [Liao et al. (2020)](https://arxiv.org/abs/1409.1254) that can be used with this sub-package can are availaible at https://lsstdesc.org/TimeDelayChallenge/downloads.html
 
 ## 0. Set up
  
