@@ -116,7 +116,7 @@ if __name__ == '__main__':
                                description="Reformat the txt file from the Time Delay Challenge to an usable rdb file.",
                                formatter_class=ap.RawTextHelpFormatter)
     help_name = "name of the sample. Make sure the directory has the same name."
-    help_name_type = "Type of the data ie double or quad"
+    help_name_type = "Type of the data ie 'double' or 'quad' "
     help_number_pair = "number of pair in the rung folder. Make sure the folder have the format name_pair0"
     help_work_dir = "name of the work directory"
     parser.add_argument(dest='name', type=str,

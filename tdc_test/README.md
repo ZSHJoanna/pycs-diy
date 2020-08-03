@@ -1,6 +1,21 @@
-# PyCS3 multiple pipline
+# PyCS3 test pipline
 
-This folder contains all the script to process multiple light curves. The complete description of the pipeline can be found in [Millon et al. (2020)](https://arxiv.org/abs/2002.05736).
+This folder contains all the script to process multiple light curves from the TDC at the same time. It aims at providing a test framework to check the precision and accuracy of PyCS3. It is based on the original pipeline which is in the `script` folder. A list of light curves from the TDC1 ([Liao et al. (2020)](https://arxiv.org/abs/1409.1254)) that can be used with this sub-package are available [here](https://lsstdesc.org/TimeDelayChallenge/downloads.html).
+
+Four metrics were selected in the Time-Delay challenge to evaluate the performance of the curev-shifting techniques : 
+* the accuracy 
+* the precision 
+* the $`chi^2`$ 
+* X, the fraction of outliers (with a $`chi^2`$ > 10). 
+
+We recently ran this test pipeline on the first 200 curves of the rung 3 of the TDC1. Those data closely mimics the real Euler light curves in terms of cadence, photometric noise and microlensing. We reproduce here Figure 8 of [Liao et al. (2020)](https://arxiv.org/abs/1409.1254), which summarized the 4 metrics in one plot : 
+
+![](figure/SS_Final_Plot.png)
+
+The results presented here are for our *Silver Sample*, which contains more than 60% of the curves. We excluded the curves with a precision >40% and ones with a time delay > 100 days, which does not have enough overlap to measure a robust time delay. Of course, the results were not *blinded* here, but this demonstrates that `PyCS3` was able to measure the time-delay in most of curves of the TDC1 rung3 with an automated procedure with an accuracy better than 2%. 
+
+
+## Using the pipeline 
 
 You should first define a working directory that must contain your light curves in the sub-folder `data`. 
 Your data should have the naming convention `name_double_pairX_ECAM.rdb` with X the number of the light curve and must contain one column for the days of the observation and two columns per lens image for the measured magnitudes and its associated uncertainties. 
@@ -9,7 +24,6 @@ You also need to have the true time delay for your light curves in the sub-folde
         test_double_pair2     104.22
         test_double_pair3     56.59
 
-A list of light curves from the TDC1 [Liao et al. (2020)](https://arxiv.org/abs/1409.1254) that can be used with this sub-package can are availaible at https://lsstdesc.org/TimeDelayChallenge/downloads.html
 
 ## 0. Set up
  
@@ -17,7 +31,7 @@ Run the command :
 
     python3 multiple_0.py name double numberofcurves --dir='path_to_working_directory'
 
-This will set up the directories for this multiple pipeline and generate the multiple config file in the `./config/multiple` directory under the name `config_multiple_name.py` and can be modified before running the next script. Check the README from the main pipeline for more informations on the different parameters.
+This will set up the directories for this multiple pipeline and generate the multiple config file in the `./config/multiple` directory under the name `config_multiple_name.py` and can be modified before running the next script. Check the [README](../scripts/README.md) from the main pipeline for more information on the different parameters.
 
 ## 1. Create data set 
 
@@ -25,7 +39,7 @@ Run the command :
 
     python3 multiple_1.py name double numberofcurves --dir='path_to_working_directory'
 
-This will run the script `1_create_dataset.py` from the PyCS3 main pipeline for all the curves. The specific config file for each of the curve is created in `config` directory under the name `config_name_double_pairX_EXAM.py`. The single config files are then updated with the parameters from the multiple config file previously mentionned.
+This will run the script `1_create_dataset.py` from the PyCS3 main pipeline for all the curves. The specific config file for each of the curve is created in `config` directory under the name `config_name_double_pairX_EXAM.py`. The single config files are then updated with the parameters from the multiple config file previously mentioned.
 The initial guess will be randomly taken around the true time delay from the `./data/truth/truth_name.txt`.
 The initial guesses are saved in `./Simulation/multiple/name_double/post_gaussian_guess.txt`. 
 
