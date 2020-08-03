@@ -1,8 +1,8 @@
-# PyCS3 test pipline
+# PyCS3 test pipeline
 
 This folder contains all the script to process multiple light curves from the TDC at the same time. It aims at providing a test framework to check the precision and accuracy of PyCS3. It is based on the original pipeline which is in the `script` folder. A list of light curves from the TDC1 ([Liao et al. (2020)](https://arxiv.org/abs/1409.1254)) that can be used with this sub-package are available [here](https://lsstdesc.org/TimeDelayChallenge/downloads.html).
 
-Four metrics were selected in the Time-Delay challenge to evaluate the performance of the curev-shifting techniques : 
+Four metrics were selected in the Time-Delay challenge to evaluate the performance of the curve-shifting techniques : 
 * the accuracy 
 * the precision 
 * the $`chi^2`$ 
@@ -94,7 +94,7 @@ Run the command :
 
     python3 multiple_4b.py name double numberofcurves --dir='path_to_working_directory'
 
-This will run the script `4b_marginalise_spline.py` from the PyCS3 main pipeline for each curve for three different `sigmathresh = 0, 0.5, 1000`. You can find informations on the marginalisation in the README of the main pipeline.
+This will run the script `4b_marginalise_spline.py` from the PyCS3 main pipeline for each curve for three different `sigmathresh = 0, 0.5, 1000`. You can find information on the marginalisation in the README of the main pipeline.
 
 ## 4b. Margininalise the regdiff Estimates 
 
@@ -102,7 +102,7 @@ Run the command :
 
     python3 multiple_4c.py name double numberofcurves --dir='path_to_working_directory'
 
-This will run the script `4c_marginalise_regdiff.py` from the PyCS3 main pipeline for each curve for three different `sigmathresh = 0, 0.5, 1000`. You can find informations on the marginalisation in the README of the main pipeline.
+This will run the script `4c_marginalise_regdiff.py` from the PyCS3 main pipeline for each curve for three different `sigmathresh = 0, 0.5, 1000`. You can find information on the marginalisation in the README of the main pipeline.
 
 ## 4d. Marginalise spline and regression difference Estimates 
 
