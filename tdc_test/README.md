@@ -1,4 +1,5 @@
-# PyCS3 test pipeline
+# PyCS3 test pipeline
+
 
 This folder contains all the script to process multiple light curves from the TDC at the same time. It aims at providing a test framework to check the precision and accuracy of PyCS3. It is based on the original pipeline which is in the `script` folder. A list of light curves from the TDC1 ([Liao et al. (2015)](https://arxiv.org/abs/1409.1254)) that can be used with this sub-package are available [here](https://lsstdesc.org/TimeDelayChallenge/downloads.html).
 
@@ -43,8 +44,7 @@ This will run the script `1_create_dataset.py` from the PyCS3 main pipeline for 
 The initial guess will be randomly taken around the true time delay from the `./data/truth/truth_name.txt`.
 The initial guesses are saved in `./Simulation/multiple/name_double/post_gaussian_guess.txt`. 
 
-
-## 2. Fit spline
+## 2. Fit spline 
 
 Run the command : 
 
@@ -52,14 +52,15 @@ Run the command :
 
 This will run the script `2_fit_spline.py` from the PyCS3 main pipeline for each curve.
 
-## 3. Launch spline
+## 3. Launch spline 
+
 Modify the `./cluster/multiple_launcher.sh` with the parameters from your cluster. Then make sure the line 18 execute the `start_3all.slurm` and update the number of curves you will run on the line 28. Then run the command while in the `./cluster` folder :
 
     ./multiple_launcher.sh
 
 This will run the script `3a_generate_tweakml.py`, `3b_draw_copy_mocks.py`, `3c_optimise_copy_mocks.py` and `3d_check_statistics.py` from the PyCS3 main pipeline for each curves.
 
-## 4a. Get the time delay for the spline
+## 4a. Get the time delay for the spline 
 
 Run the command : 
 
@@ -67,7 +68,7 @@ Run the command :
 
 This will run the script `4a_plot_results.py` from the PyCS3 main pipeline for each curve.
 
-## 3bis. Launch regdiff
+##  3bis. Launch regdiff 
 
 Run the command : 
 
