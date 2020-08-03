@@ -8,11 +8,11 @@ Four metrics were selected in the Time-Delay challenge to evaluate the performan
 * the $`chi^2`$ 
 * X, the fraction of outliers (with a $`chi^2`$ > 10). 
 
-We recently ran this test pipeline on the first 200 curves of the rung 3 of the TDC1. Those data closely mimics the real Euler light curves in terms of cadence, photometric noise and microlensing. We reproduce here Figure 8 of [Liao et al. (2020)](https://arxiv.org/abs/1409.1254), which summarized the 4 metrics in one plot : 
+We recently ran this test pipeline on the first 200 curves of the rung 3 of the TDC1. Those data closely mimics the real Euler light curves in terms of cadence, photometric noise and microlensing. We reproduce here Figure 8 of [Liao et al. (2020)](https://arxiv.org/abs/1409.1254), which summarizes the 4 metrics in one plot : 
 
-![](figure/SS_Final_Plot.png)
+![TDC1 rung 3 results. The dot are blind submission from [Liao et al. (2020)](https://arxiv.org/abs/1409.1254). Our new results with PyCS3 with both the spline and regression difference estimator are marked with triangles](figure/SS_Final_Plot.png)
 
-The results presented here are for our *Silver Sample*, which contains more than 60% of the curves. We excluded the curves with a precision >40% and ones with a time delay > 100 days, which does not have enough overlap to measure a robust time delay. Of course, the results were not *blinded* here, but this demonstrates that `PyCS3` was able to measure the time-delay in most of curves of the TDC1 rung3 with an automated procedure with an accuracy better than 2%. 
+The results presented here are for our *Silver Sample* (SS), which contains more than 60% of the curves. We excluded the curves with a precision >40% and ones with a time delay > 100 days, which does not have enough overlap to measure a robust time delay. Of course, the results were not *blinded* here, but this demonstrates that `PyCS3` was able to measure the time-delay in most of curves of the TDC1 rung3 with an automated procedure with an accuracy better than 2%. 
 
 
 ## Using the pipeline 
