@@ -822,7 +822,7 @@ def display(lclist=[], splist=[],
         from matplotlib.offsetbox import OffsetImage, AnnotationBbox
         logodir = os.path.dirname(__file__)
         im = imread(os.path.join(logodir, "EPFL_Logo.png"))
-        imagebox = OffsetImage(im, zoom=0.13, interpolation="sinc", resample=True)
+        imagebox = OffsetImage(im, zoom=0.35, interpolation="sinc", resample=True)
 
         if logopos == "left":
             ab = AnnotationBbox(imagebox, xy=(0.0, 0.0), xycoords='axes pixels', xybox=(52, 30),
@@ -830,8 +830,8 @@ def display(lclist=[], splist=[],
                                 pad=0.0, frameon=False
                                 )
             axes.add_artist(ab)
-            axes.annotate("COSMOGRAIL.org", xy=(0.0, 0.0), xycoords='axes fraction', fontsize=16, xytext=(105, 7),
-                          textcoords='offset points', ha='left', va='bottom', color="gray")
+            # axes.annotate("COSMOGRAIL.org", xy=(0.0, 0.0), xycoords='axes fraction', fontsize=16, xytext=(105, 7),
+            #               textcoords='offset points', ha='left', va='bottom', color="gray")
 
         if logopos == "right":
             ab = AnnotationBbox(imagebox, xy=(1.0, 0.0), xycoords='axes fraction', xybox=(-200, 30),
@@ -839,17 +839,17 @@ def display(lclist=[], splist=[],
                                 pad=0.0, frameon=False
                                 )
             axes.add_artist(ab)
-            axes.annotate("COSMOGRAIL.org", xy=(1.0, 0.0), xycoords='axes fraction', fontsize=16, xytext=(-10, 7),
-                          textcoords='offset points', ha='right', va='bottom', color="gray")
+            # axes.annotate("COSMOGRAIL.org", xy=(1.0, 0.0), xycoords='axes fraction', fontsize=16, xytext=(-10, 7),
+            #               textcoords='offset points', ha='right', va='bottom', color="gray")
 
         if logopos == "center":
-            ab = AnnotationBbox(imagebox, xy=(0.55, 0.0), xycoords='axes fraction', xybox=(-80, 30),
+            ab = AnnotationBbox(imagebox, xy=(0.5, 0.05), xycoords='axes fraction', xybox=(0, 0),
                                 boxcoords="offset points",
                                 pad=0.0, frameon=False
                                 )
             axes.add_artist(ab)
-            axes.annotate("COSMOGRAIL.org", xy=(0.55, 0.0), xycoords='axes fraction', fontsize=16, xytext=(40, 7),
-                          textcoords='offset points', ha='center', va='bottom', color="gray")
+            # axes.annotate("COSMOGRAIL.org", xy=(0.55, 0.0), xycoords='axes fraction', fontsize=16, xytext=(40, 7),
+            #               textcoords='offset points', ha='center', va='bottom', color="gray")
 
     if ax is not None:
         return

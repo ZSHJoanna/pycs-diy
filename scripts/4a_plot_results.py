@@ -131,7 +131,7 @@ def main(lensname, dataname, work_dir='./'):
 
                 pycs3.mltd.plot.delayplot(toplot, rplot=10.0, displaytext=True, text=text, showlegend=False,
                                           filename=figure_directory + "fig_delays_%i-%i_%s_%s.png" % (
-                                              kn, ml, config.simset_mock, opt))
+                                              kn, ml, config.simset_mock, opt), autoobj=config.lcs_label)
 
                 if config.display:
                     plt.show()
