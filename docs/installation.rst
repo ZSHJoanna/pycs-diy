@@ -18,9 +18,9 @@ The regression difference technique have furter dependencies:
 Download
 --------
 
-Get the latest PyCS by cloning it from `GitLab <https://gitlab.com/vbonvin/PyCS3>`_::
+Get the latest PyCS by cloning it from `GitLab <https://gitlab.com/cosmograil/PyCS3>`_::
 
-	git clone https://gitlab.com/vbonvin/PyCS3
+	git clone https://gitlab.com/cosmograil/PyCS3
 
 
 Installation
