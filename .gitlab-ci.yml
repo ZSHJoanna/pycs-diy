@@ -75,7 +75,6 @@ build-doc-failure:
 pages:
   stage: deploy
   script:
-    - mv htmldoc/ public/
     - mv htmlcov public/coverage
     - mv doc_status.svg public/
   when: always
