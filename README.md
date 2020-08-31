@@ -15,7 +15,7 @@ Proceed to the [documentation](https://vbonvin.gitlab.io/PyCS3/) to get further 
 
 ## Installation 
 
-    git clone https://gitlab.com/vbonvin/PyCS3.git
+    git clone https://gitlab.com/cosmograil/PyCS3
     cd PyCS3 
     python setup.py install
 
@@ -34,7 +34,7 @@ If you want to use the regdiff optimiser, you will also need :
 * `scikit-learn`
     
 ## Example Notebooks and Documentation
-The full documentation can be found [here](https://vbonvin.gitlab.io/PyCS3/). 
+The full documentation can be found [here](https://cosmograil.gitlab.io/PyCS3/). 
 
 Example notebooks are located in the [notebook](https://gitlab.com/vbonvin/PyCS3/-/tree/master/notebook) folder : 
 * [Importing, exporting and displaying light curves](https://gitlab.com/vbonvin/PyCS3/-/blob/master/notebook/Import_export_and_display.ipynb)
