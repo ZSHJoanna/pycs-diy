@@ -2,9 +2,8 @@
 Module defining the Spline class, something easy to wrap around SciPy splines.
 Includes BOK algorithms (Mollinari et al.)
 Some rules of splrep (k = 3)
-	- do not put more then 2 knots between data points.
-	- splrep wants inner knots only, do not give extremal knots, even only "once".
-
+- do not put more then 2 knots between data points.
+- splrep wants inner knots only, do not give extremal knots, even only "once".
 """
 
 import copy as pythoncopy
