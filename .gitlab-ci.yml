@@ -41,9 +41,10 @@ test:
 build-doc:
   stage: build-doc
   script:
+    - pip install -U sphinx
+    - pip install -U sphinx_rtd_theme
+    - which sphinx-build
     - cd docs
-    - pip install sphinx
-    - pip install sphinx_rtd_theme
     - make clean
     - make html
     - mv _build/html ../htmldoc
