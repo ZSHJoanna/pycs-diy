@@ -6,7 +6,8 @@ from functools import reduce
 
 import numpy as np
 from pycs3.gen.util import readidlist
-
+import logging
+logger = logging.getLogger(__name__)
 
 class LightCurve:
     """
@@ -225,7 +226,7 @@ class LightCurve:
 
     def printinfo(self, title="None"):
         """ Prints the above longinfo about the lightcurve."""
-        print(self.longinfo(title))
+        logger.info(self.longinfo(title))
 
     # Elementary lightcurve methods related to shifts
     def shifttime(self, days):
@@ -303,7 +304,7 @@ class LightCurve:
             else:
                 shifts = -2.5 * np.log10((self.fluxshift * np.ones(len(self)) / (10.0 ** (self.mags / -2.5))) + 1.0)
             if np.all(np.isnan(shifts) is False) is False:  # pragma: no cover  # If there is a nan in this...
-                print("Ouch, negative flux !")
+                logger.warning("Ouch, negative flux !")
                 return np.zeros(len(self))
             else:
                 return shifts
@@ -368,7 +369,7 @@ class LightCurve:
         """
 
         if self.ml is not None and verbose:  # pragma: no cover
-            print("I replace an existing microlensing.")
+            logger.warning("I replace an existing microlensing.")
 
         self.ml = microlensing.copy()  # this copy is important if you append the "same" new ml object to different lcs.
 
@@ -490,36 +491,36 @@ class LightCurve:
 
         if verbose:
             if self.hasmask():
-                print("Note : %i epochs are already masked." % (np.sum(self.mask == False)))
+                logger.info("Note : %i epochs are already masked." % (np.sum(self.mask == False)))
 
         for skippoint in skippoints:
             skipjd = float(skippoint[0])
             indices = np.argwhere(np.fabs(self.jds - skipjd) <= searchrange)
             if len(indices) == 0:
                 if verbose:
-                    print("Warning, epoch %s from skiplist not found in %s !" % (skippoint[0], str(self)))
+                    logger.warning("Epoch %s from skiplist not found in %s !" % (skippoint[0], str(self)))
             elif len(indices) > 1:
                 if verbose:
-                    print("Warning, multiple matches for epoch %s from skiplist !" % (skippoint[0]))
+                    logger.warning("Multiple matches for epoch %s from skiplist !" % (skippoint[0]))
                 if accept_multiple_matches:
                     if verbose:
-                        print("I mask all of them...")
+                        logger.info("I mask all of them...")
                     for index in indices:
                         if not self.mask[index]:
                             if verbose:
-                                print("Epoch %s is already masked." % (skippoint[0]))
+                                logger.info("Epoch %s is already masked." % (skippoint[0]))
                         else:
                             self.mask[index] = False
             elif len(indices) == 1:
                 index = indices[0]
                 if not self.mask[index]:
                     if verbose:
-                        print("Epoch %s is already masked." % (skippoint[0]))
+                        logger.info("Epoch %s is already masked." % (skippoint[0]))
                 else:
                     self.mask[index] = False
 
         if verbose:
-            print("Done with maskskiplist, %i epochs are now masked." % (np.sum(self.mask == False)))
+            logger.info("Done with maskskiplist, %i epochs are now masked." % (np.sum(self.mask == False)))
 
     def remove_epochs(self, index):
         """
@@ -603,7 +604,7 @@ class LightCurve:
         self.mask = self.magerrs >= 0.0  # This should be True for all !
 
         if self.ml is not None:  # pragma: no cover
-            print("WARNING : cutmask() just removed your microlensing !")
+            logger.warning("WARNING : cutmask() just removed your microlensing !")
             self.rmml()
 
         # Note that removing microlensing is important, as the parameters change
@@ -661,7 +662,7 @@ class LightCurve:
             self.ml.checkcompatibility(self)
 
         if verbose:
-            print("%s : validation done !" % self)
+            logger.info("%s : validation done !" % self)
 
     def sort(self):
         """
@@ -680,7 +681,7 @@ class LightCurve:
         self.properties = [self.properties[i] for i in sortedindices]  # trick as properties is not a numpy array
 
         if self.ml is not None:  # pragma: no cover
-            print("WARNING : sort() just removed your microlensing !")
+            logger.warning("WARNING : sort() just removed your microlensing !")
             self.rmml()
 
     def montecarlomags(self, f=1.0, seed=None):
@@ -776,15 +777,15 @@ class LightCurve:
         """
         # Let's warn the user if there are timeshifts in the curves :
         if self.timeshift != 0.0 or otherlc.timeshift != 0.0:  # pragma: no cover
-            print("WARNING : you ask me to merge time-shifted lightcurves !")
+            logger.warning("You ask me to merge time-shifted lightcurves !")
 
         # and microlensing :
         if self.ml is not None or otherlc.ml is not None:  # pragma: no cover
-            print("WARNING : I am merging lightcurves with possible microlensing !")
+            logger.warning("I am merging lightcurves with possible microlensing !")
 
         # for the magnitude shift, for otherlc it is quite common, but not for self :
         if self.magshift != 0.0 or self.fluxshift != 0.0:  # pragma: no cover
-            print("WARNING : merging into a lightcurve with magshift or fluxshift : everything gets applied ! ")
+            logger.warning("Merging into a lightcurve with magshift or fluxshift : everything gets applied ! ")
 
         # Frist we just concatenate all the values into new numpy arrays :
 
@@ -881,4 +882,4 @@ class LightCurve:
         writer.writerows(data)
 
         outfile.close()
-        print("Wrote %s into %s." % (str(self), filename))
+        logger.info("Wrote %s into %s." % (str(self), filename))

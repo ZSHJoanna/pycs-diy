@@ -6,6 +6,8 @@ import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import ConstantKernel
 from sklearn.gaussian_process.kernels import RBF, Matern, WhiteKernel, RationalQuadratic
+import logging
+logger = logging.getLogger(__name__)
 
 
 def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=False):
@@ -41,7 +43,7 @@ def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, er
     mean_err = np.mean(obs_v)
 
     if verbose:
-        print("Computing GPR with params covkernel=%s, pow=%.1f, errscale=%.1f" % (covkernel, pow, errscale))
+        logger.info("Computing GPR with params covkernel=%s, pow=%.1f, errscale=%.1f" % (covkernel, pow, errscale))
 
     # v4, allow you to chose your kernel.
     if covkernel == "matern":
@@ -58,7 +60,7 @@ def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, er
     gp = GaussianProcessRegressor(kernel=kernel, alpha=obs_v, normalize_y =True)
     gp.fit(obs_mesh, obs_vals)
     if verbose :
-        print("Kernel after optimisation :", gp.kernel_)
+        logger.info("Kernel after optimisation :", gp.kernel_)
 
     def outfct(jds):  # this is made to speed up the code, no need to refit the GP
         m_out, v_out = gp.predict(jds.reshape(-1, 1), return_std=True) #this retunr std not variance

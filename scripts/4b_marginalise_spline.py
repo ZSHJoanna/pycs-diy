@@ -11,6 +11,9 @@ import numpy as np
 import pickle as pkl
 import importlib
 import argparse as ap
+import logging
+loggerformat='%(message)s'
+logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 
 def main(lensname, dataname, work_dir='./'):

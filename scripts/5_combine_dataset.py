@@ -12,6 +12,9 @@ import pickle as pkl
 import importlib
 from shutil import copyfile
 import pycs3.pipe.pipe_utils as ut
+import logging
+loggerformat='%(message)s'
+logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 matplotlib.style.use('classic')
 matplotlib.rc('font', serif='Times New Roman')

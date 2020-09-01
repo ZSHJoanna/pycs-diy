@@ -2,7 +2,8 @@
 Module to define Datapoints class which is a minimal version of a LightCurve made for fast computation
 """
 import numpy as np
-
+import logging
+logger = logging.getLogger(__name__)
 
 class DataPoints:
     """
@@ -210,7 +211,7 @@ class DataPoints:
         maskindices = np.where(self.mask == False)[0]
 
         if len(maskindices) < 3:
-            print("Hmm, not much masked here ...")
+            logger.info("Hmm, not much masked here ...")
             return np.array([]), np.array([])
         else:
             lcuts = maskindices[np.where(maskindices[1:] - maskindices[:-1] > 1)[0] + 1]

@@ -9,7 +9,6 @@ import sys
 import os
 import argparse as ap
 import subprocess
-import itertools
 import numpy as np
 import py_compile
 
@@ -48,7 +47,7 @@ def main(name, name_type, number_pair = 1, work_dir = './'): #Make sure the dire
 			guess = [-x for x in guess]
 		elif (int(Lines[21][6:9])!=1):
 			print('ERROR : Make sure the sign of the config_multiple file is +1 or -1')
-			sys.exit()	
+			sys.exit()
 			
 	### Save the truth
 	with open(Simulation_multiple_directory + 'post_gaussian_guess.txt', 'w') as f :

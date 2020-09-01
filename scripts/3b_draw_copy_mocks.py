@@ -10,6 +10,9 @@ import glob
 import argparse as ap
 import multiprocess
 import importlib
+import logging
+loggerformat='PID %(process)06d | %(asctime)s | %(levelname)s: %(name)s(%(funcName)s): %(message)s'
+logging.basicConfig(format=loggerformat,level=logging.WARNING)
 
 
 def draw_mock_para(i, j, kn, ml, string_ML, lensname, dataname, work_dir):

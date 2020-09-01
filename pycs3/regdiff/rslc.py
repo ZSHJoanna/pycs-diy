@@ -7,6 +7,8 @@ import copy as pythoncopy
 import numpy as np
 import pycs3.regdiff.scikitgp as scikitgp
 import scipy.optimize as spopt
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Rslc:
@@ -202,7 +204,6 @@ def wtvdiff(rs1, rs2, method):
 
     """
     out = subtract(rs1, rs2).wtv(method)
-    # print out
     return float(out)
 
 
@@ -261,31 +262,31 @@ def opt_rslcs(rslcs, method="weights", verbose=True):
         return ret
 
     if verbose:
-        print("Starting time shift optimization ...")
-        print("Initial pars (shifts, not delays) : ", inishifts)
+        logger.info("Starting time shift optimization ...")
+        logger.info("Initial pars (shifts, not delays) : ", inishifts)
 
     # Some brute force exploration, like for the dispersion techniques ...
 
     res = spopt.brute(errorfct, bruteranges(5, 3, inishifts), full_output=False, finish=None)
     # This would finish by default with fmin ... we do not want that.
     if verbose:
-        print("Brute 1 shifts : %s" % np.array2string(res, precision=2))
-        print("Brute 1 errorfct : %f" % errorfct(res))
+        logger.info("Brute 1 shifts : %s" % np.array2string(res, precision=2))
+        logger.info("Brute 1 errorfct : %f" % errorfct(res))
 
     res = spopt.brute(errorfct, bruteranges(2.5, 3, res), full_output=False, finish=None)
     if verbose:
-        print("Brute 2 shifts : %s" % np.array2string(res, precision=2))
-        print("Brute 2 errorfct : %f" % errorfct(res))
+        logger.info("Brute 2 shifts : %s" % np.array2string(res, precision=2))
+        logger.info("Brute 2 errorfct : %f" % errorfct(res))
 
     res = spopt.brute(errorfct, bruteranges(1.25, 3, res), full_output=False, finish=None)
     if verbose:
-        print("Brute 3 shifts : %s" % np.array2string(res, precision=2))
-        print("Brute 3 errorfct : %f" % errorfct(res))
+        logger.info("Brute 3 shifts : %s" % np.array2string(res, precision=2))
+        logger.info("Brute 3 errorfct : %f" % errorfct(res))
 
     res = spopt.brute(errorfct, bruteranges(0.5, 3, res), full_output=False, finish=None)
     if verbose:
-        print("Brute 4 shifts : %s" % np.array2string(res, precision=2))
-        print("Brute 4 errorfct : %f" % errorfct(res))
+        logger.info("Brute 4 shifts : %s" % np.array2string(res, precision=2))
+        logger.info("Brute 4 errorfct : %f" % errorfct(res))
 
     minout = spopt.fmin_powell(errorfct, res, xtol=0.001, full_output=True, disp=verbose)
     # minout = spopt.fmin_bfgs(errorfct, inishifts, maxiter=None, full_output=1, disp=verbose, retall=0, callback=None)
@@ -294,8 +295,8 @@ def opt_rslcs(rslcs, method="weights", verbose=True):
     minwtv = errorfct(popt)  # This sets popt, and the optimal ML and source.
 
     if verbose:
-        print("Final shifts : %s" % popt)
-        print("Final errorfct : %f" % minwtv)
+        logger.info("Final shifts : %s" % popt)
+        logger.info("Final errorfct : %f" % minwtv)
 
     # We set the timeshifts of the originals :
     for (origrs, rs) in zip(rslcs[1:], rslcsc[1:]):

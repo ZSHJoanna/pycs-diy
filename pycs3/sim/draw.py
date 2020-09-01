@@ -11,6 +11,8 @@ import pycs3.gen.lc_func
 import pycs3.gen.util
 import pycs3.sim.src
 import scipy.ndimage.filters
+import logging
+logger = logging.getLogger(__name__)
 
 
 def sample(lc, spline):
@@ -200,7 +202,7 @@ def draw(lcs, spline, shotnoise=None, shotnoisefrac=1.0, tweakml=None, scaletwea
                 thislctweakml([l], spline)  # modifies in place
                 tweakedml = l.ml.copy()
             else:
-                print("WARNING: curve %s has no ML to tweak !" % (str(l)))
+                logger.warning("Curve %s has no ML to tweak !" % (str(l)))
                 tweakedml = None
         else:
             tweakedml = origml
@@ -227,7 +229,6 @@ def draw(lcs, spline, shotnoise=None, shotnoisefrac=1.0, tweakml=None, scaletwea
             # Now we can compute the "residuals" that are due to the tweaked ml :
 
             tweakresis = l.mags - lorigml.mags
-            # print np.std(tweakresis)
 
             # We scale them using previously saved residuals :
             if not hasattr(l, 'residuals'): # pragma: no cover
@@ -379,21 +380,21 @@ def multidraw(lcs, spline=None, optfctnots=None, onlycopy=False, n=20, npkl=5, s
     else:
         destdir = os.path.join(destpath, simdir)
     if verbose:
-        print("Now thowing dice into %s ..." % destdir)
+        logger.info("Now thowing dice into %s ..." % destdir)
 
     # We prepare the destination directory
     if not os.path.isdir(destdir):
         os.mkdir(destdir)
     else:
         if verbose:
-            print("The directory exists, I'll add my new curves.")
+            logger.info("The directory exists, I'll add my new curves.")
 
     # Print out some info
     if verbose:
-        print("Input shifts :")
-        print(pycs3.gen.lc_func.getnicetimeshifts(lcs, separator=" | "))
-        print("Input delays :")
-        print(pycs3.gen.lc_func.getnicetimedelays(lcs, separator=" | "))
+        logger.info("Input shifts :")
+        logger.info(pycs3.gen.lc_func.getnicetimeshifts(lcs, separator=" | "))
+        logger.info("Input delays :")
+        logger.info(pycs3.gen.lc_func.getnicetimedelays(lcs, separator=" | "))
 
     origshifts = np.array([l.timeshift for l in lcs])  # the mean shifts for the simulations
 
@@ -418,7 +419,7 @@ def multidraw(lcs, spline=None, optfctnots=None, onlycopy=False, n=20, npkl=5, s
 
         if onlycopy:
             if verbose:
-                print("Preparing %i identical copies for pkl %i/%i ..." % (n, (i + 1), npkl))
+                logger.info("Preparing %i identical copies for pkl %i/%i ..." % (n, (i + 1), npkl))
             simlcslist = [[l.copy() for l in lcs] for ni in range(n)]
             # We remove any microlensing or shifts :
             for simlcs in simlcslist:
@@ -427,7 +428,7 @@ def multidraw(lcs, spline=None, optfctnots=None, onlycopy=False, n=20, npkl=5, s
 
         else:
             if verbose:
-                print("Drawing %i simulations for pkl %i/%i ..." % (n, (i + 1), npkl))
+                logger.info("Drawing %i simulations for pkl %i/%i ..." % (n, (i + 1), npkl))
 
             simlcslist = []
 

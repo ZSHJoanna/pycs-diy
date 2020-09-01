@@ -10,6 +10,8 @@ import numpy as np
 import pycs3.gen.datapoints
 import pycs3.gen.spl
 import scipy.interpolate as si
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Source:
@@ -158,12 +160,9 @@ class Source:
 
         # We add the points to the values
         if flux:
-            print("Implement flux !")
-            print("Hmm, change sigma somehow, can't be the same as for mags !")
-
+            logger.warning("Working with fluxes, check that sigma is scaled for fluxes and not magnitude.")
             iflux = 10.0 ** (-0.4 * self.imags)  # The fluxes
             iflux += sigma * np.fft.irfft(specs)[:int(n2 / 2)]  # We add our "noise"
-            # print np.min(iflux)
             self.imags = -2.5 * np.log10(iflux)  # and get back to fluxes
         else:
             self.imags -= sigma * np.fft.irfft(specs)[:int(n2 / 2)]  # -, to make it coherent with the fluxes.

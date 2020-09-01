@@ -9,7 +9,8 @@ And as such lists of seasons are so common, there are a few functions below that
 
 from numpy import *
 from pycs3.gen.lc import LightCurve
-
+import logging
+logger = logging.getLogger(__name__)
 
 class Season:
     """
@@ -61,7 +62,7 @@ class Season:
             if not alltrue(less_equal(first, second)):  # this is very fast, better than a loop
                 raise RuntimeError("A season must be sorted !")
             if self.indices[-1] - self.indices[0] + 1 != len(self.indices):
-                print("WARNING : your season has holes !?")
+                logger.warning("WARNING : your season has holes !?")
 
     def checkcompatibility(self, lc):
         """
@@ -226,7 +227,7 @@ def printinfo(seasons):
 
     """
     for s in seasons:
-        print(str(s))
+        logger.info(str(s))
 
 
 def easycut(lclist, keep=[1], seasongap=60, mask=False, verbose=False):
@@ -250,7 +251,7 @@ def easycut(lclist, keep=[1], seasongap=60, mask=False, verbose=False):
     for l in lclist:
         seasons = autofactory(l, seasongap=seasongap)
         if verbose:
-            print("%i seaons in %s" % (len(seasons), str(l)))
+            logger.info("%i seaons in %s" % (len(seasons), str(l)))
 
         # We check user provided indices ...
         for humanindex in keep:
@@ -260,7 +261,7 @@ def easycut(lclist, keep=[1], seasongap=60, mask=False, verbose=False):
         seasonstomask = [season for (i, season) in enumerate(seasons) if i + 1 not in keep]
 
         if l.hasmask():
-            print("Warning : %s has already a mask, I might get cut !" % (str(l)))
+            logger.warning("%s has already a mask, I might get cut !" % (str(l)))
 
         for season in seasonstomask:
             l.mask[season.indices] = False

@@ -12,6 +12,8 @@ The functions must return a final optimal spline. This spline object also contai
 from pycs3.gen.lc_func import getnicetimedelays
 from pycs3.gen.spl_func import fit
 from pycs3.spl.multiopt import opt_magshift, opt_ml, opt_source, opt_ts_indi, redistribflux
+import logging
+logger = logging.getLogger(__name__)
 
 
 def opt_rough(lcs, nit=5, shifttime=True, crit="r2",
@@ -46,8 +48,8 @@ def opt_rough(lcs, nit=5, shifttime=True, crit="r2",
 
     """
     if verbose:
-        print("Starting opt_rough on initial delays :")
-        print(getnicetimedelays(lcs, separator=" | "))
+        logger.info("Starting opt_rough on initial delays :")
+        logger.info(getnicetimedelays(lcs, separator=" | "))
 
     opt_magshift(lcs)
 
@@ -56,13 +58,13 @@ def opt_rough(lcs, nit=5, shifttime=True, crit="r2",
     if len(nomllcs) == 0:
         # Spline though the first curve :
         if verbose:
-            print("Aiming at first curve.")
+            logger.info("Aiming at first curve.")
         spline = fit([lcs[0]], knotstep=knotstep, stab=True, stabext=stabext,
                      stabgap=stabgap, stabstep=stabstep, stabmagerr=stabmagerr, bokit=0, verbose=False)
     else:
         # Spline through the fixed curves :
         if verbose:
-            print("Aiming at curves %s." % (", ".join([l.object for l in nomllcs])))
+            logger.info("Aiming at curves %s." % (", ".join([l.object for l in nomllcs])))
         spline = fit(nomllcs, knotstep=knotstep, stab=True, stabext=stabext,
                      stabgap=stabgap, stabstep=stabstep, stabmagerr=stabmagerr, bokit=0, verbose=False)
 
@@ -75,7 +77,7 @@ def opt_rough(lcs, nit=5, shifttime=True, crit="r2",
     opt_source(lcs, spline, dpmethod="extadj", bokit=0, verbose=False, trace=False)
 
     if verbose:
-        print("First spline and ML opt done.")
+        logger.info("First spline and ML opt done.")
 
     for it in range(nit):
         if shifttime:
@@ -85,12 +87,12 @@ def opt_rough(lcs, nit=5, shifttime=True, crit="r2",
         opt_source(lcs, spline, dpmethod="extadj", bokit=0, verbose=False, trace=False)
 
         if verbose:
-            print("%s    (Iteration %2i, r2 = %8.1f)" % (
+            logger.info("%s    (Iteration %2i, r2 = %8.1f)" % (
                 getnicetimedelays(lcs, separator=" | "), it + 1, spline.lastr2nostab))
 
     if verbose:
-        print("Rough time shifts done :")
-        print("%s" % (getnicetimedelays(lcs, separator=" | ")))
+        logger.info("Rough time shifts done :")
+        logger.info("%s" % (getnicetimedelays(lcs, separator=" | ")))
 
     return spline
 
@@ -142,8 +144,8 @@ def opt_fine(lcs, spline=None, nit=10, shifttime=True, crit="r2",
     """
 
     if verbose:
-        print("Starting opt_fine on initial delays :")
-        print(getnicetimedelays(lcs, separator=" | "))
+        logger.info("Starting opt_fine on initial delays :")
+        logger.info(getnicetimedelays(lcs, separator=" | "))
 
     if spline is None:
         spline = fit(lcs, knotstep=knotstep,
@@ -152,30 +154,30 @@ def opt_fine(lcs, spline=None, nit=10, shifttime=True, crit="r2",
     opt_ml(lcs, spline, bokit=2, splflat=splflat, verbose=False)
 
     if verbose:
-        print("Iterations :")
+        logger.info("Iterations :")
 
     for it in range(nit):
 
         if verbose:
-            print("Start")
+            logger.info("Start")
 
         if shifttime:
             opt_ts_indi(lcs, spline, optml=True, mlsplflat=splflat, method="brute", crit=crit, brutestep=0.2, bruter=10,
                         verbose=False)
             if verbose:
-                print("opt_ts_indi brute done")
+                logger.info("opt_ts_indi brute done")
 
         opt_source(lcs, spline, dpmethod="extadj", bokit=0, verbose=False, trace=False)
 
         if shifttime:
             opt_ts_indi(lcs, spline, optml=True, mlsplflat=splflat, method="fmin", crit=crit, verbose=False)
             if verbose:
-                print("opt_ts_indi fine done")
+                logger.info("opt_ts_indi fine done")
 
         opt_source(lcs, spline, dpmethod="extadj", bokit=0, verbose=False, trace=False)
         opt_ml(lcs, spline, bokit=1, splflat=splflat, verbose=False)
         if verbose:
-            print("opt_ml done")
+            logger.info("opt_ml done")
 
         if distribflux:
             # This works only for doubles
@@ -186,14 +188,14 @@ def opt_fine(lcs, spline=None, nit=10, shifttime=True, crit="r2",
 
         opt_source(lcs, spline, dpmethod="extadj", bokit=1, verbose=False, trace=False)
         if verbose:
-            print("opt_source BOK done")
+            logger.info("opt_source BOK done")
 
         if verbose:
-            print("%s    (Iteration %2i, r2 = %8.1f)" % (
+            logger.info("%s    (Iteration %2i, r2 = %8.1f)" % (
                 getnicetimedelays(lcs, separator=" | "), it + 1, spline.lastr2nostab))
 
     if verbose:
-        print("Timeshift stabilization and releasing of splflat :")
+        logger.info("Timeshift stabilization and releasing of splflat :")
 
     for it in range(5):
         if shifttime:
@@ -201,7 +203,7 @@ def opt_fine(lcs, spline=None, nit=10, shifttime=True, crit="r2",
                         verbose=False)
         opt_source(lcs, spline, dpmethod="extadj", bokit=0, verbose=False, trace=False)
         if verbose:
-            print("%s    (Iteration %2i, r2 = %8.1f)" % (
+            logger.info("%s    (Iteration %2i, r2 = %8.1f)" % (
                 getnicetimedelays(lcs, separator=" | "), it + 1, spline.lastr2nostab))
 
     return spline

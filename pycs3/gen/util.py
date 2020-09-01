@@ -12,6 +12,8 @@ import pickle as pickle
 
 import numpy as np
 import pycs3
+import logging
+logger = logging.getLogger(__name__)
 
 tracei = 1  # global variable, filename to write trace pkl.
 
@@ -30,7 +32,7 @@ def writepickle(obj, filepath, verbose=True, protocol=-1):
     pickle.dump(obj, pkl_file, protocol)
     pkl_file.close()
     if verbose:
-        print("Wrote %s" % filepath)
+        logger.info("Wrote %s" % filepath)
 
 
 def readpickle(filepath, verbose=True):
@@ -45,7 +47,7 @@ def readpickle(filepath, verbose=True):
     obj = pickle.load(pkl_file)
     pkl_file.close()
     if verbose:
-        print("Read %s" % filepath)
+        logger.info("Read %s" % filepath)
     return obj
 
 
@@ -77,7 +79,7 @@ def readidlist(filepath, verbose=True):
 
         table.append([id, comment])
     if verbose:
-        print("I've read %i lines from %s" % (len(table), os.path.basename(filepath)))
+        logger.info("I've read %i lines from %s" % (len(table), os.path.basename(filepath)))
     return table
 
 
@@ -159,7 +161,6 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
     for thislc in lclist:
         thislc.validate()  # Good idea to keep this here, as the code below is so ugly ...
         if len(thislc) != lenlc: # pragma: no cover
-            print("First lightcurve has %i points" % len(commonjds))
             raise RuntimeError("Lightcurve %s has not the same length !" % str(thislc))
 
         if not np.allclose(thislc.getjds(), commonjds, rtol=0.0, atol=1e-5):# pragma: no cover
@@ -189,7 +190,6 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
     data.append(["%.5f" % commonjd for commonjd in commonjds])
 
     for thislc in lclist:
-        print(str(thislc))
         colnames.append("mag_" + thislc.object)
         # data.append(["%09.5f" % mag for mag in thislc.getmags()])
         data.append(["%.5f" % mag for mag in thislc.getmags()])
@@ -217,7 +217,7 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
     csvwriter = csv.writer(open(filepath, 'w'), delimiter=separator, quotechar='"', quoting=csv.QUOTE_MINIMAL)
     csvwriter.writerows(biglist)
     if verbose:
-        print("Wrote the lightcurves into %s" % filepath)
+        logger.info("Wrote the lightcurves into %s" % filepath)
 
 
 def datetimefromjd(JD):
@@ -277,7 +277,6 @@ def datetimefromjd(JD):
         leap = 1
 
     if year % 100 == 0 and year % 400 != 0:
-        print(year % 100, year % 400)
         leap = 0
     if leap and month > 2:
         dayofyr = dayofyr + leap

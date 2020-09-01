@@ -11,6 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pycs3.gen.lc import LightCurve
 from pycs3.gen.util import datetimefromjd
+import logging
+logger = logging.getLogger(__name__)
 
 
 # Factory functions : give me some stuff and I make a lightcurve object from this.
@@ -67,7 +69,7 @@ def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", 
     newlc.validate()
 
     if verbose:
-        print("New lightcurve %s with %i points" % (str(newlc), len(newlc.jds)))
+        logger.info("New lightcurve %s with %i points" % (str(newlc), len(newlc.jds)))
 
     return newlc
 
@@ -98,7 +100,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
 
     """
     if verbose:
-        print("Reading \"%s\"..." % (os.path.basename(filepath)))
+        logger.info("Reading \"%s\"..." % (os.path.basename(filepath)))
     rdbfile = open(filepath, "r")
     rdbfilelines = rdbfile.readlines()[startline - 1:]  # we directly "skip" the first lines of eventual headers ...
     rdbfile.close()
@@ -117,7 +119,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
             continue
 
         if len(line.strip()) < 5:
-            print("Skipping empty line %i : %s" % (i + startline, repr(line)))
+            logger.info("Skipping empty line %i : %s" % (i + startline, repr(line)))
             continue
 
         elements = line.split()  # line is a string, elements is a list of strings
@@ -139,7 +141,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
             elif strflag == "False":
                 flags.append(False)
             else:  # pragma: no cover
-                print("Flag error in line %i : %s" % (i + startline, repr(line)))
+                logger.info("Flag error in line %i : %s" % (i + startline, repr(line)))
                 flags.append(True)
         else:
             flags.append(True)
@@ -163,7 +165,7 @@ def flexibleimport(filepath, jdcol=1, magcol=2, errcol=3, startline=1, flagcol=N
     commentcols = "(%i, %i, %i)" % (jdcol, magcol, errcol)
     newlc.commentlist.insert(0, "Imported from %s, columns %s" % (os.path.basename(filepath), commentcols))
     if verbose:  # noinspection PyStringFormat
-        print("%s with %i points imported (%i of them masked)." % (str(newlc), len(newlc.jds), nbmask))
+        logger.info("%s with %i points imported (%i of them masked)." % (str(newlc), len(newlc.jds), nbmask))
     return newlc
 
 
@@ -199,7 +201,7 @@ def rdbimport(filepath, object="Unknown", magcolname="mag", magerrcolname="mager
     """
 
     if verbose:
-        print("Checking header of \"%s\"..." % (os.path.basename(filepath)))
+        logger.info("Checking header of \"%s\"..." % (os.path.basename(filepath)))
     rdbfile = open(filepath, "r")
     rdbfilelines = rdbfile.readlines()
     rdbfile.close()
@@ -554,7 +556,7 @@ def display(lclist=[], splist=[],
         axes = ax
 
     if verbose:
-        print("Plotting %i lightcurves and %i splines ..." % (len(lclist), len(splist)))
+        logger.info("Plotting %i lightcurves and %i splines ..." % (len(lclist), len(splist)))
 
     reflevels = []  # only used for collapseref
 
@@ -583,7 +585,7 @@ def display(lclist=[], splist=[],
                 curve = curve[0]  # for the rest of this loop, curve is now only the lightcurve.
 
             if verbose:
-                print("#   %s -> %s\n\t%s" % (curve, str(curve.plotcolour), "\n\t".join(curve.commentlist)))
+                logger.info("#   %s -> %s\n\t%s" % (curve, str(curve.plotcolour), "\n\t".join(curve.commentlist)))
 
             tmpjds = curve.getjds()
             tmpmags = curve.getmags()  # to avoid calculating the microlensing each time we need it
@@ -660,7 +662,7 @@ def display(lclist=[], splist=[],
                                       size=12, color=curve.plotcolour)
 
     if collapseref and len(reflevels) != 0:
-        print("WARNING : collapsing the refs %s" % reflevels)
+        logger.warning("WARNING : collapsing the refs %s" % reflevels)
         if not hidecollapseref:
             axes.axhline(np.mean(np.array(reflevels)), color="gray", dashes=(3, 3))  # the new ref
 
@@ -673,7 +675,7 @@ def display(lclist=[], splist=[],
             if hasattr(stuff, "knottype"):  # Then it's a spline
                 spline = stuff
                 if verbose:
-                    print("#   %s -> %s" % (str(spline), str(spline.plotcolour)))
+                    logger.info("#   %s -> %s" % (str(spline), str(spline.plotcolour)))
 
                 npts = (spline.datapoints.jds[-1] - spline.datapoints.jds[0]) * 2.0
                 xs = np.linspace(spline.datapoints.jds[0], spline.datapoints.jds[-1], int(npts))
@@ -755,8 +757,8 @@ def display(lclist=[], splist=[],
                       textcoords='offset points', ha='left', va='top')
         legendloc = 1
         if verbose:
-            print("Delays between plotted curves :")
-            print(txt)
+            logger.info("Delays between plotted curves :")
+            logger.info(txt)
 
     if showlegend and (len(lclist) > 0 or len(splist) > 0):
         axes.legend(loc=legendloc, numpoints=1, prop=fm.FontProperties(size=12))
@@ -858,7 +860,7 @@ def display(lclist=[], splist=[],
         plt.show()
     else:
         plt.savefig(filename, transparent=transparent)
-        print("Plot written to %s" % filename)
+        logger.info("Plot written to %s" % filename)
         plt.close()  # this seems important so that the plot is not displayed when a next plt.show() is called.
 
 
@@ -974,7 +976,6 @@ def settimeshifts(lcs, shifts, includefirst=False):
             l.timeshift = shift
 
     elif not includefirst:
-        # print lcs, shifts
         assert len(lcs) - 1 == len(shifts)
         for (l, shift) in zip(lcs[1:], shifts):
             l.timeshift = shift
@@ -1011,7 +1012,7 @@ def objsort(lcs, ret=False, verbose=True):
     if not ret:
         lcs.sort(key=operator.attrgetter('object'))
         if verbose:
-            print("Sorted lcs, order : %s" % ", ".join([l.object for l in lcs]))
+            logger.info("Sorted lcs, order : %s" % ", ".join([l.object for l in lcs]))
         return
     if ret:
         return sorted(lcs, key=operator.attrgetter('object'))

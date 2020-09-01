@@ -10,7 +10,7 @@ PyCS3 is developed using python 3.7 and might be fine with older versions.
 It requires ``numpy``, ``scipy`` and ``matplotlib``.
 Those are all you need to run the free-knot splines.
 
-The regression difference technique have furter dependencies:
+The regression difference technique have further dependencies:
 
 * `scikit-learn <http://scikit-learn.org>`_
 

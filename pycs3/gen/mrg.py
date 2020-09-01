@@ -7,6 +7,8 @@ Of course we need overlapping curves to do this.
 
 import numpy as np
 from scipy.optimize import fmin_powell
+import logging
+logger = logging.getLogger(__name__)
 
 
 def matchtels(lcsref, lcsmatch, dispersionmethod, fluxshifts=True):
@@ -25,9 +27,9 @@ def matchtels(lcsref, lcsmatch, dispersionmethod, fluxshifts=True):
 
     if len(lcsref) != len(lcsmatch):
         raise RuntimeError("Input lists must have the same length.")
-    print("Matching curves : ")
+    logger.info("Matching curves : ")
     for (lr, lm) in zip(lcsref, lcsmatch):
-        print("   %20s -> %20s" % (lm, lr))
+        logger.info("   %20s -> %20s" % (lm, lr))
 
     def setp(p, lcs):
         """
@@ -57,12 +59,12 @@ def matchtels(lcsref, lcsmatch, dispersionmethod, fluxshifts=True):
             fluxes = [l.fluxshift for l in lcsmatch]
             fluxpars = 0.01 * np.array(fluxes)
             pars = np.concatenate([np.array([magpar]), fluxpars])
-            print("Initial pars : ", pars)
+            logger.info("Initial pars : ", pars)
             return pars
 
         else:
             pars = np.array([magpar])
-            print("Initial pars : ", pars)
+            logger.info("Initial pars : ", pars)
             return pars
 
     def errorfct(p):
@@ -84,13 +86,13 @@ def matchtels(lcsref, lcsmatch, dispersionmethod, fluxshifts=True):
         return totdisp
 
     # We optimize p :
-    print("Starting Powell optimization ...")
+    logger.info("Starting Powell optimization ...")
     # This is very well suited, as it starts by optimizing the mag shifts, then the fluxes, then iterates.
     minout = fmin_powell(errorfct, inip(), full_output=True)
     popt = minout[0]  # This might be an array, or a 0-d array. We want an array :
     if popt.shape == ():
         popt = np.array([popt])
-    print("Optimal pars : ", popt)
+    logger.info("Optimal pars : ", popt)
     setp(popt, lcsmatch)
 
 

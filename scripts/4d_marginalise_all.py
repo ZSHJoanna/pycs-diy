@@ -9,6 +9,9 @@ import os
 import pickle as pkl
 import importlib
 import argparse as ap
+import logging
+loggerformat='%(message)s'
+logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 matplotlib.style.use('classic')
 matplotlib.rc('font', family="Times New Roman")

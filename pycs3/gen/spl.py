@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate as si
 import scipy.optimize as spopt
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Spline:
@@ -159,7 +161,6 @@ class Spline:
             newmax = newdatapoints.jds[-1]
 
             oldknots = self.getinttex()
-            # print oldknots
 
             # we will stretch the oldknots by a factor a :
             a = (newmax - newmin) / (oldmax - oldmin)
@@ -279,7 +280,7 @@ class Spline:
         """
 
         if verbose:
-            print("Building BOK bounds (bokeps = %.3f, bokwindow = %s) ..." % (self.bokeps, self.bokwindow))
+            logger.info("Building BOK bounds (bokeps = %.3f, bokwindow = %s) ..." % (self.bokeps, self.bokwindow))
 
         knots = self.getinttex()  # Including extremal knots (once).
         n = len(knots)
@@ -290,7 +291,7 @@ class Spline:
             raise RuntimeError("Ouch, your knots are not sorted !")
         minspace = np.min(knotspacings)
         if verbose:
-            print("Minimal knot spacing : %.3f" % minspace)
+            logger.info("Minimal knot spacing : %.3f" % minspace)
 
         if minspace < self.bokeps - 0.00001: # pragma: no cover  # Rounding errors, we decrease epsilon a bit...
             # If this does still happens, then it was not just a rounding error ...
@@ -331,7 +332,7 @@ class Spline:
         self.u = np.array(uppers)
         self.knottype += "l"
         if verbose:
-            print("Buildbounds done.")
+            logger.info("Buildbounds done.")
 
     def bok(self, bokmethod="BF", verbose=True):
         """
@@ -374,7 +375,7 @@ class Spline:
         lastscore = iniscore
         iterations = 0
         if verbose:
-            print("Starting BOK-%s on %i intknots (boktests = %i)" % (bokmethod, nintknots, self.boktests))
+            logger.info("Starting BOK-%s on %i intknots (boktests = %i)" % (bokmethod, nintknots, self.boktests))
 
         if bokmethod == "MCBF":
 
@@ -425,7 +426,6 @@ class Spline:
 
                 out = spopt.fminbound(target, self.l[i + 1], self.u[i + 1], xtol=0.01, maxfun=100, full_output=True,
                                       disp=1)
-                # print out
                 optval = out[0]
                 bestscore = out[1]
 
@@ -453,8 +453,8 @@ class Spline:
         self.optc()  # Yes, not yet done !
         finalr2 = self.r2(nostab=True)
         if verbose:
-            print("r2 = %f (without stab poins)" % finalr2)
-            print("Done in %i iterations, relative improvement = %f" % (iterations, relimp))
+            logger.info("r2 = %f (without stab poins)" % finalr2)
+            logger.info("Done in %i iterations, relative improvement = %f" % (iterations, relimp))
         # We count all datapoints here, as score returns the full chi2 including stab pts.
 
         return finalr2
@@ -664,8 +664,8 @@ class Spline:
             self.setcflat(full)
 
         if verbose:
-            print("Starting flat coeff optimization ...")
-            print("Initial pars : ", inip)
+            logger.info("Starting flat coeff optimization ...")
+            logger.info("Initial pars : ", inip)
 
         def errorfct(p):
             setp(p)
@@ -677,7 +677,7 @@ class Spline:
             popt = np.array([popt])
 
         if verbose:
-            print("Optimal pars : ", popt)
+            logger.info("Optimal pars : ", popt)
         setp(popt)
         return self.r2(nostab=False)  # We include the stab points, like optc does.
 

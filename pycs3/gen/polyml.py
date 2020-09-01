@@ -9,6 +9,8 @@ import copy as pythoncopy
 
 import numpy as np
 from pycs3.gen.sea import autofactory
+import logging
+logger = logging.getLogger(__name__)
 
 
 def polyfit(jds, mags, magerrs, nparams):
@@ -141,7 +143,7 @@ class SeasonFct:
         """
         Prints the longer description of the object.
         """
-        print(self.longinfo())
+        logger.info(self.longinfo())
 
     def setparams(self, p):
         """
@@ -297,7 +299,7 @@ class Microlensing:
         Print info about the object in the mllist
 
         """
-        print(self.longinfo())
+        logger.info(self.longinfo())
 
     def getfreeparams(self):
         """
@@ -380,7 +382,7 @@ def multigetfreeparams(lclist):
             params = np.append(params, curve.ml.getfreeparams())
 
     if len(params) == 0:
-        print("WARNING : there are no free ml params !")
+        logger.warning("There are no free ml params !")
     return params
 
 

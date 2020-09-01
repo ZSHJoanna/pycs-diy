@@ -13,6 +13,8 @@ import pycs3.gen.lc
 import pycs3.gen.lc_func
 import pycs3.gen.util
 import pycs3.sim.draw
+import logging
+logger = logging.getLogger(__name__)
 
 
 def applyopt(optfct, lcslist, ncpu, **kwargs):
@@ -38,7 +40,7 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
     ncpuava = multiprocess.cpu_count()
     if ncpu == 1:
         # curves are optimised one after the other :
-        print("Starting the curve shifting on a single CPU, no multiprocessing...")
+        logger.info("Starting the curve shifting on a single CPU, no multiprocessing...")
         start = time.time()
         kwargs_vec = [kwargs for k in lcslist]
         optfct_outs = []
@@ -47,8 +49,7 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
             try:
                 optout = optfct(lcs, **kwargs_vec[i])
             except Exception as e: # pragma: no cover
-                print("WARNING : I have a problem with the curve number %i." % i)
-                print(e)
+                logger.warning("I have a problem with the curve number %i. Details : %s" %(i,e))
                 sucess_dic['failed_id'].append(i)
                 sucess_dic['success'] = False
                 sucess_dic['error_list'].append(e)
@@ -63,8 +64,7 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
             try:
                 out = optfct(arg, **kwargs)
             except Exception as e:
-                print("WARNING : I have a problem with the curve number %i." % id)
-                print(e)
+                logger.warning("I have a problem with the curve number %i. Details : %s" % (i, e))
                 dic = {'success': False, 'failed_id': [id], 'error_list': [e]}
                 out = None
             else:
@@ -75,7 +75,8 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
             ncpu = ncpuava
         if ncpu == -1:
             ncpu = ncpuava - 1
-        print("Starting the curve shifting on %i/%i CPUs." % (ncpu, ncpuava))
+
+        logger.info("Starting the curve shifting on %i/%i CPUs." % (ncpu, ncpuava))
         start = time.time()
         job_args = [(k, id, kwargs) for id, k in enumerate(lcslist)]
         sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
@@ -93,12 +94,13 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
                 sucess_dic['error_list'] = sucess_dic['error_list'] + output[1]['error_list']
 
     if len(optfct_outs) == 0:
-        print("### WARNING : it seems that your optfct does not return anything ! ###")
+        logger.warning(" It seems that your optfct does not return anything ! ")
     else:
-        print("Shifted %i/%i simulations on %i/%i CPUs, time : %s" % (len(optfct_outs),
+        logger.info("Shifted %i/%i simulations on %i/%i CPUs, time : %s" % (len(optfct_outs),
                                                                       len(lcslist), ncpu, ncpuava,
                                                                       pycs3.gen.util.strtd(time.time() - start)))
-        print("I failed for %i curves." % (len(lcslist) - len(optfct_outs)))
+        if len(lcslist) - len(optfct_outs) > 0 :
+            logger.warning("I failed for %i curves." % (len(lcslist) - len(optfct_outs)))
     return optfct_outs, sucess_dic
 
 
@@ -249,11 +251,11 @@ class RunResults:
         """
         labeltxt = "%s (%s, %i) " % (
             getattr(self, 'name', 'NoName'), "Truth" if self.plottrue else "Measured", self.tsarray.shape[0])
-        print('Plotting "%s"' % labeltxt)
-        print("     Labels : %s" % (", ".join(self.labels)))
-        print("     Median shifts : %s" % (
+        logger.info('Plotting "%s"' % labeltxt)
+        logger.info("     Labels : %s" % (", ".join(self.labels)))
+        logger.info("     Median shifts : %s" % (
             ", ".join(["%.2f" % (np.median(self.tsarray[:, i])) for i in range(len(self.labels))])))
-        print(
+        logger.info(
             "     Std shifts : %s" % (
                 ", ".join(["%.2f" % (np.std(self.tsarray[:, i])) for i in range(len(self.labels))])))
 
@@ -293,13 +295,13 @@ def collect(directory="./test", plotcolour="#008800", name=None):
     pklfiles = sorted(glob(os.path.join(directory, "*_runresults.pkl")))
     if len(pklfiles) == 0:# pragma: no cover
         raise RuntimeError("I couldn't find pkl files in directory %s" % directory)
-    print("Reading %i runresult pickles..." % (len(pklfiles)))
+    logger.info("Reading %i runresult pickles..." % (len(pklfiles)))
     rrlist = [pycs3.gen.util.readpickle(pklfile, verbose=False) for pklfile in pklfiles]
     jrr = pycs3.sim.run.joinresults(rrlist)
     jrr.plotcolour = plotcolour
     if name is not None:
         jrr.name = name
-    print("OK, I have collected %i runs from %s" % (len(jrr), jrr.name))
+    logger.info("OK, I have collected %i runs from %s" % (len(jrr), jrr.name))
     return jrr
 
 
@@ -353,24 +355,24 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
 
     simpkls = sorted(glob(os.path.join(simdir, "*.pkl")))
     if verbose:
-        print("I have found %i simulation pickles in %s." % (len(simpkls), simdir))
+        logger.info("I have found %i simulation pickles in %s." % (len(simpkls), simdir))
 
     # We prepare the destination directory
     destdir = os.path.join(destpath, "sims_%s_opt_%s" % (simset, optset))
     if verbose:
-        print("I'll write my results into the directory %s." % destdir)
+        logger.info("I'll write my results into the directory %s." % destdir)
 
     if not os.path.isdir(destdir):
         os.mkdir(destdir)
     else:
         if verbose:
-            print("(The latter already exists.)")
+            logger.info("(The latter already exists.)")
 
     # The initial conditions that I will set to the sims
     if verbose:
-        print("Initial conditions : ")
+        logger.info("Initial conditions : ")
         for l in lcs:
-            print(l)
+            logger.info(l)
 
     success_dic = {'success': True, 'failed_id': [], 'error_list': []}
     for simpkl in simpkls:
@@ -388,9 +390,9 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
         # Ok, we start, hence we want to avoid other instances to work on the same pkl ...
         os.system("date > %s" % workingonfilepath)
 
-        print("--- Casino running on simset %s, optset %s ---" % (simset, optset))
+        logger.info("--- Casino running on simset %s, optset %s ---" % (simset, optset))
         simlcslist = pycs3.gen.util.readpickle(simpkl)
-        print("Working for %s, %i simulations." % (resultsfilepath, len(simlcslist)))
+        logger.info("Working for %s, %i simulations." % (resultsfilepath, len(simlcslist)))
 
         # We set the initial conditions for the curves to analyse, based on the lcs argument as reference.
 
@@ -406,7 +408,7 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
                     simlc.shifttime(float(np.random.uniform(low=-tsrand, high=tsrand, size=1)))
         else:
             if verbose:
-                print("I do NOT randomize initial contidions for the time shifts !")
+                logger.info("I do NOT randomize initial contidions for the time shifts !")
 
         # And to the actual shifting, that will take most of the time
         optfctouts = [None] * len(simlcslist)  # reset variabl eof the loop to avoid weird error.
@@ -429,19 +431,19 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
             tracesplinelists = [[optfctout] for optfctout in optfctouts]  # just for the trace
             qs = np.array([s.lastr2nostab for s in optfctouts])
             if np.all(qs < 1.0):
-                print("### WARNING : qs values are very small, did you fit that spline ? ###")
+                logger.warning("### qs values are very small, did you fit that spline ? ###")
 
         elif isinstance(optfctouts[0], tuple):
             qs = np.array([s[1] for s in optfctouts])  # then it's regdiff which returns a tuple, I'll take the second element which corresponds to minwtv
             tracesplinelists = [[]] * len(simlcslist)  # just for the trace
 
         else:
-            print("Object : ", type(optfctouts[0]), "is unknown.")
+            logger.error("Object : ", type(optfctouts[0]), "is unknown.")
             raise RuntimeError("Invalid instance, please optimise your curves with regdiff or spline.")
 
         # Trace after shifting
         if trace:
-            print("Saving trace of optimized curves ...")
+            logger.info("Saving trace of optimized curves ...")
             tracedir = "trace_sims_%s_opt_%s" % (simset, optset)
             for (simlcs, tracesplinelist) in zip(simlcslist, tracesplinelists):
                 pycs3.gen.util.trace(lclist=simlcs, splist=tracesplinelist, tracedir=tracedir)
@@ -459,9 +461,8 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
         # We remove the lock for this pkl file.
         # If the files does not exist we stop !
         if not os.path.exists(workingonfilepath):
-            print("WORKINGON FILE REMOVED -> I STOP HERE")
-            break
-
+            logger.error("WORKINGON FILE REMOVED -> I STOP HERE")
+            raise RuntimeError('Workingon file has been removed during the optimisation.')
         else:
             os.remove(workingonfilepath)
 
@@ -478,7 +479,7 @@ def clean_simlist(simlcslist, success_dic):
     :return: list of LightCurves where the failed optimisation has been removed
     """
     for i in reversed(success_dic['failed_id']):
-        print("remove simlcs ", i)
+        logger.info("remove simlcs ", i)
         del simlcslist[i]
 
     return simlcslist

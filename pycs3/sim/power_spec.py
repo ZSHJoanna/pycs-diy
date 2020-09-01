@@ -3,10 +3,11 @@ Module to define the PowerSpectrum class and associated functions. This can be u
 and adjust the argument in the py:mod:`pycs3.sim.twk.tweakspl` function, when using ``colored_noise`` for generating the mock curves.
 """
 import copy as pythoncopy
-
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.optimize as spopt
+import logging
+logger = logging.getLogger(__name__)
 
 
 def window_hanning(x):
@@ -36,7 +37,6 @@ class PowerSpectrum:
             x = 10.0 ** (-0.4 * source.imags)
 
         # Note that these frequencies of self.f have physical units, they are directly in days^-1 !
-        # print self.f
 
         # An alternative using only fft by myself, strongly "inspired" by the mlab psd above
         # (It gives the same results, of course, but avoids the stupid figure)
@@ -98,7 +98,7 @@ class PowerSpectrum:
         fity = np.log10(self.p[reg]).flatten()
 
         if not np.all(np.isfinite(fity)):
-            print("Skipping calcsclope for flat function !")
+            logger.info("Skipping calcsclope for flat function !")
             return
 
         self.slope = {}
@@ -130,7 +130,7 @@ def psplot(pslist, nbins=0, filename=None, figsize=(12, 8), showlegend=True):
     for ps in pslist:
 
         if not np.all(np.isfinite(np.log10(ps.p))):
-            print("No power to plot (probably flat curve !), skipping this one.")
+            logger.info("No power to plot (probably flat curve !), skipping this one.")
             continue
         # We bin the points
 

@@ -13,6 +13,8 @@ import pycs3.gen.util
 import scipy.ndimage
 from matplotlib.ticker import MultipleLocator, MaxNLocator
 from pycs3.gen.stat import mad
+import logging
+logger = logging.getLogger(__name__)
 
 
 class DelayContainer:
@@ -272,8 +274,8 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
     elif nimages == 3:  # then it's a folded quad
         covmatsize = 3
     else:  # then it's a double
-        print("This function does not work for doubles")
-        print(
+        logger.info("This function does not work for doubles")
+        logger.info(
             "I kindly remind you that the covariance between a variable and itself is called variance, and there are simpler functions to compute that in PyCS. Try newdelayplot for instance.")
 
     couplelist = [(i, j) for j in imginds for i in imginds if i > j]
@@ -353,7 +355,7 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
 
                 keep = np.logical_and(binvalarray < binclipr, binvalarray > -binclipr)
                 if np.sum(keep == False) != 0:
-                    print("Kicking %i points." % (np.sum(keep == False)))
+                    logging.warning("Kicking %i points." % (np.sum(keep == False)))
                 binvals[bini] = binvalarray[keep]
             binstds = list(map(np.std, binvals))
             binmeans = list(map(np.mean, binvals))
@@ -419,10 +421,10 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
 
         if method == 'depbin':
             if ii == 0 and verbose:
-                print("You chose a binning depending on the sample values")
+                logger.info("You chose a binning depending on the sample values")
             covmat[ii][ii] = depbins[ii]
         elif method == 'indepbin':  # that should be the default value
-            if ii == 0 and verbose: print("You chose a binning independent of the sample values")
+            if ii == 0 and verbose: logger.info("You chose a binning independent of the sample values")
             covmat[ii][ii] = indepbins[ii]
 
         ### fill the off-diagonal elements
@@ -646,8 +648,6 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
                         if xbinval < xtruetd < xbinvals[indx + 1] and ybinval < ytruetd < ybinvals[indy + 1]:
                             subsamples.append((xtderrs[ind], ytderrs[ind]))
 
-                    # TODO: due to the non-uniform sampling of the simulated true tds, some regions of the truetd_x vs truetd_y are rather empty (less than 10 samples). Should we i) increase the number of simulated samples, ii) discard these regions from the analysis, iii) transfer these samples to the nearest bin  ?
-                    # print len(subsamples), len(subsamples[0]), subsamples[0]
                     xdelaylabeldet = "%s%s [%.1f , %.1f]" % (labels[i[1]], labels[i[0]], xbinval, xbinvals[indx + 1])
                     ydelaylabeldet = "%s%s [%.1f , %.1f]" % (labels[j[1]], labels[j[0]], ybinval, ybinvals[indy + 1])
                     if len(subsamples) > minsamples:
@@ -672,9 +672,9 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
 
             if verbose:
                 # I shoud definitely improve that display part...
-                print("-" * 15)
-                print(i, j)
-                print(covdep, covindep)
+                logger.info("-" * 15)
+                logger.info(i, j)
+                logger.info(covdep, covindep)
 
     axinv = bincovplot.add_subplot(ncouples, ncouples, 2, frameon=False)
     axinv.set_xticklabels([])
@@ -700,7 +700,7 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
                      [str(e) for e in covmat[5]]
             mylist = [float(e) for e in mylist]
         else:
-            print("Cov. matrix display not defined for matrices other than 6x6 !")
+            logger.warning("Cov. matrix display not defined for matrices other than 6x6 !")
             printcovmat = False
 
         if printcovmat:
@@ -739,37 +739,37 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
 
     # now let's compare indepbins and depbins
     if verbose:
-        print("-" * 35)
-        print("nbins = %i" % nbins)
-        print("indepbins - r = %.1f" % r)
-        print("depbins - r(max-min) =", np.mean(rranges))
-        print("-" * 35)
-        print("pair - indepbins - depbins - diff")
-        print("-" * 35)
-        print("AB - %.2f - %.2f - %.1f%%" % (indepbins[0], depbins[0],
+        logger.info("-" * 35)
+        logger.info("nbins = %i" % nbins)
+        logger.info("indepbins - r = %.1f" % r)
+        logger.info("depbins - r(max-min) =", np.mean(rranges))
+        logger.info("-" * 35)
+        logger.info("pair - indepbins - depbins - diff")
+        logger.info("-" * 35)
+        logger.info("AB - %.2f - %.2f - %.1f%%" % (indepbins[0], depbins[0],
                                              (max(indepbins[0], depbins[0]) - min(indepbins[0], depbins[0])) / max(
                                                  indepbins[0], depbins[0]) * 100))
-        print("AC - %.2f - %.2f - %.1f%%" % (indepbins[1], depbins[1],
+        logger.info("AC - %.2f - %.2f - %.1f%%" % (indepbins[1], depbins[1],
                                              (max(indepbins[1], depbins[1]) - min(indepbins[1], depbins[1])) / max(
                                                  indepbins[1], depbins[1]) * 100))
         if nimages == 4:
-            print("BC - %.2f - %.2f - %.1f%%" % (indepbins[3], depbins[3],
+            logger.info("BC - %.2f - %.2f - %.1f%%" % (indepbins[3], depbins[3],
                                                  (max(indepbins[3], depbins[3]) - min(indepbins[3], depbins[3])) / max(
                                                      indepbins[3], depbins[3]) * 100))
-            print("AD - %.2f - %.2f - %.1f%%" % (indepbins[2], depbins[2],
+            logger.info("AD - %.2f - %.2f - %.1f%%" % (indepbins[2], depbins[2],
                                                  (max(indepbins[2], depbins[2]) - min(indepbins[2], depbins[2])) / max(
                                                      indepbins[2], depbins[2]) * 100))
-            print("BD - %.2f - %.2f - %.1f%%" % (indepbins[4], depbins[4],
+            logger.info("BD - %.2f - %.2f - %.1f%%" % (indepbins[4], depbins[4],
                                                  (max(indepbins[4], depbins[4]) - min(indepbins[4], depbins[4])) / max(
                                                      indepbins[4], depbins[4]) * 100))
-            print("CD - %.2f - %.2f - %.1f%%" % (indepbins[5], depbins[5],
+            logger.info("CD - %.2f - %.2f - %.1f%%" % (indepbins[5], depbins[5],
                                                  (max(indepbins[5], depbins[5]) - min(indepbins[5], depbins[5])) / max(
                                                      indepbins[5], depbins[5]) * 100))
         elif nimages == 3:
-            print("BC - %.2f - %.2f - %.1f%%" % (indepbins[2], depbins[2],
+            logger.info("BC - %.2f - %.2f - %.1f%%" % (indepbins[2], depbins[2],
                                                  (max(indepbins[2], depbins[2]) - min(indepbins[2], depbins[2])) / max(
                                                      indepbins[2], depbins[2]) * 100))
-        print("-" * 35)
+        logger.info("-" * 35)
 
     retdict["covmat"] = covmat
     return retdict
@@ -848,7 +848,6 @@ def measvstrue(rrlist, r=10.0, nbins=10, plotpoints=True, alphapoints=1.0, plotr
 
             # Preparing the bins :
             binlims = np.linspace(plotrange[0], plotrange[1], nbins + 1)
-            print(binlims)
 
             for irr, rr in enumerate(rrlist):  # We go through the different runresult objects
                 # We will express the delays "i - j"
@@ -873,7 +872,7 @@ def measvstrue(rrlist, r=10.0, nbins=10, plotpoints=True, alphapoints=1.0, plotr
                     for (bini, binvalarray) in enumerate(binvals):
                         keep = np.logical_and(binvalarray < binclipr, binvalarray > -binclipr)
                         if np.sum(keep == False) != 0:
-                            print("Kicking %i points." % (np.sum(keep == False)))
+                            logging.warning("Kicking %i points." % (np.sum(keep == False)))
                         binvals[bini] = binvalarray[keep]
                     binstds = list(map(np.std, binvals))
                     binmedians = list(map(np.median, binvals))

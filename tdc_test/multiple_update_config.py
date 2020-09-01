@@ -1,10 +1,8 @@
 """
 This script will modify all the single config file of the curves in order to set the simoptfctkw = "regdiff"
 """
-import sys 
 import os
 import argparse as ap
-import subprocess
 import py_compile
 
 def main(name, name_type, number_pair = 1, work_dir = './'):	

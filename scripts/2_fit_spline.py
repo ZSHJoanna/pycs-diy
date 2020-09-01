@@ -13,6 +13,9 @@ import pycs3.gen.stat
 import pycs3.gen.mrg
 import pycs3.regdiff.rslc
 import pycs3.pipe.pipe_utils as ut
+import logging
+loggerformat='%(message)s'
+logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 
 def main(lensname, dataname, work_dir='./'):

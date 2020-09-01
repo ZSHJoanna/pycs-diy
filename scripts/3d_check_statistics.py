@@ -12,6 +12,9 @@ import glob
 import importlib
 import argparse as ap
 import numpy as np
+import logging
+loggerformat='PID %(process)06d | %(asctime)s | %(levelname)s: %(name)s(%(funcName)s): %(message)s'
+logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 
 def write_report_checkstat(f, lcs, stats, combkw, sset, ooset, tolerance=1.0):

@@ -13,6 +13,9 @@ import pickle as pkl
 import importlib
 import argparse as ap
 import pycs3.pipe.pipe_utils as ut
+import logging
+loggerformat='%(message)s'
+logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 
 def main(lensname, dataname, work_dir='./'):

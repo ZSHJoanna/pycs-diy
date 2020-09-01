@@ -15,6 +15,9 @@ import argparse as ap
 import importlib
 import pickle as pkl
 import numpy as np
+import logging
+loggerformat='PID %(process)06d | %(asctime)s | %(levelname)s: %(name)s(%(funcName)s): %(message)s'
+logging.basicConfig(format=loggerformat,level=logging.WARNING)
 
 def exec_worker_copie_aux(args):
     return exec_worker_copie(*args)

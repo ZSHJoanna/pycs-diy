@@ -9,6 +9,8 @@ import pycs3.gen.util
 import pickle as pkl
 import os
 import copy
+import logging
+logger = logging.getLogger(__name__)
 
 
 class CScontainer:
@@ -101,8 +103,8 @@ class Group:
 
         lins = []
         if verbose:
-            print("*" * 10)
-            print(self.name)
+            logger.info("*" * 10)
+            logger.info(self.name)
         for ind, label in enumerate(self.labels):
             scale = (self.errors_up[ind] + self.errors_down[ind]) / 2.0
             xs = np.random.normal(loc=self.medians[ind], scale=scale, size=nsamples)
@@ -116,8 +118,8 @@ class Group:
             ci = confinterval(0.5 * (self.binslist[ind][1:] + self.binslist[ind][:-1]), weights=bin_means,
                               testmode=testmode)
             if verbose:
-                print("=" * 45)
-                print("Delay %s:" % label, "%.2f" % self.medians[ind], "+/-", "%.2f" % scale, " --> ", "%.2f" % ci[0],
+                logger.info("=" * 45)
+                logger.info("Delay %s:" % label, "%.2f" % self.medians[ind], "+/-", "%.2f" % scale, " --> ", "%.2f" % ci[0],
                       "+%.2f-%.2f" % (ci[2], ci[1]))
 
             lins.append(bin_means)
@@ -133,13 +135,13 @@ class Group:
         else:
             name = self.nicename
 
-        print("=" * 5, name, "=" * 5)
+        logger.info("=" * 5, name, "=" * 5)
         toprint = ""
         for ind, l in enumerate(self.labels):
             toprint += "%s: " % l + "%.2f +%.2f-%.2f\n" % (
                 self.medians[ind], self.errors_up[ind], self.errors_down[ind])
-        print(toprint)
-        return toprint
+
+        logger.info(toprint)
 
 
 def getcombweightslist(groups):
@@ -353,15 +355,15 @@ def get_bestprec(groups, refimg=None, verbose=False):
 
             thisgroupprecs.append(err / np.abs(mean))
             if verbose:
-                print("=" * 5)
-                print("%s: %.2f +- %.2f" % (l, np.abs(mean), err))
-                print("P = %.2f" % (err / np.abs(mean)))
+                logger.info("=" * 5)
+                logger.info("%s: %.2f +- %.2f" % (l, np.abs(mean), err))
+                logger.info("P = %.2f" % (err / np.abs(mean)))
 
         precs.append(sum(thisgroupprecs))
 
     if verbose:
         for ind, prec in enumerate(precs):
-            print("Total prec of %i: %f" % (ind, prec))
+            logger.info("Total prec of %i: %f" % (ind, prec))
 
     return precs.index(min(precs))
 
@@ -398,24 +400,24 @@ def compute_sigmas(refgroup, groups, verbose=False, niceprint=True):
 
             sigmas.append(sigma)
             if verbose:
-                print("=" * 15)
-                print("%s: " % l, end=' ')
+                logger.info("=" * 15)
+                logger.info("%s: " % l, end=' ')
                 # reference estimate
-                print("ref: %.2f + %.2f - %.2f" % (refmedian, referr_up, referr_down))
+                logger.info("ref: %.2f + %.2f - %.2f" % (refmedian, referr_up, referr_down))
 
                 #  comparision estimate
-                print("ref: %.2f + %.2f - %.2f" % (median, err_up, err_down))
-                print("tension: ", sigma)
+                logger.info("ref: %.2f + %.2f - %.2f" % (median, err_up, err_down))
+                logger.info("tension: ", sigma)
 
         sigmaslist.append(sigmas)
 
     if niceprint:
-        print("=" * 5 + "Tension comparison" + "=" * 5)
-        print("Reference is %s" % refgroup.name)
+        logger.info("=" * 5 + "Tension comparison" + "=" * 5)
+        logger.info("Reference is %s" % refgroup.name)
         for name, sigmas, labels in zip([g.name for g in groups], sigmaslist, [g.labels for g in groups]):
-            print("---%s---" % name)
+            logger.info("---%s---" % name)
             for sigma, label in zip(sigmas, labels):
-                print("  %s: %.2f" % (label, sigma))
+                logger.info("  %s: %.2f" % (label, sigma))
 
     return sigmaslist
 
@@ -628,7 +630,7 @@ def group_estimate(path_list, name_list = None, colors=None, sigma_thresh=0, new
         raise RuntimeError("Path list and name_list should have he same lenght")
     for p, path in enumerate(path_list):
         if not os.path.isfile(path):
-            print("Warning : I cannot find %s. I will skip this one. Be careful !" % path)
+            logger.warning("I cannot find %s. I will skip this one. Be careful !" % path)
             continue
 
         group = pkl.load(open(path, 'rb'))
@@ -658,14 +660,14 @@ def group_estimate(path_list, name_list = None, colors=None, sigma_thresh=0, new
         group.objects = object_name
         color_id += 1
         if color_id >= len(colors):
-            print("Warning : I don't have enough colors in my list, I'll restart from the beginning.")
+            logger.warning("I don't have enough colors in my list, I'll restart from the beginning.")
             color_id = 0  # reset the color form the beginning
 
     combined = copy.deepcopy(pycs3.tdcomb.comb.combine_estimates(group_list, sigmathresh=sigma_thresh, testmode=testmode))
     combined.linearize(testmode=testmode)
     combined.name = 'Combined ($\\tau_{thresh} = %2.1f$)' % sigma_thresh
     combined.plotcolor = 'black'
-    print("Final combination for marginalisation ", new_name_marg)
+    logger.info("Final combination for marginalisation ", new_name_marg)
     combined.niceprint()
 
     return group_list, combined

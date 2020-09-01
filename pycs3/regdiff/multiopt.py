@@ -7,6 +7,8 @@ Would be great to have an opt_flux in here !
 import pycs3.gen.lc
 import pycs3.gen.lc_func
 import pycs3.regdiff.rslc
+import logging
+logger = logging.getLogger(__name__)
 
 
 def opt_ts(lcs, method="weights", pd=2., covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0, verbose=True):
@@ -33,15 +35,15 @@ def opt_ts(lcs, method="weights", pd=2., covkernel="matern", pow=1.5, amp=1.0, s
     """
 
     if verbose:
-        print("Starting regdiff opt_ts, initial time delays :")
-        print("%s" % (pycs3.gen.lc_func.getnicetimedelays(lcs, separator=" | ")))
+        logger.info("Starting regdiff opt_ts, initial time delays :")
+        logger.info("%s" % (pycs3.gen.lc_func.getnicetimedelays(lcs, separator=" | ")))
 
     rss = [pycs3.regdiff.rslc.factory(l, pd=pd, covkernel=covkernel, pow=pow, amp=amp, scale=scale, errscale=errscale)
            for l in lcs]
     # The time shifts are transfered to these rss, any microlensing is disregarded
 
     if verbose:
-        print("Regressions done.")
+        logger.info("Regressions done.")
 
     minwtv = pycs3.regdiff.rslc.opt_rslcs(rss, method=method, verbose=verbose)
 
@@ -50,7 +52,7 @@ def opt_ts(lcs, method="weights", pd=2., covkernel="matern", pow=1.5, amp=1.0, s
         l.commentlist.append("Timeshift optimized with regdiff.")
 
     if verbose:
-        print("Optimization done ! Optimal time delays :")
-        print("%s" % (pycs3.gen.lc_func.getnicetimedelays(lcs, separator=" | ")))
+        logger.info("Optimization done ! Optimal time delays :")
+        logger.info("%s" % (pycs3.gen.lc_func.getnicetimedelays(lcs, separator=" | ")))
 
     return rss, minwtv

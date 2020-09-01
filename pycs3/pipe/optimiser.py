@@ -15,6 +15,8 @@ import pycs3.gen.stat
 import pycs3.sim.draw
 import pycs3.sim.twk as twk
 import pycs3.spl.topopt
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Optimiser(object):
@@ -90,13 +92,13 @@ class Optimiser(object):
             self.max_core = max_core
         else:
             self.max_core = multiprocess.cpu_count()
-            print("You will run on %i cores." % self.max_core)
+            logger.info("You will run on %i cores." % self.max_core)
 
         if debug:
             self.para = False
         else:
             self.para = True
-            print("Debug mode, I won't compute the mock curves in parallel.")
+            logger.debug("Debug mode, I won't compute the mock curves in parallel.")
 
         self.n_curve_stat = n_curve_stat
         self.shotnoise = shotnoise
@@ -154,10 +156,10 @@ class Optimiser(object):
             mean_sigmas.append(np.mean(sigmas[:, i]))
             std_sigmas.append(np.std(sigmas[:, i]))
             if self.verbose:
-                print('Curve %i :' % (i + 1))
-                print('Mean zruns (simu): ', np.mean(zruns[:, i]), '+/-', np.std(zruns[:, i]))
-                print('Mean sigmas (simu): ', np.mean(sigmas[:, i]), '+/-', np.std(sigmas[:, i]))
-                print('Mean nruns (simu): ', np.mean(nruns[:, i]), '+/-', np.std(nruns[:, i]))
+                logger.info('Curve %i :' % (i + 1))
+                logger.info('Mean zruns (simu): ', np.mean(zruns[:, i]), '+/-', np.std(zruns[:, i]))
+                logger.info('Mean sigmas (simu): ', np.mean(sigmas[:, i]), '+/-', np.std(sigmas[:, i]))
+                logger.info('Mean nruns (simu): ', np.mean(nruns[:, i]), '+/-', np.std(nruns[:, i]))
 
         return mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas
 
@@ -208,7 +210,7 @@ class Optimiser(object):
 
         if self.recompute_spline:
             if self.knotstep is None:
-                print("Error : you must give a knotstep to recompute the spline")
+                logger.error("You must give a knotstep to recompute the spline")
             try:
                 spline_on_mock = pycs3.spl.topopt.opt_fine(mocklc, nit=5, knotstep=self.knotstep,
                                                            verbose=self.verbose, bokeps=self.knotstep / 3.0,
@@ -216,7 +218,7 @@ class Optimiser(object):
                 mockrls = pycs3.gen.stat.subtract(mocklc, spline_on_mock)
                 stat = pycs3.gen.stat.mapresistats(mockrls)
             except Exception as e:
-                print('Warning : light curves could not be optimised for parameter :', theta)
+                logger.warning('Light curves could not be optimised for parameter :', theta)
                 error_message = 'The following error occured : %s for parameters %s \n' % (e, str(theta))
                 return {'stat': None, 'error': error_message}
             else:
@@ -320,10 +322,10 @@ class Optimiser(object):
             mean_sigmas.append(np.mean(sigmas[:, i]))
             std_sigmas.append(np.std(sigmas[:, i]))
             if self.verbose:
-                print('Curve %s :' % self.lcs[i].object)
-                print('Mean zruns (simu): ', np.mean(zruns[:, i]), '+/-', np.std(zruns[:, i]))
-                print('Mean sigmas (simu): ', np.mean(sigmas[:, i]), '+/-', np.std(sigmas[:, i]))
-                print('Mean nruns (simu): ', np.mean(nruns[:, i]), '+/-', np.std(nruns[:, i]))
+                logger.info('Curve %s :' % self.lcs[i].object)
+                logger.info('Mean zruns (simu): ', np.mean(zruns[:, i]), '+/-', np.std(zruns[:, i]))
+                logger.info('Mean sigmas (simu): ', np.mean(sigmas[:, i]), '+/-', np.std(sigmas[:, i]))
+                logger.info('Mean nruns (simu): ', np.mean(nruns[:, i]), '+/-', np.std(nruns[:, i]))
 
         return mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas
 
@@ -458,11 +460,11 @@ class DicOptimiser(Optimiser):
 
         if self.correction_PS_residuals:
             self.A_correction, _, _, _, _ = self.compute_set_A_correction(B)
-            print("I will slightly correct the amplitude of the Power Spectrum by a factor :", self.A_correction)
+            logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :", self.A_correction)
 
         while True:
             self.iteration += 1
-            print("Iteration %i, B vector : " % self.iteration, B)
+            logger.info("Iteration %i, B vector : " % self.iteration, B)
             chi2_c, zruns_c, sigma_c, zruns_std_c, sigma_std_c = self.compute_chi2(B)
 
             chi2.append(chi2_c)
@@ -513,7 +515,7 @@ class DicOptimiser(Optimiser):
             if self.iteration % 5 == 0:
                 self.A_correction, _, _, _, _ = self.compute_set_A_correction(
                     B)  # recompute A correction every 5 iterations.
-                print("I will slightly correct the amplitude of the Power Spectrum by a factor :", self.A_correction)
+                logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :", self.A_correction)
 
         self.chain_list = [self.explored_param, chi2, zruns, sigma, zruns_std,
                            sigma_std]  # explored param has dimension(n_iter,ncurve,1)
@@ -536,15 +538,15 @@ class DicOptimiser(Optimiser):
         """
         if self.iteration >= self.max_iter:
             self.message = "I stopped because I reached the max number of iteration.\n"
-            print(self.message[:-2])
+            logger.info(self.message[:-2])
             return True
         if all(self.turn_back[i] > 4 for i in range(self.ncurve)):
             self.message = "I stopped because I passed four times the optimal value for all the curves.\n"
-            print(self.message[:-2])
+            logger.info(self.message[:-2])
             return True
         if self.check_success():
             self.message = "I stopped because I found a good set of parameters. \n"
-            print(self.message[:-2])
+            logger.info(self.message[:-2])
             return True
         else:
             return False

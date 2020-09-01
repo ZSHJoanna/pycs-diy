@@ -22,6 +22,8 @@ import pycs3.gen.util
 import scipy.optimize as spopt
 from pycs3.gen.polyml import polyfit
 from pycs3.gen.spl_func import r2, mltv, merge
+import logging
+logger = logging.getLogger(__name__)
 
 
 def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False, tracedir='trace'):
@@ -57,7 +59,7 @@ def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False, tracedir='t
             if trace:
                 pycs3.gen.util.trace(lcs, tracedir=tracedir)
         if verbose:
-            print("Magshift optimization done.")
+            logger.info("Magshift optimization done.")
 
     else:
 
@@ -65,7 +67,7 @@ def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False, tracedir='t
         for l in lcs:
 
             if verbose:
-                print("Magshift optimization on %s ..." % l)
+                logger.info("Magshift optimization on %s ..." % l)
             inip = l.magshift
 
             def setp(p):
@@ -78,10 +80,10 @@ def opt_magshift(lcs, sourcespline=None, verbose=False, trace=False, tracedir='t
             minout = spopt.fmin(errorfct, inip, full_output=True, xtol=0.001, disp=verbose)
             popt = minout[0]
             if verbose:
-                print("Optimal magshift: %.4f" % popt)
+                logger.info("Optimal magshift: %.4f" % popt)
             setp(popt)
             if verbose:
-                print("Magshift optimization of %s done." % l)
+                logger.info("Magshift optimization of %s done." % l)
 
 
 def opt_source(lcs, sourcespline, dpmethod="extadj", bokit=0, bokmethod="BF", verbose=True, trace=False, tracedir = 'trace'):
@@ -111,8 +113,8 @@ def opt_source(lcs, sourcespline, dpmethod="extadj", bokit=0, bokmethod="BF", ve
 
     inir2 = sourcespline.r2(nostab=True)
     if verbose:
-        print("Starting source optimization ...")
-        print("Initial r2 (before dp update) : %f" % inir2)
+        logger.info("Starting source optimization ...")
+        logger.info("Initial r2 (before dp update) : %f" % inir2)
 
     dp = merge(lcs, olddp=sourcespline.datapoints)
     sourcespline.updatedp(dp, dpmethod=dpmethod)
@@ -128,7 +130,7 @@ def opt_source(lcs, sourcespline, dpmethod="extadj", bokit=0, bokmethod="BF", ve
     if trace:
         pycs3.gen.util.trace(lcs, [sourcespline], tracedir=tracedir)
     if verbose:
-        print("Final r2 : %f" % finalr2)
+        logger.info("Final r2 : %f" % finalr2)
     return finalr2
 
 
@@ -152,7 +154,7 @@ def opt_fluxshift(lcs, sourcespline, verbose=True):
     for l in lcs[1:]:  # We don't touch the first one.
 
         if verbose:
-            print("Fluxshift optimization on %s ..." % l)
+            logger.info("Fluxshift optimization on %s ..." % l)
 
         minfs = l.getminfluxshift()
         inip = (0, 0)
@@ -177,7 +179,7 @@ def opt_fluxshift(lcs, sourcespline, verbose=True):
         popt = minout[0]
         setp(popt)
         if verbose:
-            print("Done with %s ..." % l)
+            logger.info("Done with %s ..." % l)
 
 
 def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=True, trace=False, tracedir='trace'):
@@ -227,14 +229,14 @@ def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=Tr
         pycs3.gen.util.trace(lcs, [sourcespline], tracedir=tracedir)
 
     if verbose:
-        print("Starting ML optimization ...")
+        logger.info("Starting ML optimization ...")
 
     for l in lcs:
         if (l.ml is not None) and (l.ml.mltype == "spline"):
             # So this is spline microlensing
 
             if verbose:
-                print("Working on the spline ML of %s" % l)
+                logger.info("Working on the spline ML of %s" % l)
             l.ml.settargetmags(l, sourcespline)
 
             for n in range(bokit):
@@ -252,7 +254,7 @@ def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=Tr
         if (l.ml is not None) and (l.ml.mltype == "poly"):
 
             if verbose:
-                print("Working on the poly ML of %s" % l)
+                logger.info("Working on the poly ML of %s" % l)
 
             # We go through the curve season by season :
             for m in l.ml.mllist:
@@ -270,7 +272,7 @@ def opt_ml(lcs, sourcespline, bokit=0, bokmethod="BF", splflat=False, verbose=Tr
 
                 m.setparams(polyparams)
     if verbose:
-        print("Done !")
+        logger.info("Done !")
 
 
 def redistribflux(lc1, lc2, sourcespline, verbose=True, maxfrac=0.2):
@@ -294,7 +296,7 @@ def redistribflux(lc1, lc2, sourcespline, verbose=True, maxfrac=0.2):
         raise RuntimeError("I do only work on curves with identical jds !")
 
     if verbose:
-        print("Starting redistrib_flux, r2 = %10.2f" % (r2([lc1, lc2], sourcespline)))
+        logger.info("Starting redistrib_flux, r2 = %10.2f" % (r2([lc1, lc2], sourcespline)))
 
     # The initial curves :
     lc1fluxes = lc1.getrawfluxes()
@@ -317,7 +319,7 @@ def redistribflux(lc1, lc2, sourcespline, verbose=True, maxfrac=0.2):
         setp(out, i)
 
     if verbose:
-        print("Done with redistrib,     r2 = %10.2f" % (r2([lc1, lc2], sourcespline)))
+        logger.info("Done with redistrib,     r2 = %10.2f" % (r2([lc1, lc2], sourcespline)))
 
 def opt_ts_indi(lcs, sourcespline, method="fmin", crit="r2", optml=False, mlsplflat=False, brutestep=1.0, bruter=5,
                 verbose=True):
@@ -362,12 +364,11 @@ def opt_ts_indi(lcs, sourcespline, method="fmin", crit="r2", optml=False, mlsplf
             # Calculate r2 without touching the spline :
             if crit == "r2":
                 error = r2([l], sourcespline)
-            # print "Still using r2 !"
             elif crit == "tv":
                 error = mltv([l], sourcespline)[0]
-                print("Warning, using TV !")
+                logger.warning("Warning, using TV !")
             if verbose:
-                print("%s %10.3f %10.3f" % (l.object, l.timeshift, error))
+                logger.info("%s %10.3f %10.3f" % (l.object, l.timeshift, error))
             return error
 
         initimeshift = l.timeshift

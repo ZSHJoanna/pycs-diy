@@ -16,6 +16,9 @@ import pycs3.pipe.pipe_utils as ut
 import sys
 import argparse as ap
 import importlib
+import logging
+loggerformat='PID %(process)06d | %(asctime)s | %(levelname)s: %(name)s(%(funcName)s): %(message)s'
+logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 
 def run_DIC(lcs, spline, fit_vector, kn, ml, optim_directory, config_file, stream, tolerance=0.75):

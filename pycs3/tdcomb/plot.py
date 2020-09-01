@@ -8,6 +8,9 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MultipleLocator
+import logging
+logger = logging.getLogger(__name__)
+
 
 
 def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=False, showbias=True, showran=True,
@@ -65,18 +68,18 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
 
     n = len(objects)
     nmeas = len(plotlist)
-    print("Objects : %s" % (", ".join(objects)))
+    logger.info("Objects : %s" % (", ".join(objects)))
 
     if horizontaldisplay and n != 3:
-        print("Horizontal display works only for three delays, you have %i" % n)
-        print("Switching back to regular display")
+        logger.info("Horizontal display works only for three delays, you have %i" % n)
+        logger.info("Switching back to regular display")
         horizontaldisplay = False
 
     fig = plt.figure(figsize=figsize)
     fig.subplots_adjust(left=left, right=right, bottom=bottom, top=top, wspace=wspace, hspace=hspace)
 
     axinum = 0
-    print("#" * 80)
+    logger.info("#" * 80)
     for i in range(n):  # A, B, C, D and so on
         for j in range(n):
             if (i == 0) or (j == n - 1):
@@ -96,7 +99,7 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
 
             # We will express the delays "i - j"
             delaylabel = "%s%s" % (objects[j], objects[i])
-            print("           Delay %s" % delaylabel)
+            logger.info("           Delay %s" % delaylabel)
 
             # To determine the plot range :
             paneldelays = []
@@ -201,9 +204,9 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
                     ax.annotate(delaytext, xy=(median, ypos + 0.3), color=group.plotcolor,
                                 horizontalalignment="center", fontsize=group.labelfontsize)
 
-                    print("%45s : %+6.2f + %.2f - %.2f" % (group.name, median, error_up, error_down))
+                    logger.info("%45s : %+6.2f + %.2f - %.2f" % (group.name, median, error_up, error_down))
 
-            print("#" * 80)
+            logger.info("#" * 80)
 
             # Now this panel is done. Some general settings :
             if centerdelays is not None:
@@ -322,7 +325,7 @@ def write_delays(group, write_dir=None, mode="GLEE"):
             try:
                 assert len(list(set(["%.3f" % (xs[i + 1] - xs[i]) for i in range(len(xs) - 1)]))) == 1
             except AssertionError: # pragma: no cover
-                print(list(set(["%.3f" % (xs[i + 1] - xs[i]) for i in range(len(xs) - 1)])))
+                logger.error(list(set(["%.3f" % (xs[i + 1] - xs[i]) for i in range(len(xs) - 1)])))
                 raise AssertionError(
                     "The delay values step is not constant. This might be due to a rounding error: either change the digit precision of your delays, or use a different binning when linearizing.")
 
