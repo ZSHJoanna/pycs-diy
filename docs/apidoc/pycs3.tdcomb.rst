@@ -1,11 +1,11 @@
 pycs3\.tdcomb package
-===================
+=====================
 
 Submodules
 ----------
 
 pycs3.tdcomb.comb module
-----------------------
+------------------------
 
 .. automodule:: pycs3.tdcomb.comb
     :members:
@@ -13,7 +13,7 @@ pycs3.tdcomb.comb module
     :show-inheritance:
 
 pycs3.tdcomb.plot module
-----------------------
+------------------------
 
 .. automodule:: pycs3.tdcomb.plot
     :members:

@@ -79,7 +79,7 @@ class TestCopies(unittest.TestCase):
 
         result_th_center_spline = np.asarray([-5.277040592115382, -21.46321581986174, -69.4705103261964, -16.157084811163116, -64.58223959717778, -47.7311641573173])
         result_th_center_regdiff = np.asarray([-4.330783742618957, -20.853803332725075, -70.47692722707262, -16.585762660900606, -66.12541444597821, -49.69037247953041])
-        result_th_center_disp = np.asarray([-5.654677825138508, -22.427181084944905, -69.07368943801299, -16.772529550463144, -63.41903790353123, -46.646508353068086])
+
         assert_allclose(result_dic_spline['center'], result_th_center_spline, atol=1.)
         assert_allclose(result_dic_regdiff['center'], result_th_center_regdiff, atol=1.)
         pycs3.sim.plot.hists(dataresults, r=5.0, nbins=100, showqs=False,

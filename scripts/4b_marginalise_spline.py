@@ -2,8 +2,8 @@
 Combine the the spline optimiser Groups of time delay Estimates. I am using the threshold defined in your config file to select which
 Groups to combine.  See Bonvin et al.(2018,2019) and Millon et al. (2020) for details.
 """
-import pycs3.mltd.comb
-import pycs3.mltd.plot
+import pycs3.tdcomb.comb
+import pycs3.tdcomb.plot
 import os
 import copy
 import sys
@@ -87,8 +87,8 @@ def main(lensname, dataname, work_dir='./'):
                     continue
 
                 name = "%s_ks%i_%s_%s_%s" % (dataname, kn, string_ML, ml, noise)
-                group_list.append(pycs3.mltd.comb.getresults(
-                    pycs3.mltd.comb.CScontainer(data=dataname, knots=kn, ml=ml, name=name,
+                group_list.append(pycs3.tdcomb.comb.getresults(
+                    pycs3.tdcomb.comb.CScontainer(data=dataname, knots=kn, ml=ml, name=name,
                                                 drawopt=config.optfctkw, runopt=opt,
                                                 ncopy=config.ncopy * config.ncopypkls,
                                                 nmocks=config.nsim * config.nsimpkls, truetsr=config.truetsr,
@@ -129,7 +129,7 @@ def main(lensname, dataname, work_dir='./'):
             color_id = 0  # reset the color form the beginning
 
     combined = copy.deepcopy(
-        pycs3.mltd.comb.combine_estimates(group_list, sigmathresh=config.sigmathresh, testmode=config.testmode))
+        pycs3.tdcomb.comb.combine_estimates(group_list, sigmathresh=config.sigmathresh, testmode=config.testmode))
     combined.linearize(testmode=config.testmode)
     combined.name = 'combined $\\tau = %2.2f$' % config.sigmathresh
     combined.plotcolor = 'black'
@@ -151,12 +151,12 @@ def main(lensname, dataname, work_dir='./'):
         auto_radius = False
 
     if config.display:
-        pycs3.mltd.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text, hidedetails=True,
+        pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text, hidedetails=True,
                                   showbias=False, showran=False, showlegend=True, figsize=(15, 10),
                                   horizontaldisplay=False, legendfromrefgroup=False, auto_radius=auto_radius,
                                   tick_step_auto=True)
 
-    pycs3.mltd.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
+    pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
                               autoobj=config.lcs_label,
                               hidedetails=True, showbias=False, showran=False, showlegend=True, auto_radius=auto_radius,
                               figsize=(15, 10), horizontaldisplay=False, legendfromrefgroup=False, tick_step_auto=True,

@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import pycs3.sim.run
 import pycs3.sim.plot
 import pycs3.gen.util
-import pycs3.mltd.plot
-import pycs3.mltd.comb
+import pycs3.tdcomb.plot
+import pycs3.tdcomb.comb
 import sys
 import os
 import importlib
@@ -80,7 +80,7 @@ def main(lensname, dataname, work_dir='./'):
                                                   kn, ml, config.simset_copy, opt),
                                               outdir=regdiff_mocks_dir)
 
-                    cscontainer = pycs3.mltd.comb.CScontainer("Regdiff kn%s %s%s"%(kn, string_ML, ml), knots=str(kn), ml=str(ml),
+                    cscontainer = pycs3.tdcomb.comb.CScontainer("Regdiff kn%s %s%s"%(kn, string_ML, ml), knots=str(kn), ml=str(ml),
                                                               result_file_delays=regdiff_copie_dir + 'sims_%s_opt_%s_delays.pkl' % (
                                                                   config.simset_copy, opt),
                                                               result_file_errorbars=regdiff_mocks_dir + 'sims_%s_opt_%s_errorbars.pkl' % (
@@ -107,7 +107,7 @@ def main(lensname, dataname, work_dir='./'):
                                                   a, b] + '/sims_%s_opt_%s/' % (
                                                          config.simset_copy, opt))
 
-                    cscontainer = pycs3.mltd.comb.CScontainer("Spline kn%s %s%s"%(kn, string_ML,ml), knots=str(kn), ml=str(ml),
+                    cscontainer = pycs3.tdcomb.comb.CScontainer("Spline kn%s %s%s"%(kn, string_ML,ml), knots=str(kn), ml=str(ml),
                                                               result_file_delays=os.path.join(
                                                                   config.lens_directory + config.combkw[
                                                                       a, b] + '/sims_%s_opt_%s/' % (
@@ -125,11 +125,11 @@ def main(lensname, dataname, work_dir='./'):
                 if config.display:
                     plt.show()
 
-                toplot.append(pycs3.mltd.comb.getresults(cscontainer, useintrinsic=False))
+                toplot.append(pycs3.tdcomb.comb.getresults(cscontainer, useintrinsic=False))
 
                 text = [(0.12, 0.9, r"$\mathrm{" + config.full_lensname + "}$", {"fontsize": 22})]
 
-                pycs3.mltd.plot.delayplot(toplot, rplot=10.0, displaytext=True, text=text, showlegend=False,
+                pycs3.tdcomb.plot.delayplot(toplot, rplot=10.0, displaytext=True, text=text, showlegend=False,
                                           filename=figure_directory + "fig_delays_%i-%i_%s_%s.png" % (
                                               kn, ml, config.simset_mock, opt), autoobj=config.lcs_label)
 

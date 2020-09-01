@@ -11,7 +11,7 @@ Subpackages
     pycs3.sim
     pycs3.spl
     pycs3.pipe
-    pycs3.mltd
+    pycs3.tdcomb
 
 
 Module contents

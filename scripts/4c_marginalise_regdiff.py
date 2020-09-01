@@ -4,8 +4,8 @@ I am using the threshold defined in your config file to select which Groups to c
 See Millon et al. (2020) for details.
 """
 import sys
-import pycs3.mltd.comb
-import pycs3.mltd.plot
+import pycs3.tdcomb.comb
+import pycs3.tdcomb.plot
 import copy
 import os
 import numpy as np
@@ -100,8 +100,8 @@ def main(lensname, dataname, work_dir='./'):
                             result_file_delay, result_file_errorbars))
                         continue
 
-                    group_list.append(pycs3.mltd.comb.getresults(
-                        pycs3.mltd.comb.CScontainer(data=dataname, knots=kn, ml=ml,
+                    group_list.append(pycs3.tdcomb.comb.getresults(
+                        pycs3.tdcomb.comb.CScontainer(data=dataname, knots=kn, ml=ml,
                                                     name="knstp %i mlknstp %i" % (kn, ml),
                                                     drawopt=config.optfctkw, runopt=opt,
                                                     ncopy=config.ncopy * config.ncopypkls,
@@ -159,7 +159,7 @@ def main(lensname, dataname, work_dir='./'):
                     color_id = 0  # reset the color form the beginning
 
             combined = copy.deepcopy(
-                pycs3.mltd.comb.combine_estimates(group_list, sigmathresh=1000.0, testmode=config.testmode))
+                pycs3.tdcomb.comb.combine_estimates(group_list, sigmathresh=1000.0, testmode=config.testmode))
             combined.linearize(testmode=config.testmode)
             combined.name = 'Most precise'
 
@@ -181,13 +181,13 @@ def main(lensname, dataname, work_dir='./'):
                 auto_radius = False
 
             if config.display:
-                pycs3.mltd.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined,
+                pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined,
                                           text=text, hidedetails=True, showbias=False, showran=False,
                                           tick_step_auto=True, autoobj=config.lcs_label,
                                           showlegend=True, figsize=(15, 10), horizontaldisplay=False,
                                           legendfromrefgroup=False, auto_radius=auto_radius)
 
-            pycs3.mltd.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
+            pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
                                       hidedetails=True, tick_step_auto=True, autoobj=config.lcs_label,
                                       showbias=False, showran=False, showlegend=True, figsize=(15, 10),
                                       horizontaldisplay=False, auto_radius=auto_radius,
@@ -206,7 +206,7 @@ def main(lensname, dataname, work_dir='./'):
             name_list.append('%s, Noise : %s ' % (dickw['name'], noise))
 
     # ------  MAKE THE FINAL REGDIFF ESTIMATE ------#
-    final_groups, final_combined = pycs3.mltd.comb.group_estimate(path_list, name_list=name_list, colors=colors,
+    final_groups, final_combined = pycs3.tdcomb.comb.group_estimate(path_list, name_list=name_list, colors=colors,
                                                                   sigma_thresh=config.sigmathresh,
                                                                   new_name_marg=config.name_marg_regdiff,
                                                                   testmode=config.testmode,
@@ -217,13 +217,13 @@ def main(lensname, dataname, work_dir='./'):
          {"fontsize": 26, "horizontalalignment": "center"})]
 
     if config.display:
-        pycs3.mltd.plot.delayplot(final_groups + [final_combined], rplot=radius_f, refgroup=final_combined,
+        pycs3.tdcomb.plot.delayplot(final_groups + [final_combined], rplot=radius_f, refgroup=final_combined,
                                   tick_step_auto=True,
                                   text=text, hidedetails=True, showbias=False, showran=False, auto_radius=auto_radius,
                                   autoobj=config.lcs_label,
                                   showlegend=True, figsize=(15, 10), horizontaldisplay=False, legendfromrefgroup=False)
 
-    pycs3.mltd.plot.delayplot(final_groups + [final_combined], rplot=radius_f, refgroup=final_combined, text=text,
+    pycs3.tdcomb.plot.delayplot(final_groups + [final_combined], rplot=radius_f, refgroup=final_combined, text=text,
                               hidedetails=True,
                               showbias=False, showran=False, showlegend=True, figsize=(15, 10), horizontaldisplay=False,
                               autoobj=config.lcs_label,

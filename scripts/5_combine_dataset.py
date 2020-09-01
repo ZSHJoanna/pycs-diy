@@ -6,8 +6,8 @@ import matplotlib.style
 import argparse as ap
 import os
 import sys
-import pycs3.mltd.comb
-import pycs3.mltd.plot
+import pycs3.tdcomb.comb
+import pycs3.tdcomb.plot
 import pickle as pkl
 import importlib
 from shutil import copyfile
@@ -74,13 +74,13 @@ def main(lensname, work_dir='./'):
               'violet', 'dodgerblue', 'palevioletred', 'olive',
               'brown', 'salmon', "seagreen", 'chocolate', 'indigo', 'steelblue', 'cyan', 'gold', 'lightcoral']
 
-    groups, sum = pycs3.mltd.comb.group_estimate(path_list, name_list=name_list, colors=colors,
+    groups, sum = pycs3.tdcomb.comb.group_estimate(path_list, name_list=name_list, colors=colors,
                                                  sigma_thresh=config.sigma_thresh, new_name_marg="Sum",
                                                  testmode=config.testmode)
     sum.name = "PyCS-Sum"
     sum.plotcolor = "black"
 
-    mult = pycs3.mltd.comb.mult_estimates(groups)
+    mult = pycs3.tdcomb.comb.mult_estimates(groups)
     mult.name = "PyCS-Mult"
     mult.plotcolor = "gray"
 
@@ -133,13 +133,13 @@ def main(lensname, work_dir='./'):
          {"fontsize": 26, "horizontalalignment": "center"})]
 
     if config.display:
-        pycs3.mltd.plot.delayplot(toplot, rplot=radius, refgroup=mult, text=text,
+        pycs3.tdcomb.plot.delayplot(toplot, rplot=radius, refgroup=mult, text=text,
                                   autoobj=config.lcs_label, bottom=bottom, legendy_offset=legendy_offset,
                                   hidedetails=True, showbias=False, showran=False, showlegend=True, tick_step_auto=True,
                                   figsize=figsize, horizontaldisplay=False, legendfromrefgroup=False, txtstep=txtstep,
                                   auto_radius=auto_radius, xlabelfontsize=xlabelfontsize, update_group_style=False)
 
-    pycs3.mltd.plot.delayplot(toplot, rplot=radius, refgroup=mult, text=text,
+    pycs3.tdcomb.plot.delayplot(toplot, rplot=radius, refgroup=mult, text=text,
                               autoobj=config.lcs_label,
                               hidedetails=True, showbias=False, showran=False, showlegend=True, figsize=figsize,
                               auto_radius=auto_radius, tick_step_auto=True, bottom=bottom,
@@ -154,7 +154,7 @@ def main(lensname, work_dir='./'):
     legendy_offset = 0.17
 
     # Plot with the spline only
-    groups_spline, sum_spline = pycs3.mltd.comb.group_estimate(path_list_spline, name_list=name_list, colors=colors,
+    groups_spline, sum_spline = pycs3.tdcomb.comb.group_estimate(path_list_spline, name_list=name_list, colors=colors,
                                                                sigma_thresh=config.sigma_thresh, new_name_marg="Sum",
                                                                testmode=config.testmode)
     sum_spline.name = "Sum"
@@ -164,14 +164,14 @@ def main(lensname, work_dir='./'):
          r"$\mathrm{" + config.full_lensname + "}$" + "\n" + r"$\mathrm{PyCS}$" + '\n' + r"$\mathrm{Free-knot\ Spline}$",
          {"fontsize": 26, "horizontalalignment": "center"})]
     if config.display:
-        pycs3.mltd.plot.delayplot(groups_spline + groups_extra_spline + [sum_spline], rplot=radius, refgroup=sum_spline,
+        pycs3.tdcomb.plot.delayplot(groups_spline + groups_extra_spline + [sum_spline], rplot=radius, refgroup=sum_spline,
                                   text=text,
                                   hidedetails=True, showbias=False, showran=False, showlegend=True, tick_step_auto=True,
                                   figsize=(15, 10), horizontaldisplay=False, legendfromrefgroup=False,
                                   auto_radius=auto_radius,
                                   legendx=legendx, legendy_offset=legendy_offset, autoobj=config.lcs_label, )
 
-    pycs3.mltd.plot.delayplot(groups_spline + groups_extra_spline + [sum_spline], rplot=radius, refgroup=sum_spline,
+    pycs3.tdcomb.plot.delayplot(groups_spline + groups_extra_spline + [sum_spline], rplot=radius, refgroup=sum_spline,
                               text=text,
                               hidedetails=True, showbias=False, showran=False, showlegend=True, figsize=(15, 10),
                               auto_radius=auto_radius, tick_step_auto=True,
@@ -180,7 +180,7 @@ def main(lensname, work_dir='./'):
                               legendx=legendx, legendy_offset=legendy_offset)
 
     # Plot with regdiff only
-    groups_regdiff, sum_regdiff = pycs3.mltd.comb.group_estimate(path_list_regdiff, name_list=name_list, colors=colors,
+    groups_regdiff, sum_regdiff = pycs3.tdcomb.comb.group_estimate(path_list_regdiff, name_list=name_list, colors=colors,
                                                                  sigma_thresh=config.sigma_thresh, new_name_marg="Sum",
                                                                  testmode=config.testmode)
     sum_regdiff.name = "Sum"
@@ -190,14 +190,14 @@ def main(lensname, work_dir='./'):
          r"$\mathrm{" + config.full_lensname + "}$" + "\n" + r"$\mathrm{PyCS}$" + '\n' + r"$\mathrm{Regression\ Difference}$",
          {"fontsize": 26, "horizontalalignment": "center"})]
     if config.display:
-        pycs3.mltd.plot.delayplot(groups_regdiff + groups_extra_regdiff + [sum_regdiff], rplot=radius,
+        pycs3.tdcomb.plot.delayplot(groups_regdiff + groups_extra_regdiff + [sum_regdiff], rplot=radius,
                                   refgroup=sum_regdiff, text=text,
                                   hidedetails=True, showbias=False, showran=False, showlegend=True, tick_step_auto=True,
                                   figsize=(15, 10), horizontaldisplay=False, legendfromrefgroup=False,
                                   auto_radius=auto_radius,
                                   legendx=legendx, legendy_offset=legendy_offset, autoobj=config.lcs_label, )
 
-    pycs3.mltd.plot.delayplot(groups_regdiff + groups_extra_regdiff + [sum_regdiff], rplot=radius, refgroup=sum_regdiff,
+    pycs3.tdcomb.plot.delayplot(groups_regdiff + groups_extra_regdiff + [sum_regdiff], rplot=radius, refgroup=sum_regdiff,
                               text=text,
                               hidedetails=True, showbias=False, showran=False, showlegend=True, figsize=(15, 10),
                               auto_radius=auto_radius, tick_step_auto=True,
@@ -212,7 +212,7 @@ def main(lensname, work_dir='./'):
     for i, p in enumerate(path_list_spline):
         name_list_all.append("Spline %s" % config.data_sets[i])
 
-    groups_all, sum_all = pycs3.mltd.comb.group_estimate(path_list_regdiff + path_list_spline, name_list_all,
+    groups_all, sum_all = pycs3.tdcomb.comb.group_estimate(path_list_regdiff + path_list_spline, name_list_all,
                                                          config.delay_labels,
                                                          colors, config.sigma_thresh, "Sum", testmode=config.testmode)
     sum_all.name = "Sum"
@@ -221,14 +221,14 @@ def main(lensname, work_dir='./'):
         (0.85, 0.90, r"$\mathrm{" + config.full_lensname + "}$" + "\n" + r"$\mathrm{PyCS}$",
          {"fontsize": 24, "horizontalalignment": "center"})]
     if config.display:
-        pycs3.mltd.plot.delayplot(groups_all + groups_extra_spline + groups_extra_regdiff + [sum_all], rplot=radius,
+        pycs3.tdcomb.plot.delayplot(groups_all + groups_extra_spline + groups_extra_regdiff + [sum_all], rplot=radius,
                                   refgroup=sum_all, text=text,
                                   hidedetails=True, showbias=False, showran=False, showlegend=True, tick_step_auto=True,
                                   figsize=(15, 10), horizontaldisplay=False, legendfromrefgroup=False,
                                   auto_radius=auto_radius,
                                   legendx=0.85, legendy_offset=0.12, autoobj=config.lcs_label, )
 
-    pycs3.mltd.plot.delayplot(groups_all + groups_extra_spline + groups_extra_regdiff + [sum_all], rplot=radius,
+    pycs3.tdcomb.plot.delayplot(groups_all + groups_extra_spline + groups_extra_regdiff + [sum_all], rplot=radius,
                               refgroup=sum_all, text=text,
                               hidedetails=True, showbias=False, showran=False, showlegend=True, figsize=(15, 10),
                               auto_radius=auto_radius, tick_step_auto=True,

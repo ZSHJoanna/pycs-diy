@@ -136,10 +136,10 @@ class RunResults:
         if len(lcslist) == 0:# pragma: no cover
             raise RuntimeError("Should this happen ?")
 
-        self.tsarray = np.vstack(np.array([l.timeshift for l in lcs]) for lcs in lcslist)
+        self.tsarray = np.vstack([[l.timeshift for l in lcs] for lcs in lcslist])
         # First index selects the simulation, second index selects the timeshifts of the curves in each lcs.
         # We build a similar array for the true shifts (value = 0.0 if the curve was not drawn)
-        self.truetsarray = np.vstack(np.array([getattr(l, "truetimeshift", 0.0) for l in lcs]) for lcs in lcslist)
+        self.truetsarray = np.vstack([[getattr(l, "truetimeshift", 0.0) for l in lcs] for lcs in lcslist])
 
         # We check the ordering of the lcs in lcslist
         objectstringsasset = set(["/".join([l.object for l in lcs]) for lcs in lcslist])

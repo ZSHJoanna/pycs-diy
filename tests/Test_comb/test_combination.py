@@ -157,7 +157,7 @@ class TestComb(unittest.TestCase):
         assert np.abs(predicted_error_up - convolved.errors_up[0]) < 0.1
         assert np.abs(predicted_error_down - convolved.errors_down[0]) < 0.1
 
-        pycs3.tdcomb.plot.delayplot([group_spline, tdcomb, convolved, convolved2], rplot=20.0, refgroup=convolved, displaytext=True,showran=False,showbias=False,
+        pycs3.tdcomb.plot.delayplot([group_spline, mltd, convolved, convolved2], rplot=20.0, refgroup=convolved, displaytext=True,showran=False,showbias=False,
                                   filename=os.path.join(self.outpath, "fig_delays_comb_convolved.png"), figsize=(15, 10))
 
 

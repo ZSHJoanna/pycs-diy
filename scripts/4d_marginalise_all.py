@@ -3,8 +3,8 @@ Combine the the spline and regdiff optimiser together. By default it will perfor
 """
 import matplotlib.style
 import sys
-import pycs3.mltd.comb
-import pycs3.mltd.plot
+import pycs3.tdcomb.comb
+import pycs3.tdcomb.plot
 import os
 import pickle as pkl
 import importlib
@@ -41,7 +41,7 @@ def main(lensname, dataname, work_dir='./'):
     path_list = [config.lens_directory + marg + '/' + marg + '_sigma_%2.2f' % sig + '_combined.pkl' for marg, sig in
                  zip(config.name_marg_list, config.sigmathresh_list)]
     name_list = [d for d in config.display_name]
-    group_list, combined = pycs3.mltd.comb.group_estimate(path_list, name_list=name_list, colors=colors,
+    group_list, combined = pycs3.tdcomb.comb.group_estimate(path_list, name_list=name_list, colors=colors,
                                                           sigma_thresh=config.sigmathresh_final,
                                                           new_name_marg=config.new_name_marg
                                                           , testmode=config.testmode, object_name=config.lcs_label)
@@ -78,13 +78,13 @@ def main(lensname, dataname, work_dir='./'):
         txtstep = 0.04
 
     if config.display:
-        pycs3.mltd.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
+        pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
                                   autoobj=config.lcs_label, bottom=bottom, legendy_offset=legendy_offset,
                                   hidedetails=True, showbias=False, showran=False, showlegend=True, tick_step_auto=True,
                                   figsize=figsize, horizontaldisplay=False, legendfromrefgroup=False, txtstep=txtstep,
                                   auto_radius=auto_radius, xlabelfontsize=xlabelfontsize, update_group_style=False)
 
-    pycs3.mltd.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
+    pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
                               autoobj=config.lcs_label,
                               hidedetails=True, showbias=False, showran=False, showlegend=True, figsize=figsize,
                               auto_radius=auto_radius, tick_step_auto=True, bottom=bottom,
