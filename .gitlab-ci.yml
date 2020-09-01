@@ -75,8 +75,7 @@ build-doc-failure:
 pages:
   stage: deploy
   script:
-    - mv htmlcov public/coverage
-    - mv doc_status.svg public/
+    - echo "Deploy"
   when: always
   artifacts:
     paths:
