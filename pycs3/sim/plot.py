@@ -1,6 +1,6 @@
 """
 Subpackage with functions to plot all kind of results from runs.
-The delayplot function is now moved to :py:mod:`pycs3.mltd.plot`
+The delayplot function is now moved to :py:mod:`pycs3.tdcomb.plot`
 """
 
 import math

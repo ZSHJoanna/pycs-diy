@@ -8,8 +8,8 @@ import pycs3.sim.draw
 import pycs3.gen.splml
 import pycs3.sim.run
 import pycs3.sim.plot
-import pycs3.mltd.plot
-import pycs3.mltd.comb
+import pycs3.tdcomb.plot
+import pycs3.tdcomb.comb
 import pycs3.gen.stat
 
 from tests import utils

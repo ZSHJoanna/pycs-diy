@@ -43,7 +43,6 @@ build-doc:
   script:
     - pip install -U sphinx
     - pip install -U sphinx_rtd_theme
-    - which sphinx-build
     - cd docs
     - make clean
     - make html
@@ -76,7 +75,9 @@ build-doc-failure:
 pages:
   stage: deploy
   script:
-    - echo "Deploy"
+    - mv htmldoc/ public/
+    - mv htmlcov public/coverage
+    - mv doc_status.svg public/
   when: always
   artifacts:
     paths:

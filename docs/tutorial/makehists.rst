@@ -102,23 +102,23 @@ If you want to go straight to some more or less automatic plots showing the resu
 	pycs3.sim.plot.measvstrue(simres, r=10.0, nbins = 1, plotpoints=True, ploterrorbars=True, sidebyside=True, errorrange=8, binclip=False, binclipr=20.0, dataout =True)
 
 
-The measured time delays and their associated uncertainties are stored in pkl files that can be later processed with the :py:mod:`pycs3.mltd` :
+The measured time delays and their associated uncertainties are stored in pkl files that can be later processed with the :py:mod:`pycs3.tdcomb` :
 
 ::
 
 
-    group_list = [pycs3.mltd.comb.getresults(pycs3.mltd.comb.CScontainer("Free-knot Spline",
+    group_list = [pycs3.tdcomb.comb.getresults(pycs3.tdcomb.comb.CScontainer("Free-knot Spline",
                                                 result_file_delays='sims_copies_opt_regdiff1_delays.pkl',
                                                 result_file_errorbars='sims_sim1tsr10_opt_regdiff1_errorbars.pkl',
                                                 colour = 'blue')),
 
-                  pycs3.mltd.comb.getresults(pycs3.mltd.comb.CScontainer("Regression Difference",
+                  pycs3.tdcomb.comb.getresults(pycs3.tdcomb.comb.CScontainer("Regression Difference",
                                                 result_file_delays='sims_copies_opt_spl1_delays.pkl',
                                                 result_file_errorbars='sims_sim1tsr10_opt_spl1_errorbars.pkl',
                                                 colour = 'red'))
                     ]
 
-    pycs3.mltd.plot.delayplot(group_list, rplot=10, hidedetails=True,
+    pycs3.tdcomb.plot.delayplot(group_list, rplot=10, hidedetails=True,
                                   showbias=False, showran=False, showlegend=True, figsize=(15, 10), auto_radius=True,
                                   tick_step_auto=True)
 

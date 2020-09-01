@@ -661,7 +661,7 @@ def group_estimate(path_list, name_list = None, colors=None, sigma_thresh=0, new
             print("Warning : I don't have enough colors in my list, I'll restart from the beginning.")
             color_id = 0  # reset the color form the beginning
 
-    combined = copy.deepcopy(pycs3.mltd.comb.combine_estimates(group_list, sigmathresh=sigma_thresh, testmode=testmode))
+    combined = copy.deepcopy(pycs3.tdcomb.comb.combine_estimates(group_list, sigmathresh=sigma_thresh, testmode=testmode))
     combined.linearize(testmode=testmode)
     combined.name = 'Combined ($\\tau_{thresh} = %2.1f$)' % sigma_thresh
     combined.plotcolor = 'black'

@@ -4,8 +4,8 @@ import unittest
 import copy
 from tests import TEST_PATH
 import numpy as np
-import pycs3.mltd.comb
-import pycs3.mltd.plot
+import pycs3.tdcomb.comb
+import pycs3.tdcomb.plot
 from numpy.testing import assert_allclose, assert_almost_equal
 import pickle as pkl
 
@@ -15,12 +15,12 @@ class TestComb(unittest.TestCase):
         self.path = TEST_PATH
         self.outpath = os.path.join(self.path, "output")
         self.datapath = os.path.join(self.path, "data")
-        self.CS_spline = pycs3.mltd.comb.CScontainer("Test Spline", knots="20", ml="spl-150", colour="blue",
+        self.CS_spline = pycs3.tdcomb.comb.CScontainer("Test Spline", knots="20", ml="spl-150", colour="blue",
                                                      result_file_delays=os.path.join(self.path, 'data',
                                                                                      "sims_copies_opt_spl_delays.pkl"),
                                                      result_file_errorbars=os.path.join(self.path, "data",
                                                                                         "sims_mocks_opt_spl_errorbars.pkl"))
-        self.CS_regdiff = pycs3.mltd.comb.CScontainer("Test Regdiff", colour="red",
+        self.CS_regdiff = pycs3.tdcomb.comb.CScontainer("Test Regdiff", colour="red",
                                                       result_file_delays=os.path.join(self.path, 'data',
                                                                                       "sims_copies_opt_regdiff_delays.pkl"),
                                                       result_file_errorbars=os.path.join(self.path, "data",
@@ -30,18 +30,18 @@ class TestComb(unittest.TestCase):
              {"fontsize": 26, "horizontalalignment": "center"})]
 
     def test_groups(self):
-        groups = [pycs3.mltd.comb.getresults(self.CS_spline, useintrinsic=False),
-                  pycs3.mltd.comb.getresults(self.CS_regdiff, useintrinsic=False)]
+        groups = [pycs3.tdcomb.comb.getresults(self.CS_spline, useintrinsic=False),
+                  pycs3.tdcomb.comb.getresults(self.CS_regdiff, useintrinsic=False)]
 
-        pycs3.mltd.plot.delayplot(groups, rplot=6.0, displaytext=True, text=self.text,
+        pycs3.tdcomb.plot.delayplot(groups, rplot=6.0, displaytext=True, text=self.text,
                                   filename=os.path.join(self.outpath, "fig_delays.png"), figsize=(15, 10),
                                   hidedetails=False, showbias=False, showran=False, showlegend=True,
                                   auto_radius=True, horizontaldisplay=False, legendfromrefgroup=False,
                                   tick_step_auto=True)
 
     def test_combine_from_groups(self):
-        groups = [pycs3.mltd.comb.getresults(self.CS_spline, useintrinsic=False),
-                  pycs3.mltd.comb.getresults(self.CS_regdiff, useintrinsic=False)]
+        groups = [pycs3.tdcomb.comb.getresults(self.CS_spline, useintrinsic=False),
+                  pycs3.tdcomb.comb.getresults(self.CS_regdiff, useintrinsic=False)]
 
         medians_list = np.asarray([gr.medians for gr in groups])
         errors_down_list = np.asarray([gr.errors_down for gr in groups])
@@ -57,13 +57,13 @@ class TestComb(unittest.TestCase):
             group.binslist = binslist
             group.linearize(testmode=True)
 
-        combined = copy.deepcopy(pycs3.mltd.comb.combine_estimates(groups, sigmathresh=0., testmode=True))
+        combined = copy.deepcopy(pycs3.tdcomb.comb.combine_estimates(groups, sigmathresh=0., testmode=True))
         combined.linearize(testmode=True)
         combined.name = 'PyCS-Sum'
         combined.nicename = 'PyCS-Sum'
         combined.plotcolor = 'black'
 
-        mult = pycs3.mltd.comb.mult_estimates(groups)
+        mult = pycs3.tdcomb.comb.mult_estimates(groups)
         mult.name = "PyCS-Mult"
         mult.nicename = "PyCS-Mult"
         mult.plotcolor = "gray"
@@ -81,29 +81,29 @@ class TestComb(unittest.TestCase):
         assert_allclose(combined.errors_up, errors_up_th, atol=0.2)
         assert_allclose(combined.errors_down, errors_down_th, atol=0.2)
 
-        pycs3.mltd.plot.delayplot(groups + [combined] + [mult], rplot=6.0, refgroup=combined, displaytext=True,
+        pycs3.tdcomb.plot.delayplot(groups + [combined] + [mult], rplot=6.0, refgroup=combined, displaytext=True,
                                   text=self.text,
                                   filename=os.path.join(self.outpath, "fig_delays_comb.png"), figsize=(15, 10),
                                   hidedetails=False, showbias=False, showran=False, showlegend=True,
                                   auto_radius=True, horizontaldisplay=False, legendfromrefgroup=False,
                                   tick_step_auto=True)
 
-        pycs3.mltd.plot.delayplot(groups, rplot=6.0, refgroup=combined, displaytext=True, text=self.text,
+        pycs3.tdcomb.plot.delayplot(groups, rplot=6.0, refgroup=combined, displaytext=True, text=self.text,
                                   filename=os.path.join(self.outpath, "fig_delays_comb_blind.png"), figsize=(15, 10),
                                   hidedetails=False, showbias=True, showran=False, showlegend=True,
                                   auto_radius=True, horizontaldisplay=True, legendfromrefgroup=False,
                                   tick_step_auto=True, blindness=True)
 
-        pycs3.mltd.plot.write_delays(combined, write_dir=self.outpath)
-        pycs3.mltd.plot.write_delays(combined, write_dir=self.outpath, mode='Lenstro')
-        index_best_prec = pycs3.mltd.comb.get_bestprec(groups, refimg='A', verbose=True)
+        pycs3.tdcomb.plot.write_delays(combined, write_dir=self.outpath)
+        pycs3.tdcomb.plot.write_delays(combined, write_dir=self.outpath, mode='Lenstro')
+        index_best_prec = pycs3.tdcomb.comb.get_bestprec(groups, refimg='A', verbose=True)
 
 
     def test_combine_from_pkl(self):
         path_list = [os.path.join(self.datapath, 'marginalisation_regdiff.pkl'),
                      os.path.join(self.datapath, 'marginalisation_spline.pkl')]
 
-        group_list, combined = pycs3.mltd.comb.group_estimate(path_list, name_list=['regdiff', 'spline'], colors=['red', 'blue'],
+        group_list, combined = pycs3.tdcomb.comb.group_estimate(path_list, name_list=['regdiff', 'spline'], colors=['red', 'blue'],
                                        sigma_thresh=0, new_name_marg='Spline + regdiff', testmode=True)
 
         print("Final combination for marginalisation :")
@@ -118,8 +118,8 @@ class TestComb(unittest.TestCase):
 
     def test_confinterval(self):
         xs = np.random.normal(size=100000)
-        out = pycs3.mltd.comb.confinterval(xs, testmode=True)
-        out2 = pycs3.mltd.comb.confinterval(xs, testmode=True,cumulative=True)
+        out = pycs3.tdcomb.comb.confinterval(xs, testmode=True)
+        out2 = pycs3.tdcomb.comb.confinterval(xs, testmode=True,cumulative=True)
         assert_allclose([0.,1.,1.], out, atol=0.04)
 
     def test_convolution(self):
@@ -135,7 +135,7 @@ class TestComb(unittest.TestCase):
         medians = [0. for i in range(n_delay)]
         error_up = [1. for i in range(n_delay)]
         error_down = [1. for i in range(n_delay)]
-        mltd = pycs3.mltd.comb.Group(group_spline.labels, medians, error_up, error_down, "ML Time Delay",binslist=bins, nicename="Microlensing Time Delay")
+        mltd = pycs3.tdcomb.comb.Group(group_spline.labels, medians, error_up, error_down, "ML Time Delay",binslist=bins, nicename="Microlensing Time Delay")
         mltd.plotcolor = 'red'
 
         mltd_copy = copy.deepcopy(mltd)
@@ -144,8 +144,8 @@ class TestComb(unittest.TestCase):
         mltd_copy.binslist = [np.linspace(-10.,10.,50000)] # need to reset the binslist as the bins from group_spline is not covering 0
         mltd_copy.linearize(verbose=True)
 
-        convolved = pycs3.mltd.comb.convolve_estimates(group_spline, mltd, testmode=True)
-        convolved2 = pycs3.mltd.comb.convolve_estimates(group_spline, mltd_copy, testmode=True)
+        convolved = pycs3.tdcomb.comb.convolve_estimates(group_spline, mltd, testmode=True)
+        convolved2 = pycs3.tdcomb.comb.convolve_estimates(group_spline, mltd_copy, testmode=True)
         convolved2.niceprint()
         convolved.niceprint()
 
@@ -157,7 +157,7 @@ class TestComb(unittest.TestCase):
         assert np.abs(predicted_error_up - convolved.errors_up[0]) < 0.1
         assert np.abs(predicted_error_down - convolved.errors_down[0]) < 0.1
 
-        pycs3.mltd.plot.delayplot([group_spline, mltd, convolved, convolved2], rplot=20.0, refgroup=convolved, displaytext=True,showran=False,showbias=False,
+        pycs3.tdcomb.plot.delayplot([group_spline, tdcomb, convolved, convolved2], rplot=20.0, refgroup=convolved, displaytext=True,showran=False,showbias=False,
                                   filename=os.path.join(self.outpath, "fig_delays_comb_convolved.png"), figsize=(15, 10))
 
 

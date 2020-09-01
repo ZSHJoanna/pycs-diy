@@ -1,28 +1,28 @@
-pycs3\.mltd package
+pycs3\.tdcomb package
 ===================
 
 Submodules
 ----------
 
-pycs3.mltd.comb module
+pycs3.tdcomb.comb module
 ----------------------
 
-.. automodule:: pycs3.mltd.comb
+.. automodule:: pycs3.tdcomb.comb
     :members:
     :undoc-members:
     :show-inheritance:
 
-pycs3.mltd.plot module
+pycs3.tdcomb.plot module
 ----------------------
 
-.. automodule:: pycs3.mltd.plot
+.. automodule:: pycs3.tdcomb.plot
     :members:
     :undoc-members:
     :show-inheritance:
 
 Module contents
 ---------------
-.. automodule:: pycs3.mltd
+.. automodule:: pycs3.tdcomb
     :members:
     :undoc-members:
     :show-inheritance:
