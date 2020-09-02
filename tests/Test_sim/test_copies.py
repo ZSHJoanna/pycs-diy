@@ -1,18 +1,20 @@
 import os
-import pytest
+import shutil
 import unittest
-from tests import TEST_PATH
+
+import numpy as np
+import pytest
+from numpy.testing import assert_allclose
+
 import pycs3.gen.lc_func as lc_func
 import pycs3.gen.mrg as mrg
-import pycs3.sim.draw
-import pycs3.gen.util
 import pycs3.gen.splml
-import pycs3.sim.run
+import pycs3.gen.util
+import pycs3.sim.draw
 import pycs3.sim.plot
+import pycs3.sim.run
+from tests import TEST_PATH
 from tests import utils
-import numpy as np
-import shutil
-from numpy.testing import assert_allclose
 
 
 class TestCopies(unittest.TestCase):
@@ -76,12 +78,10 @@ class TestCopies(unittest.TestCase):
         print("Spline : ", result_dic_spline)
         print("Regdiff : ", result_dic_regdiff)
 
+        result_th = np.asarray([-5., -20., -70., -15., -65., -50. ])
 
-        result_th_center_spline = np.asarray([-5.277040592115382, -21.46321581986174, -69.4705103261964, -16.157084811163116, -64.58223959717778, -47.7311641573173])
-        result_th_center_regdiff = np.asarray([-4.330783742618957, -20.853803332725075, -70.47692722707262, -16.585762660900606, -66.12541444597821, -49.69037247953041])
-
-        assert_allclose(result_dic_spline['center'], result_th_center_spline, atol=1.)
-        assert_allclose(result_dic_regdiff['center'], result_th_center_regdiff, atol=1.)
+        assert_allclose(result_dic_spline['center'], result_th, atol=3)
+        assert_allclose(result_dic_regdiff['center'], result_th, atol=3)
         pycs3.sim.plot.hists(dataresults, r=5.0, nbins=100, showqs=False,
                              filename=os.path.join(self.outpath, "fig_intrinsicvariance.png"), dataout=True,outdir=self.outpath)
         pycs3.sim.plot.hists(dataresults, r=5.0, nbins=100, showqs=True, showallqs=True, niceplot= True, blindness=True,

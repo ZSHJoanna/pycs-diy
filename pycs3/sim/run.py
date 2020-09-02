@@ -2,20 +2,39 @@
 Functions to run curve shifting techniques on lightcurves produced by sim.multidraw.
 We define the class runresults that "holds" results obtained by curve shifting techniques (saved into pickles).
 """
+import copy
 import copy as pythoncopy
+import logging
 import os
 import time
 from glob import glob
 
 import multiprocess
 import numpy as np
+
 import pycs3.gen.lc
 import pycs3.gen.lc_func
 import pycs3.gen.util
 import pycs3.sim.draw
-import logging
+
 logger = logging.getLogger(__name__)
 
+
+def optfct_aux(argument):
+    """
+    Auxiliary function for multithreading
+    """
+    arg, id, kwargs, optfct = argument
+    try:
+        out = optfct(arg, **kwargs)
+    except Exception as e:
+        # logger.warning("I have a problem with the curve number %i. Details : %s" % (i, e))
+        dic = {'success': False, 'failed_id': [id], 'error_list': [e]}
+        out = None
+    else:
+        dic = {'success': True, 'failed_id': [], 'error_list': []}
+
+    return out, dic
 
 def applyopt(optfct, lcslist, ncpu, **kwargs):
     """
@@ -37,7 +56,14 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
 
     :return: optfct_outs: a list of the optimised LightCurves and a dictionnary containing the failed attempt to shift the curves.
     """
+
     ncpuava = multiprocess.cpu_count()
+
+    if ncpu > 1 :
+        #todo : there is a very nasty bug here : the microlensing is not optimised in multiprocessing. I can't find why this is happening so do not use multiprocessing until this is solve. The bug is quiet it will just provide a very bad fit to the data !!! This must have to do with object that are not deepcopied...
+        logger.warning('Multi-processing is not supported on this verison ! You can still use a higher level of parallelisation. I will run on a single core for the moment.')
+        ncpu = 1
+
     if ncpu == 1:
         # curves are optimised one after the other :
         logger.info("Starting the curve shifting on a single CPU, no multiprocessing...")
@@ -57,19 +83,7 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
                 optfct_outs.append(optout)
 
 
-    else: # pragma: no cover # Multithreading version. Cannot be tested on CI server.
-        # auxilliary function for using map_async() with arguments and keyword arguments :
-        def optfct_aux(argument):
-            arg, id, kwargs = argument
-            try:
-                out = optfct(arg, **kwargs)
-            except Exception as e:
-                logger.warning("I have a problem with the curve number %i. Details : %s" % (i, e))
-                dic = {'success': False, 'failed_id': [id], 'error_list': [e]}
-                out = None
-            else:
-                dic = {'success': True, 'failed_id': [], 'error_list': []}
-            return out, dic
+    else: # pragma: no cover # Multithreading version. Cannot be tested on CI server
 
         if ncpu == None:
             ncpu = ncpuava
@@ -78,20 +92,24 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
 
         logger.info("Starting the curve shifting on %i/%i CPUs." % (ncpu, ncpuava))
         start = time.time()
-        job_args = [(k, id, kwargs) for id, k in enumerate(lcslist)]
+
+        job_args = [(copy.deepcopy(k), id, copy.deepcopy(kwargs), copy.deepcopy(optfct)) for id, k in enumerate(lcslist)]
         sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
 
         pool = multiprocess.Pool(ncpu)
-        results = pool.map_async(optfct_aux, job_args)  # order should be conserved with map_async
-        outputs = results.get()
+        results = pool.map(optfct_aux, job_args)  # order should be conserved with map_async
+        pool.close()
+        pool.join()
+
         optfct_outs = []
-        for output in outputs:
+        for output in results:
             if output[0] is not None:
                 optfct_outs.append(output[0])
             if output[1]['success'] is False:
                 sucess_dic['success'] = False
                 sucess_dic['failed_id'] = sucess_dic['failed_id'] + output[1]['failed_id']
                 sucess_dic['error_list'] = sucess_dic['error_list'] + output[1]['error_list']
+
 
     if len(optfct_outs) == 0:
         logger.warning(" It seems that your optfct does not return anything ! ")
@@ -101,6 +119,7 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
                                                                       pycs3.gen.util.strtd(time.time() - start)))
         if len(lcslist) - len(optfct_outs) > 0 :
             logger.warning("I failed for %i curves." % (len(lcslist) - len(optfct_outs)))
+
     return optfct_outs, sucess_dic
 
 

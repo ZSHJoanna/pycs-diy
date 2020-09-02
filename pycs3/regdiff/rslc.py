@@ -3,11 +3,13 @@ Defines a class that represents a regularly sampled lightcurve
 
 """
 import copy as pythoncopy
+import logging
 
 import numpy as np
-import pycs3.regdiff.scikitgp as scikitgp
 import scipy.optimize as spopt
-import logging
+
+import pycs3.regdiff.scikitgp as scikitgp
+
 logger = logging.getLogger(__name__)
 
 
@@ -263,7 +265,7 @@ def opt_rslcs(rslcs, method="weights", verbose=True):
 
     if verbose:
         logger.info("Starting time shift optimization ...")
-        logger.info("Initial pars (shifts, not delays) : ", inishifts)
+        logger.info("Initial pars (shifts, not delays) : " + np.array2string(inishifts))
 
     # Some brute force exploration, like for the dispersion techniques ...
 

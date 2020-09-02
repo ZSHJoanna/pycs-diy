@@ -3,17 +3,19 @@ Subpackage with functions to plot all kind of results from runs.
 The delayplot function is now moved to :py:mod:`pycs3.tdcomb.plot`
 """
 
+import logging
 import math
 import os
 
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 import numpy as np
-import pycs3.gen.util
 import scipy.ndimage
 from matplotlib.ticker import MultipleLocator, MaxNLocator
+
+import pycs3.gen.util
 from pycs3.gen.stat import mad
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -160,8 +162,6 @@ def hists(rrlist, r=10.0, nbins=100, showqs=True, showallqs=False, qsrange=None,
                     if niceplot:
                         majorLocator = MultipleLocator(500)
                         axscatter.yaxis.set_major_locator(majorLocator)
-                        if axisNum == 1:
-                            axscatter.set_ylabel(r"$\chi^2$", fontsize=18)
 
                 # We plot the true shifts (if available) as a straight line individually for each rr :
                 if rr.trues["type"] == "same":

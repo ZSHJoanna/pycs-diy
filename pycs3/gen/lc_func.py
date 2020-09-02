@@ -2,16 +2,18 @@
 Module containing the function related to LightCurve operation
 It contains light curves plotting routine, and all function that operate on a *list* of LightCurve
 """
+import logging
 import operator
 import os
 # For the sort and shuffle stuff :
 import random
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from pycs3.gen.lc import LightCurve
 from pycs3.gen.util import datetimefromjd
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -541,9 +543,7 @@ def display(lclist=[], splist=[],
 
     labelfontsize = 14
     if nicefont:
-        # mpl.rcParams['font.size'] = 20
         mpl.rcParams['font.family'] = 'serif'
-    # labelfontsize = 20
     else:
         labelfontsize = 14
 
@@ -779,7 +779,6 @@ def display(lclist=[], splist=[],
         # This showdates stuff should come at the very end
         minjd = axes.get_xlim()[0]
         maxjd = axes.get_xlim()[1]
-        # axes.set_xlim(minjd, maxjd)
         yearx = axes.twiny()
         yearxmin = datetimefromjd(minjd + 2400000.5)
         yearxmax = datetimefromjd(maxjd + 2400000.5)
@@ -832,8 +831,6 @@ def display(lclist=[], splist=[],
                                 pad=0.0, frameon=False
                                 )
             axes.add_artist(ab)
-            # axes.annotate("COSMOGRAIL.org", xy=(0.0, 0.0), xycoords='axes fraction', fontsize=16, xytext=(105, 7),
-            #               textcoords='offset points', ha='left', va='bottom', color="gray")
 
         if logopos == "right":
             ab = AnnotationBbox(imagebox, xy=(1.0, 0.0), xycoords='axes fraction', xybox=(-200, 30),
@@ -841,8 +838,6 @@ def display(lclist=[], splist=[],
                                 pad=0.0, frameon=False
                                 )
             axes.add_artist(ab)
-            # axes.annotate("COSMOGRAIL.org", xy=(1.0, 0.0), xycoords='axes fraction', fontsize=16, xytext=(-10, 7),
-            #               textcoords='offset points', ha='right', va='bottom', color="gray")
 
         if logopos == "center":
             ab = AnnotationBbox(imagebox, xy=(0.5, 0.05), xycoords='axes fraction', xybox=(0, 0),
@@ -850,8 +845,6 @@ def display(lclist=[], splist=[],
                                 pad=0.0, frameon=False
                                 )
             axes.add_artist(ab)
-            # axes.annotate("COSMOGRAIL.org", xy=(0.55, 0.0), xycoords='axes fraction', fontsize=16, xytext=(40, 7),
-            #               textcoords='offset points', ha='center', va='bottom', color="gray")
 
     if ax is not None:
         return
