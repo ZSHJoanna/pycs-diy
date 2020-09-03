@@ -4,12 +4,15 @@ Machinery to combine various probability distributions that are not necessarily 
 To combine various distributions, they need to be "linearized" on the same basis. For each delay, I define a interval range (see binlists below). This range will be used to draw numerical distributions matching the theoretical one, if you give me e.g. mean and std of an analytical Gaussian distrib. Make sure to have ranges large enough and binnings thin enough to properly reproduce the distributions.
 
 """
-import numpy as np
-import pycs3.gen.util
-import pickle as pkl
-import os
 import copy
 import logging
+import os
+import pickle as pkl
+
+import numpy as np
+
+import pycs3.gen.util
+
 logger = logging.getLogger(__name__)
 
 
@@ -119,7 +122,7 @@ class Group:
                               testmode=testmode)
             if verbose:
                 logger.info("=" * 45)
-                logger.info("Delay %s:" % label, "%.2f" % self.medians[ind], "+/-", "%.2f" % scale, " --> ", "%.2f" % ci[0],
+                logger.info("Delay %s:" % label + "%.2f" % self.medians[ind] + "+/-", "%.2f" % scale + " --> " + "%.2f" % ci[0] +
                       "+%.2f-%.2f" % (ci[2], ci[1]))
 
             lins.append(bin_means)
@@ -135,7 +138,7 @@ class Group:
         else:
             name = self.nicename
 
-        logger.info("=" * 5, name, "=" * 5)
+        logger.info("=" * 5 + name + "=" * 5)
         toprint = ""
         for ind, l in enumerate(self.labels):
             toprint += "%s: " % l + "%.2f +%.2f-%.2f\n" % (

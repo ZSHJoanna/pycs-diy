@@ -15,7 +15,7 @@ import numpy as np
 import pycs3.tdcomb.comb
 import pycs3.tdcomb.plot
 
-loggerformat='%(levelname)s: %(message)s'
+loggerformat='%(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 

@@ -15,7 +15,7 @@ import importlib
 import argparse as ap
 import pickle as pkl
 import logging
-loggerformat='%(levelname)s: %(message)s'
+loggerformat='%(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 
