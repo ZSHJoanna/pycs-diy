@@ -3,6 +3,7 @@ Module to optimise the parameter of the noise generation. We keep only the DIC o
 expensive computationally, the MCMC and PSO optimiser are very un-efficient. They are now removed from this version.
 """
 import copy
+import logging
 import os
 import time
 from functools import partial
@@ -10,12 +11,13 @@ from functools import partial
 import matplotlib.pyplot as plt
 import multiprocess
 import numpy as np
+
 import pycs3.gen.lc_func
 import pycs3.gen.stat
 import pycs3.sim.draw
 import pycs3.sim.twk as twk
 import pycs3.spl.topopt
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -460,11 +462,11 @@ class DicOptimiser(Optimiser):
 
         if self.correction_PS_residuals:
             self.A_correction, _, _, _, _ = self.compute_set_A_correction(B)
-            logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :", self.A_correction)
+            logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :", np.array2string(self.A_correction))
 
         while True:
             self.iteration += 1
-            logger.info("Iteration %i, B vector : " % self.iteration, B)
+            logger.info("Iteration %i, B vector : " % self.iteration, np.array2string(B))
             chi2_c, zruns_c, sigma_c, zruns_std_c, sigma_std_c = self.compute_chi2(B)
 
             chi2.append(chi2_c)
