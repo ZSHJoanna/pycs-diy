@@ -466,7 +466,7 @@ class DicOptimiser(Optimiser):
 
         while True:
             self.iteration += 1
-            logger.info("Iteration %i, B vector : " % self.iteration, np.array2string(B))
+            logger.info("Iteration %i, B vector : " %self.iteration + np.array2string(B))
             chi2_c, zruns_c, sigma_c, zruns_std_c, sigma_std_c = self.compute_chi2(B)
 
             chi2.append(chi2_c)

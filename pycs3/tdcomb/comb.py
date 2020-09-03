@@ -122,8 +122,8 @@ class Group:
                               testmode=testmode)
             if verbose:
                 logger.info("=" * 45)
-                logger.info("Delay %s:" % label + "%.2f" % self.medians[ind] + "+/-" + "%.2f" % scale + " --> " + "%.2f" % ci[0] +
-                      "+%.2f-%.2f" % (ci[2], ci[1]))
+                logger.info("Delay %s:" % label + "%.2f" % self.medians[ind] + "+/-" + "%.2f" %scale + " --> " + "%.2f" % ci[0] +
+                      "+%.2f-%.2f" %(ci[2], ci[1]))
 
             lins.append(bin_means)
 
