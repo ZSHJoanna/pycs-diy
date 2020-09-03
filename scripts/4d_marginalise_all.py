@@ -1,16 +1,19 @@
 """
 Combine the the spline and regdiff optimiser together. By default it will perform a true marginalisation with equal weights.
 """
-import matplotlib.style
-import sys
-import pycs3.tdcomb.comb
-import pycs3.tdcomb.plot
+import argparse as ap
+import importlib
+import logging
 import os
 import pickle as pkl
-import importlib
-import argparse as ap
-import logging
-loggerformat='%(message)s'
+import sys
+
+import matplotlib.style
+
+import pycs3.tdcomb.comb
+import pycs3.tdcomb.plot
+
+loggerformat='%(levelname)s: %(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 matplotlib.style.use('classic')

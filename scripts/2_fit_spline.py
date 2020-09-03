@@ -2,19 +2,22 @@
 This script fit spline and regression difference to the data. This original fit will be used to create the generative noise model.
 You can tune the spline and regrediff parameters from the config file.
 """
-import os
-import sys
-import numpy as np
 import argparse as ap
 import importlib
-import pycs3.gen.util
-import pycs3.gen.lc_func
-import pycs3.gen.stat
-import pycs3.gen.mrg
-import pycs3.regdiff.rslc
-import pycs3.pipe.pipe_utils as ut
 import logging
-loggerformat='%(message)s'
+import os
+import sys
+
+import numpy as np
+
+import pycs3.gen.lc_func
+import pycs3.gen.mrg
+import pycs3.gen.stat
+import pycs3.gen.util
+import pycs3.pipe.pipe_utils as ut
+import pycs3.regdiff.rslc
+
+loggerformat='%(levelname)s: %(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 

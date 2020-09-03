@@ -2,16 +2,19 @@
 Setup the config file and organise the lens folder.
 If you have more than 4 images, you might need to modify the config file and rerun this script.
 """
+import argparse as ap
+import logging
 import os
 import sys
-import argparse as ap
-import numpy as np
 from shutil import copyfile
+
+import numpy as np
+
 import pycs3.gen.lc_func
 import pycs3.gen.mrg
 import pycs3.gen.util
-import logging
-loggerformat='%(message)s'
+
+loggerformat='%(levelname)s: %(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 

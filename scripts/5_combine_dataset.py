@@ -2,18 +2,21 @@
 LAst level of combination, combining across dataset. You can choose which dataset to use in a specific config file :
 Comination/lensname/config_combination_lensname.py
 """
-import matplotlib.style
 import argparse as ap
+import importlib
+import logging
 import os
+import pickle as pkl
 import sys
+from shutil import copyfile
+
+import matplotlib.style
+
+import pycs3.pipe.pipe_utils as ut
 import pycs3.tdcomb.comb
 import pycs3.tdcomb.plot
-import pickle as pkl
-import importlib
-from shutil import copyfile
-import pycs3.pipe.pipe_utils as ut
-import logging
-loggerformat='%(message)s'
+
+loggerformat='%(levelname)s: %(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 matplotlib.style.use('classic')

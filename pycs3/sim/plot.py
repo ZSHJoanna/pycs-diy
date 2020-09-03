@@ -355,7 +355,11 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
 
                 keep = np.logical_and(binvalarray < binclipr, binvalarray > -binclipr)
                 if np.sum(keep == False) != 0:
-                    logging.warning("Kicking %i points." % (np.sum(keep == False)))
+                    n_kick = np.sum(keep == False)
+                    logging.info("Kicking %i points." % (n_kick))
+                    if n_kick > 0.2 * len(binvalarray):
+                        logging.warning(
+                            'Kicking more than 20 percent of your curves. Something went probably wrong ! Please consider using other estimator parameters.')
                 binvals[bini] = binvalarray[keep]
             binstds = list(map(np.std, binvals))
             binmeans = list(map(np.mean, binvals))
@@ -747,28 +751,35 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
         logger.info("pair - indepbins - depbins - diff")
         logger.info("-" * 35)
         logger.info("AB - %.2f - %.2f - %.1f%%" % (indepbins[0], depbins[0],
-                                             (max(indepbins[0], depbins[0]) - min(indepbins[0], depbins[0])) / max(
-                                                 indepbins[0], depbins[0]) * 100))
+                                                   (max(indepbins[0], depbins[0]) - min(indepbins[0],
+                                                                                        depbins[0])) / max(
+                                                       indepbins[0], depbins[0]) * 100))
         logger.info("AC - %.2f - %.2f - %.1f%%" % (indepbins[1], depbins[1],
-                                             (max(indepbins[1], depbins[1]) - min(indepbins[1], depbins[1])) / max(
-                                                 indepbins[1], depbins[1]) * 100))
+                                                   (max(indepbins[1], depbins[1]) - min(indepbins[1],
+                                                                                        depbins[1])) / max(
+                                                       indepbins[1], depbins[1]) * 100))
         if nimages == 4:
             logger.info("BC - %.2f - %.2f - %.1f%%" % (indepbins[3], depbins[3],
-                                                 (max(indepbins[3], depbins[3]) - min(indepbins[3], depbins[3])) / max(
-                                                     indepbins[3], depbins[3]) * 100))
+                                                       (max(indepbins[3], depbins[3]) - min(indepbins[3],
+                                                                                            depbins[3])) / max(
+                                                           indepbins[3], depbins[3]) * 100))
             logger.info("AD - %.2f - %.2f - %.1f%%" % (indepbins[2], depbins[2],
-                                                 (max(indepbins[2], depbins[2]) - min(indepbins[2], depbins[2])) / max(
-                                                     indepbins[2], depbins[2]) * 100))
+                                                       (max(indepbins[2], depbins[2]) - min(indepbins[2],
+                                                                                            depbins[2])) / max(
+                                                           indepbins[2], depbins[2]) * 100))
             logger.info("BD - %.2f - %.2f - %.1f%%" % (indepbins[4], depbins[4],
-                                                 (max(indepbins[4], depbins[4]) - min(indepbins[4], depbins[4])) / max(
-                                                     indepbins[4], depbins[4]) * 100))
+                                                       (max(indepbins[4], depbins[4]) - min(indepbins[4],
+                                                                                            depbins[4])) / max(
+                                                           indepbins[4], depbins[4]) * 100))
             logger.info("CD - %.2f - %.2f - %.1f%%" % (indepbins[5], depbins[5],
-                                                 (max(indepbins[5], depbins[5]) - min(indepbins[5], depbins[5])) / max(
-                                                     indepbins[5], depbins[5]) * 100))
+                                                       (max(indepbins[5], depbins[5]) - min(indepbins[5],
+                                                                                            depbins[5])) / max(
+                                                           indepbins[5], depbins[5]) * 100))
         elif nimages == 3:
             logger.info("BC - %.2f - %.2f - %.1f%%" % (indepbins[2], depbins[2],
-                                                 (max(indepbins[2], depbins[2]) - min(indepbins[2], depbins[2])) / max(
-                                                     indepbins[2], depbins[2]) * 100))
+                                                       (max(indepbins[2], depbins[2]) - min(indepbins[2],
+                                                                                            depbins[2])) / max(
+                                                           indepbins[2], depbins[2]) * 100))
         logger.info("-" * 35)
 
     retdict["covmat"] = covmat
@@ -872,7 +883,11 @@ def measvstrue(rrlist, r=10.0, nbins=10, plotpoints=True, alphapoints=1.0, plotr
                     for (bini, binvalarray) in enumerate(binvals):
                         keep = np.logical_and(binvalarray < binclipr, binvalarray > -binclipr)
                         if np.sum(keep == False) != 0:
-                            logging.warning("Kicking %i points." % (np.sum(keep == False)))
+                            n_kick = np.sum(keep == False)
+                            logging.info("Kicking %i points." % (n_kick))
+                            if n_kick > 0.2 * len(binvalarray):
+                                logging.warning(
+                                    'Kicking more than 20 percent of your curves. Something went probably wrong ! Please consider using other estimator parameters.')
                         binvals[bini] = binvalarray[keep]
                     binstds = list(map(np.std, binvals))
                     binmedians = list(map(np.median, binvals))
@@ -994,7 +1009,7 @@ def measvstrue(rrlist, r=10.0, nbins=10, plotpoints=True, alphapoints=1.0, plotr
     if title is not None:
         plt.figtext(x=xtitle, y=ytitle, s=title, horizontalalignment="center", color="black", fontsize=titlesize)
 
-    if filename is None: # pragma: no cover
+    if filename is None:  # pragma: no cover
         plt.show()
     else:
         plt.savefig(filename)

@@ -2,17 +2,20 @@
 Combine the the spline optimiser Groups of time delay Estimates. I am using the threshold defined in your config file to select which
 Groups to combine.  See Bonvin et al.(2018,2019) and Millon et al. (2020) for details.
 """
+import argparse as ap
+import copy
+import importlib
+import logging
+import os
+import pickle as pkl
+import sys
+
+import numpy as np
+
 import pycs3.tdcomb.comb
 import pycs3.tdcomb.plot
-import os
-import copy
-import sys
-import numpy as np
-import pickle as pkl
-import importlib
-import argparse as ap
-import logging
-loggerformat='%(message)s'
+
+loggerformat='%(levelname)s: %(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 

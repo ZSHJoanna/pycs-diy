@@ -3,18 +3,21 @@ Combine the the regdiff optimiser Groups of time delay Estimates. I am selecting
 I am using the threshold defined in your config file to select which Groups to combine among your regdiff set of parameter estimator.
 See Millon et al. (2020) for details.
 """
+import argparse as ap
+import copy
+import importlib
+import logging
+import os
+import pickle as pkl
 import sys
+
+import numpy as np
+
+import pycs3.pipe.pipe_utils as ut
 import pycs3.tdcomb.comb
 import pycs3.tdcomb.plot
-import copy
-import os
-import numpy as np
-import pickle as pkl
-import importlib
-import argparse as ap
-import pycs3.pipe.pipe_utils as ut
-import logging
-loggerformat='%(message)s'
+
+loggerformat='%(levelname)s: %(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
 
 
