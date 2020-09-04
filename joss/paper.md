@@ -46,7 +46,7 @@ Time-delay cosmography is a competitive technique for measuring the current expa
 We have now developed an automated pipeline based on ``PyCS3`` to measure time delays in a large sample of lensed quasars [@Millon1:2020; @Millon2:2020]. Such improvements toward automation of the procedure is necessary with the hundreds of new lensed quasars expected to be discovered in the near future. 
 
 # Functionality
- The basic functionality of ``PyCS3`` includes a LightCurve class to manipulate photometric monitoring data. It includes methods to import, shift, fit and export light curves. These are located in the `pycs3.gen` subpackage.
+ The basic functionality of ``PyCS3`` is built around a LightCurve class to manipulate photometric monitoring data. It has methods to import, shift, fit and export light curves. These are located in the `pycs3.gen` subpackage.
 
 ``PyCS3`` contains two time-delay estimators, namely the free-knot splines and the regression difference, that are in the `pycs3.spl` and `pycs3.regdiff` subpackages. These two estimators are fundamentally different and allows us to check the robustness of the measured time delays. The subpackage `pycs3.sim` is used to generate simulated light curves in order to estimate the uncertainties of the time-delay measurements. ``PyCS3`` ensures that the simulated curves have the same constraining power than the original data which is crucial for a correct estimation of the uncertainties. These simulated curves can then be shifted with either the free-knot splines or the regression difference estimator. 
 
