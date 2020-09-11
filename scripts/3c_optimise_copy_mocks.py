@@ -86,7 +86,11 @@ def main(lensname, dataname, work_dir='./'):
             destpath = os.path.join(main_path, config.lens_directory + config.combkw[a, b] + '/')
             print(destpath)
             ##### We start by shifting our curves "by eye", to get close to the result and help the optimisers to do a good job
-            pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts,[-np.median(lc.getmags()) for lc in lcs])  # be careful, this remove ml as well.
+            if config.magshift is None :
+                magsft = [-np.median(lc.getmags()) for lc in lcs]
+            else :
+                magsft = config.magshift
+            pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts,magsft)  # be careful, this remove ml as well.
 
             # We also give them a microlensing model (here, similar to Courbin 2011)
             config.attachml(lcs, ml)  # this is because they were saved as raw lcs, wihtout lcs.

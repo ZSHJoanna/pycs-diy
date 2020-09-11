@@ -1,11 +1,11 @@
-From v3.0.1 to v3.1.0
+From v3.0.1 to v3.0.2
 =====================
 
 - refractor mltd subpackage to tdcomb
 - improved documentation
 - add tdc_test pipeline : a pipeline designed to test the performance of the method on simulated curves such the curves
     of the TDC
-- adding logger
+- add a logger
 
 
 From PyCS to PyCS3 (v3.0.1)

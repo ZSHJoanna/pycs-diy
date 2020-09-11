@@ -15,6 +15,7 @@ lcs_label = ['A','B','C']
 delay_labels = ['AB', 'AC', 'BC']
 #initial guess :
 timeshifts = ut.convert_delays2timeshifts([0.,0.])#give the estimated AB delay
+magshift = None # if None, we remove the median magnitude of each curve
 
 #general config :
 askquestions = False

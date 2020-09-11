@@ -53,7 +53,11 @@ def main(lensname, dataname, work_dir='./'):
         for j, ml in enumerate(ml_param):
             print(("ML param", j, ml))
             lcs = pycs3.gen.util.readpickle(config.data)
-            pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts, [-np.median(lc.getmags()) for lc in lcs]) #remove median and set the time shift to the initial guess
+            if config.magshift is None :
+                magsft = [-np.median(lc.getmags()) for lc in lcs]
+            else :
+                magsft = config.magshift
+            pycs3.gen.lc_func.applyshifts(lcs, config.timeshifts, magsft) #remove median and set the time shift to the initial guess
             if ml != 0:
                 config.attachml(lcs, ml)  # add microlensing
 
