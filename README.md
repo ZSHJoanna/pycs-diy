@@ -29,6 +29,7 @@ PyCS3 requires the following standard python packages :
 * `numpy`
 * `scipy`
 * `matplotlib`
+* `multiprocess`
 
 If you want to use the regdiff optimiser, you will also need : 
 * `scikit-learn`
