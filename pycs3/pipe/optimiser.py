@@ -462,7 +462,7 @@ class DicOptimiser(Optimiser):
 
         if self.correction_PS_residuals:
             self.A_correction, _, _, _, _ = self.compute_set_A_correction(B)
-            logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :", np.array2string(np.asarray(self.A_correction)))
+            logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :" + np.array2string(np.asarray(self.A_correction)))
 
         while True:
             self.iteration += 1
@@ -517,7 +517,7 @@ class DicOptimiser(Optimiser):
             if self.iteration % 5 == 0:
                 self.A_correction, _, _, _, _ = self.compute_set_A_correction(
                     B)  # recompute A correction every 5 iterations.
-                logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :", self.A_correction)
+                logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :" + np.array2string(np.asarray(self.A_correction)))
 
         self.chain_list = [self.explored_param, chi2, zruns, sigma, zruns_std,
                            sigma_std]  # explored param has dimension(n_iter,ncurve,1)
