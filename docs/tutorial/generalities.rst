@@ -19,7 +19,7 @@ Importing PyCS3
 If PyCS3 is installed, simply use ``import pycs3`` at the beginning of your script.
 A minimal script (just to check that it works)::
 	
-	import pycs3
+	import pycs3.gen.lc
 	lca = pycs3.gen.lc.LightCurve(object="A", plotcolour="red")
 	lcb = pycs3.gen.lc.LightCurve(object="B", plotcolour="blue")
 	lcb.shifttime(1.0)
