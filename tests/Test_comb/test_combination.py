@@ -151,13 +151,13 @@ class TestComb(unittest.TestCase):
         convolved2.niceprint()
         convolved.niceprint()
 
-        assert np.abs(convolved.medians[0] - convolved2.medians[0]) < 0.1
-        assert np.abs(group_spline.medians[0] - convolved.medians[0]) < 0.1 #check that the mean did not change
+        assert np.abs(convolved.medians[0] - convolved2.medians[0]) < 0.15
+        assert np.abs(group_spline.medians[0] - convolved.medians[0]) < 0.15 #check that the mean did not change
 
         predicted_error_up = np.sqrt(error_up + group_spline.errors_up[0])
         predicted_error_down = np.sqrt(error_down + group_spline.errors_down[0])
-        assert np.abs(predicted_error_up - convolved.errors_up[0]) < 0.1
-        assert np.abs(predicted_error_down - convolved.errors_down[0]) < 0.1
+        assert np.abs(predicted_error_up - convolved.errors_up[0]) < 0.15
+        assert np.abs(predicted_error_down - convolved.errors_down[0]) < 0.15
 
         pycs3.tdcomb.plot.delayplot([group_spline, mltd, convolved, convolved2], rplot=20.0, refgroup=convolved, displaytext=True,showran=False,showbias=False,
                                   filename=os.path.join(self.outpath, "fig_delays_comb_convolved.png"), figsize=(15, 10))
