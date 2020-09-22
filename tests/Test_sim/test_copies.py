@@ -45,7 +45,6 @@ class TestCopies(unittest.TestCase):
         pycs3.sim.draw.multidraw(lc_copy, onlycopy=True, n=5, npkl=1, simset="copies", destpath=self.outpath)
 
         # Set the initial shift and microlensing model
-        ncpu = 1
         lc_func.settimeshifts(lc_copy, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess
         lc_func.settimeshifts(lc_copy_disp, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess
         lc_func.settimeshifts(lc_copy_regdiff, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess

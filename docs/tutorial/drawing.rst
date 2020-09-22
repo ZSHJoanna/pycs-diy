@@ -161,7 +161,7 @@ Alternatively, you can use the new functionality of PyCS3 that is using the dire
         return pycs3.sim.twk.tweakml_PS(lcs, spline, B=1.0, f_min=1 / 300.0, psplot=False, verbose=False,
                           interpolation='linear', A_correction=1.0)
 
-and use it similarly to :py:func:`pycs3.sim.twk.tweakml`. Note that this do not garantee that your mock light curves will be similar as the real data. You might need to adjust the spectral window (controlled by the parameter `B`) and the amplitude of the power spectrum with the parameter `A_correction`. This can be done automatically with this [script](https://gitlab.com/cosmograil/PyCS3/-/blob/master/scripts/3a_generate_tweakml.py) and the :py:module:`pycs3.pipe.optimiser` module.
+and use it similarly to :py:func:`pycs3.sim.twk.tweakml`. Note that this do not garantee that your mock light curves will be similar as the real data. You might need to adjust the spectral window (controlled by the parameter `B`) and the amplitude of the power spectrum with the parameter `A_correction`. This can be done automatically with this [script](https://gitlab.com/cosmograil/PyCS3/-/blob/master/scripts/3a_generate_tweakml.py) and the :py:mod:`pycs3.pipe.optimiser` module.
 
 
 .. note:: Instead of providing a single "mytweakml" function to draw, you can also provide a *list* of mytweakml-like functions, each item of this list corresponding to a light curve in your lcs. This way you can individually adapt the tweakml to the noise properties in each curve.

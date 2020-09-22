@@ -111,8 +111,8 @@ def applyopt(optfct, lcslist, **kwargs):
     if len(optfct_outs) == 0:
         logger.warning(" It seems that your optfct does not return anything ! ")
     else:
-        logger.info("Shifted %i/%i simulations on %i/%i CPUs, time : %s" % (len(optfct_outs),
-                                                                      len(lcslist), ncpu, ncpuava,
+        logger.info("Shifted %i/%i simulations, time : %s" % (len(optfct_outs),
+                                                                      len(lcslist),
                                                                       pycs3.gen.util.strtd(time.time() - start)))
         if len(lcslist) - len(optfct_outs) > 0 :
             logger.warning("I failed for %i curves." % (len(lcslist) - len(optfct_outs)))
