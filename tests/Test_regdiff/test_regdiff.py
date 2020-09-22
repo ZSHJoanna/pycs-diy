@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import os
 import pytest
 import unittest
@@ -37,7 +39,7 @@ class TestRegdiff(unittest.TestCase):
         lc_func.display(lc_copy, myrslcs, filename=os.path.join(self.outpath, 'regdiff_mattern1.5.png'))
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         delays_th = [-4.39, -20.79, -70.52, -16.40, -66.13, -49.72]
-        assert_allclose(delays, delays_th, atol=0.5)
+        assert_allclose(delays, delays_th, atol=1.0)
         assert error_fct <= 0.01
 
         # RBF kernel
@@ -48,7 +50,7 @@ class TestRegdiff(unittest.TestCase):
         myrslcs, error_fct = utils.regdiff(lc_copy, **regdiff_param)  # good set for Radial-Basis Function
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         delays_th = [-6.944359, -20.746719, -70.711597, -13.80236 , -63.767238, -49.964879]
-        assert_allclose(delays, delays_th, atol=0.5)
+        assert_allclose(delays, delays_th, atol=1.0)
         assert error_fct <= 0.015
 
         # RatQuad kernal
@@ -59,7 +61,7 @@ class TestRegdiff(unittest.TestCase):
         myrslcs, error_fct = utils.regdiff(lc_copy, **regdiff_param)  # good set for mattern
         delays = lc_func.getdelays(lc_copy, to_be_sorted=True)
         delays_th = [-4.37, -20.23, -69.98, -15.86, -65.62, -49.75]
-        assert_allclose(delays, delays_th, atol=0.5)
+        assert_allclose(delays, delays_th, atol=1.0)
         assert error_fct <= 0.015
 
     def test_benchmark(self):

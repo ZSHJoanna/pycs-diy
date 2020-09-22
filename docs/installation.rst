@@ -45,3 +45,20 @@ or maybe
 	python setup.py install --user
 
 ... if you don't have write access to the global site-packages directory of your machine.
+
+Tests
+-----
+
+PyCS3 now have automatic tests to verify that everything works correctly. If you want to check your installation, you will first need to install `PyTest` with the command :
+
+::
+
+    pip install pytest --user
+
+Then, you can simply go in the PyCS3 repository and run the command :
+
+::
+
+    pytest
+
+Running all the tests should take between 5 and 10 minutes.
