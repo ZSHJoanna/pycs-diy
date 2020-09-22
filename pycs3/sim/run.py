@@ -2,14 +2,12 @@
 Functions to run curve shifting techniques on lightcurves produced by sim.multidraw.
 We define the class runresults that "holds" results obtained by curve shifting techniques (saved into pickles).
 """
-import copy
 import copy as pythoncopy
 import logging
 import os
 import time
 from glob import glob
 
-import multiprocess
 import numpy as np
 
 import pycs3.gen.lc
@@ -36,7 +34,7 @@ def optfct_aux(argument):
 
     return out, dic
 
-def applyopt(optfct, lcslist, ncpu, **kwargs):
+def applyopt(optfct, lcslist, **kwargs):
     """
     Applies optfct (an optimizing function that takes a list of lightcurves as single argument)
     to all the elements (list of lightcurves)
@@ -45,70 +43,69 @@ def applyopt(optfct, lcslist, ncpu, **kwargs):
     Optimizes the lightcurves themselves, in place, and returns a list of the outputs of the optimizers, corresponding to the lcslist.
     For instance, if the optfct output is a spline, it also contains the final r2s, that I will later save into the pkls !
 
-    This now works with multi-threading. Consider using ncpu=1 if you use higher level of parallelisation.
-    If one thread is failing, this should not impact the others, but the optfct_outs won't have the same length as the lcslist.
-    Call clean_simlist if you want to remove the failed attempts from the lcslist.
-
     :param optfct: function to apply to the LightCurves
     :param lcslist: list of LightCurves
     :param kwargs: dictionnary of kwargs to be transmitted to the optfct
-    :param ncpu: integer or None, None = I will use all CPUs, -1 = I will use all - 1 CPUs, and otherwise I will use ncpu CPUs.
 
     :return: optfct_outs: a list of the optimised LightCurves and a dictionnary containing the failed attempt to shift the curves.
     """
 
-    ncpuava = multiprocess.cpu_count()
+    # ncpuava = multiprocess.cpu_count()
 
-    if ncpu > 1 :
-        #todo : there is a very nasty bug here : the microlensing is not optimised in multiprocessing. I can't find why this is happening so do not use multiprocessing until this is solve. The bug is quiet it will just provide a very bad fit to the data !!! This must have to do with object that are not deepcopied...
-        logger.warning('Multi-processing is not supported on this verison ! You can still use a higher level of parallelisation. I will run on a single core for the moment.')
-        ncpu = 1
+    # if ncpu > 1 :
+    #     #todo : there is a very nasty bug here : the microlensing is not optimised in multiprocessing. I can't find why this is happening so do not use multiprocessing until this is solve. The bug is quiet it will just provide a very bad fit to the data !!! This must have to do with object that are not deepcopied...
+    #     logger.warning('Multi-processing is not supported on this verison ! You can still use a higher level of parallelisation. I will run on a single core for the moment.')
+    #     ncpu = 1
 
-    if ncpu == 1:
-        # curves are optimised one after the other :
-        logger.info("Starting the curve shifting on a single CPU, no multiprocessing...")
-        start = time.time()
-        kwargs_vec = [kwargs for k in lcslist]
-        optfct_outs = []
-        sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
-        for i, lcs in enumerate(lcslist):
-            try:
-                optout = optfct(lcs, **kwargs_vec[i])
-            except Exception as e: # pragma: no cover
-                logger.warning("I have a problem with the curve number %i. Details : %s" %(i,e))
-                sucess_dic['failed_id'].append(i)
-                sucess_dic['success'] = False
-                sucess_dic['error_list'].append(e)
-            else:
-                optfct_outs.append(optout)
+    # if ncpu == 1:
+    # curves are optimised one after the other :
+    # This now works with multi-threading. Consider using ncpu=1 if you use higher level of parallelisation.
+    # If one thread is failing, this should not impact the others, but the optfct_outs won't have the same length as the lcslist.
+    # Call clean_simlist if you want to remove the failed attempts from the lcslist.
+
+    logger.info("Starting the curve shifting on a single CPU, no multiprocessing...")
+    start = time.time()
+    kwargs_vec = [kwargs for k in lcslist]
+    optfct_outs = []
+    sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
+    for i, lcs in enumerate(lcslist):
+        try:
+            optout = optfct(lcs, **kwargs_vec[i])
+        except Exception as e: # pragma: no cover
+            logger.warning("I have a problem with the curve number %i. Details : %s" %(i,e))
+            sucess_dic['failed_id'].append(i)
+            sucess_dic['success'] = False
+            sucess_dic['error_list'].append(e)
+        else:
+            optfct_outs.append(optout)
 
 
-    else: # pragma: no cover # Multithreading version. Cannot be tested on CI server
-
-        if ncpu == None:
-            ncpu = ncpuava
-        if ncpu == -1:
-            ncpu = ncpuava - 1
-
-        logger.info("Starting the curve shifting on %i/%i CPUs." % (ncpu, ncpuava))
-        start = time.time()
-
-        job_args = [(copy.deepcopy(k), id, copy.deepcopy(kwargs), copy.deepcopy(optfct)) for id, k in enumerate(lcslist)]
-        sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
-
-        pool = multiprocess.Pool(ncpu)
-        results = pool.map(optfct_aux, job_args)  # order should be conserved with map_async
-        pool.close()
-        pool.join()
-
-        optfct_outs = []
-        for output in results:
-            if output[0] is not None:
-                optfct_outs.append(output[0])
-            if output[1]['success'] is False:
-                sucess_dic['success'] = False
-                sucess_dic['failed_id'] = sucess_dic['failed_id'] + output[1]['failed_id']
-                sucess_dic['error_list'] = sucess_dic['error_list'] + output[1]['error_list']
+    # else: # pragma: no cover # Multithreading version. Cannot be tested on CI server
+    #
+    #     if ncpu == None:
+    #         ncpu = ncpuava
+    #     if ncpu == -1:
+    #         ncpu = ncpuava - 1
+    #
+    #     logger.info("Starting the curve shifting on %i/%i CPUs." % (ncpu, ncpuava))
+    #     start = time.time()
+    #
+    #     job_args = [(copy.deepcopy(k), id, copy.deepcopy(kwargs), copy.deepcopy(optfct)) for id, k in enumerate(lcslist)]
+    #     sucess_dic = {'success': True, 'failed_id': [], 'error_list': []}
+    #
+    #     pool = multiprocess.Pool(ncpu)
+    #     results = pool.map(optfct_aux, job_args)  # order should be conserved with map_async
+    #     pool.close()
+    #     pool.join()
+    #
+    #     optfct_outs = []
+    #     for output in results:
+    #         if output[0] is not None:
+    #             optfct_outs.append(output[0])
+    #         if output[1]['success'] is False:
+    #             sucess_dic['success'] = False
+    #             sucess_dic['failed_id'] = sucess_dic['failed_id'] + output[1]['failed_id']
+    #             sucess_dic['error_list'] = sucess_dic['error_list'] + output[1]['error_list']
 
 
     if len(optfct_outs) == 0:
@@ -325,7 +322,7 @@ def collect(directory="./test", plotcolour="#008800", name=None):
 
 
 def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, shuffle=True,
-             keepopt=False, trace=False, verbose=True, destpath="./", ncpu=None, use_test_seed=False):
+             keepopt=False, trace=False, verbose=True, destpath="./", use_test_seed=False):
     """
     Top level wrapper to get delay "histograms" : I will apply the optfct to optimize the shifts
     between curves that you got from :py:func:`pycs3.sim.draw.multidraw`, and save the results in
@@ -363,7 +360,6 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
     :param verbose: boolean. Verbosity.
     :param destpath: string. Path to write the optimised curves and results.
     :param use_test_seed: boolean. Used for testing purposes. If you want to impose the random seed.
-    :param ncpu: integer. Number of CPU tu use, if None I will use all available CPUs. Turn this to one if you use higher level of parallelisation
     :return: dictionary containing information about which curves optimisation failed.
     """
 
@@ -436,7 +432,7 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
         if shuffle:
             for simlcs in simlcslist:
                 pycs3.gen.lc_func.shuffle(simlcs)
-        optfctouts, success_dic = applyopt(optfct, simlcslist, ncpu, **kwargs_optim)
+        optfctouts, success_dic = applyopt(optfct, simlcslist, **kwargs_optim)
         if shuffle:  # We sort them, as they will be passed the constructor of runresuts.
             for simlcs in simlcslist:
                 pycs3.gen.lc_func.objsort(simlcs, verbose=False)

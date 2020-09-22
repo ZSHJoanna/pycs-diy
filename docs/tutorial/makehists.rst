@@ -19,9 +19,7 @@ As input, it takes those pkl files containing simulated curves, made in the prev
 
 One important argument of ``multirun`` is ``tsrand``. It is the radius (in days) of a uniform randomization of the input time shifts.
 
-.. note:: Something nice : you can launch several identical "calls" to this multirun function (for instance simply by launching your script on several CPUs), and this will indeed process the pkl files in parallel. For this to work, the ``multirun`` function stores a temporary file in its results directory as soon as it starts working on a pickle file, so that other scripts know that they should not run on this same pkl file as well. You can see those temporary files, of course. If something goes wrong and they don't get deleted automatically as the script crashed, you might have to remove the ``.workingon`` files by hand, otherwise ``multirun`` will just skip those pkl files.
-
-Here is an example script running all 3 methods. We assume that you've defined your favorite optimizers in ``myopt.py``.
+Here is an example script running the two methods. We assume that you've defined your favorite optimizers in ``myopt.py``.
 
 
 ::
@@ -51,8 +49,35 @@ Here is an example script running all 3 methods. We assume that you've defined y
 	#pycs3.sim.run.multirun("sim1tsr10", lcs, myopt.regdiff, optset="regdiff2", tsrand=10.0)
 	"""
 	
+Parallel computing
+------------------
+You will probably need more than 500 mock curves to have reliable estimates of the uncertainties. To speed up the computation, you can launch several identical "calls" to this multirun function (for instance simply by launching your script on several CPUs), and this will indeed process the pkl files in parallel. For this to work, the ``multirun`` function stores a temporary file in its results directory as soon as it starts working on a pickle file, so that other scripts know that they should not run on this same pkl file as well. You can see those temporary files, of course. If something goes wrong and they don't get deleted automatically as the script crashed, you might have to remove the ``.workingon`` files by hand, otherwise ``multirun`` will just skip those pkl files.
+
+Here is an example on how you could perform parallel execution of the ``multirun`` function :
+
+::
+
+    from multiprocess import Pool
+    import time
+
+    def exec_worker_mocks_aux(args):
+    return exec_worker_mocks(*args)
 
 
+    def exec_worker_mocks(i, simset_mock, lcs, simoptfct, kwargs_optim, optset, tsrand, destpath):
+        print("worker %i starting..." % i)
+        time.sleep(i)
+        sucess_dic = pycs3.sim.run.multirun(simset_mock, lcs, simoptfct, kwargs_optim=kwargs_optim,
+                                           optset=optset, tsrand=tsrand, keepopt=True, destpath=destpath)
+        return sucess_dic
+
+
+    nworkers = 8
+    job_args = [(j, "copies", lcs, myopt.spl, kwargs, "spl1", 10.0, "./") for j in range(nworkers)]
+    p = Pool(nworkers)
+    success_list_copies = p.map(exec_worker_copie_aux, job_args)
+
+For a detailed example, you can check this [script](https://gitlab.com/cosmograil/PyCS3/-/blob/master/scripts/3c_optimise_copy_mocks.py)
 
 Analysing the measurement results
 ---------------------------------

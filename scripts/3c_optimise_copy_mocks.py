@@ -3,19 +3,22 @@ Optimise the copy and mock data. WARNING : this may take loooooooong. You probab
 I'm not re-running on already optimized lcs ! It should be safe to launch this script many times, it will run on different batch of lightcurves.
 """
 
-import os
-import sys
-import pycs3.gen.lc_func
-import pycs3.sim.run
-import pycs3.gen.util
-import time
-from multiprocess import Pool, Lock, cpu_count
-import copy
 import argparse as ap
+import copy
 import importlib
-import pickle as pkl
-import numpy as np
 import logging
+import os
+import pickle as pkl
+import sys
+import time
+
+import numpy as np
+from multiprocess import Pool, cpu_count
+
+import pycs3.gen.lc_func
+import pycs3.gen.util
+import pycs3.sim.run
+
 loggerformat='PID %(process)06d | %(asctime)s | %(levelname)s: %(name)s(%(funcName)s): %(message)s'
 logging.basicConfig(format=loggerformat,level=logging.WARNING)
 
@@ -27,7 +30,7 @@ def exec_worker_copie(i, simset_copy, lcs, simoptfct, kwargs_optim, optset, tsra
     print("worker %i starting..." % i)
     time.sleep(i)
     sucess_dic = pycs3.sim.run.multirun(simset_copy, lcs, simoptfct, kwargs_optim=kwargs_optim,
-                                       optset=optset, tsrand=tsrand, destpath=destpath, ncpu=1)
+                                       optset=optset, tsrand=tsrand, destpath=destpath)
     return sucess_dic
 
 
@@ -39,7 +42,7 @@ def exec_worker_mocks(i, simset_mock, lcs, simoptfct, kwargs_optim, optset, tsra
     print("worker %i starting..." % i)
     time.sleep(i)
     sucess_dic = pycs3.sim.run.multirun(simset_mock, lcs, simoptfct, kwargs_optim=kwargs_optim,
-                                       optset=optset, tsrand=tsrand, keepopt=True, destpath=destpath,ncpu=1)
+                                       optset=optset, tsrand=tsrand, keepopt=True, destpath=destpath)
     return sucess_dic
 
 

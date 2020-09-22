@@ -60,11 +60,11 @@ class TestCopies(unittest.TestCase):
 
         success_dic_spline = pycs3.sim.run.multirun("copies", lc_copy, utils.spl, kwargs_optim, optset="spl",
                                                     tsrand=10.0, keepopt=True, destpath=self.outpath,
-                                                    use_test_seed=True, ncpu=ncpu)
+                                                    use_test_seed=True)
         success_dic_regdiff = pycs3.sim.run.multirun("copies", lc_copy_regdiff, utils.regdiff, kwargs_optim_regdiff,
                                                      optset="regdiff",
                                                      tsrand=10.0, keepopt=True, destpath=self.outpath,
-                                                     use_test_seed=True, ncpu=ncpu)
+                                                     use_test_seed=True)
         assert success_dic_spline['success'] is True
         assert success_dic_regdiff['success'] is True
 

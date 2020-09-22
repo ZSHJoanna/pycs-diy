@@ -15,7 +15,6 @@ import pycs3.tdcomb.comb
 import pycs3.gen.stat
 
 from tests import utils
-import numpy as np
 import shutil
 
 
@@ -50,9 +49,9 @@ class TestSims(unittest.TestCase):
         kwargs_optim_regdiff = {'pd': 2, 'covkernel': 'matern', 'pow': 1.5, 'amp': 1., 'scale': 200., 'errscale': 1.,
                                 'verbose': True, 'method': "weights"}
         success_dic_spline = pycs3.sim.run.multirun("mocks", self.lcs, utils.spl, kwargs_optim, optset="spl",destpath=self.outpath,
-                                                    tsrand=10.0, keepopt=True, use_test_seed=True, ncpu=1)
+                                                    tsrand=10.0, keepopt=True, use_test_seed=True)
         success_dic_regdiff = pycs3.sim.run.multirun("mocks", self.lcs, utils.regdiff, kwargs_optim_regdiff,destpath=self.outpath,
-                                                     optset="regdiff", tsrand=10.0, keepopt=True, use_test_seed=True, ncpu=1)
+                                                     optset="regdiff", tsrand=10.0, keepopt=True, use_test_seed=True)
         assert success_dic_spline['success'] is True
         assert success_dic_regdiff['success'] is True
 

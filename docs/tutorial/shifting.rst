@@ -131,6 +131,7 @@ The idea is to shift the light curves so to minimize the variability of their "d
 See `Tewes et al. 2013 <http://dx.doi.org/10.1051/0004-6361/201220123>`_ for a more detailed description of the idea. In practice, as for the spline optimizer, there is a simple top-level wrapper function, that you can add to your ``myopt.py`` :
 
 ::
+
 	# we need to call the regdiff module explicitely
 	import pycs3.regdiff
 

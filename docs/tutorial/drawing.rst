@@ -4,7 +4,7 @@ Drawing mock curves
 
 The splines introduced in the previous section are used to draw simulated curves with known time delays. These mock curves can be made very similar to the real observations.
 
-At the bottom of this page a single function to build an entire population of simulated curves is presented. This will be extensively used to empirically evaluate the accuracy of curve shifting methods. But before looking at this wrapper, we have to introduce the details of how these curves are drawn, step by step. 
+At the bottom of this page a single function to build an entire population of simulated curves is presented. This will be extensively used to empirically evaluate the accuracy of curve shifting methods. But before looking at this wrapper, we have to introduce the details of how these curves are drawn, step by step. If you are not interested in the details, you can skip this part and simply follow this `notebook <https://gitlab.com/cosmograil/PyCS3/-/blob/master/notebook/Uncertainties%20estimation.ipynb>`_
 
 
 Drawing individual curves
@@ -76,7 +76,7 @@ But the whole point is that we *know* the "true" delays of these mock curves. In
 ::
 
 	for l in mocklcs:
-		print l.truetimeshift
+		print(l.truetimeshift)
 
 ... that stores what shifts where used to obtain those curves, and hence what the true delays between them are.
 
@@ -96,7 +96,7 @@ Randomizing the microlensing
 The aim here is to randomly add some "fast" extrinsic variability on top of the existing microlensing splines.
 
 For illustration purposes, let's start by doing this manually with the high level function :py:func:`pycs3.sim.twk.tweakml`. It takes as argument some lightcurve objects, and adds power-law "noise" to their microlensing, using under the hood the algorithm by Timmer and Koening 1995.
-For this to work, the lightcurve objects must have spline microlensing (otherwise they simply won't be tweaked)
+For this to work, the lightcurve objects must have spline microlensing (otherwise they simply won't be tweaked).
 Once the function has run on them, they will still have spline microlensing objects, but with many many knots. So these microlensing objects are not meant to be be optimized -- they are just meant to be used as models to draw light curves from ! Of course you can display these lightcurves with tweaked ML.
 
 To illustrate this, we can just tweak the ML of the "observed" data::
@@ -105,7 +105,7 @@ To illustrate this, we can just tweak the ML of the "observed" data::
 	
 	# I assume here that at least one of your lcs has some spline ML.
 	
-	pycs3.sim.twk.tweakml(lcs, beta=-2.0, sigma=0.05, fmin=1/500.0)
+	pycs3.sim.twk.tweakml(lcs, spline, beta=-2.0, sigma=0.05, fmin=1/500.0)
 
 	# And plot this, to see the tweaked ML :
 	pycs3.gen.lc_func.display(lcs)
@@ -143,8 +143,8 @@ Here is a (new) example :
 	pycs3.gen.splml.addtolc(lcs[0])
 	
 	# We define our own tweakml function (you can also do this in myopt.py ...)
-	def mytweakml(lcs):
-		return pycs3.sim.twk.tweakml(lcs, beta=-2.0, sigma=0.05, fmin=1/500.0, fmax=None, psplot=False)
+	def mytweakml(lcs, spline):
+		return pycs3.sim.twk.tweakml(lcs, spline, beta=-2.0, sigma=0.05, fmin=1/500.0, fmax=None, psplot=False)
 
 	# And directly draw mock curves :
 	mocklcs = pycs3.sim.draw.draw(lcs, spline, shotnoise="none", tweakml = mytweakml)
@@ -152,6 +152,16 @@ Here is a (new) example :
 	pycs3.gen.lc_func.display(mocklcs, [spline])
 	
 	# These mocklcs are drawn without any "shotnoise", all the noise comes from tweakml.
+
+Alternatively, you can use the new functionality of PyCS3 that is using the directly the power spectrum of the residuals to inject correlated noise at the same frequencies than measured in the real data. You can define this function as follow :
+
+::
+
+    def tweakml_PS(lcs, spline):
+        return pycs3.sim.twk.tweakml_PS(lcs, spline, B=1.0, f_min=1 / 300.0, psplot=False, verbose=False,
+                          interpolation='linear', A_correction=1.0)
+
+and use it similarly to :py:func:`pycs3.sim.twk.tweakml`. Note that this do not garantee that your mock light curves will be similar as the real data. You might need to adjust the spectral window (controlled by the parameter `B`) and the amplitude of the power spectrum with the parameter `A_correction`. This can be done automatically with this [script](https://gitlab.com/cosmograil/PyCS3/-/blob/master/scripts/3a_generate_tweakml.py) and the :py:module:`pycs3.pipe.optimiser` module.
 
 
 .. note:: Instead of providing a single "mytweakml" function to draw, you can also provide a *list* of mytweakml-like functions, each item of this list corresponding to a light curve in your lcs. This way you can individually adapt the tweakml to the noise properties in each curve.
@@ -163,7 +173,6 @@ Here is a (new) example :
 		mocklcs = pycs3.sim.draw.draw(lcs, spline, tweakml=[Atweakml, othertweakml, othertweakml, othertweakml], shotnoise="none")
 
 		
-
 
 
 To generate adequate simulations, we now want to adjust tweakml (and shotnoise) so to get the same kind of residuals between the spline and the real lcs and between the spline and the mocklcs.
