@@ -61,7 +61,7 @@ Here is an example on how you could perform parallel execution of the ``multirun
     import time
 
     def exec_worker_mocks_aux(args):
-    return exec_worker_mocks(*args)
+        return exec_worker_mocks(*args)
 
 
     def exec_worker_mocks(i, simset_mock, lcs, simoptfct, kwargs_optim, optset, tsrand, destpath):
@@ -73,6 +73,7 @@ Here is an example on how you could perform parallel execution of the ``multirun
 
 
     nworkers = 8
+    kwargs = {} # if your optimiser, i.e. myopt.spl, takes argument you can pass them here.
     job_args = [(j, "copies", lcs, myopt.spl, kwargs, "spl1", 10.0, "./") for j in range(nworkers)]
     p = Pool(nworkers)
     success_list_copies = p.map(exec_worker_copie_aux, job_args)
