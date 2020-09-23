@@ -77,7 +77,7 @@ Here is an example on how you could perform parallel execution of the ``multirun
     p = Pool(nworkers)
     success_list_copies = p.map(exec_worker_copie_aux, job_args)
 
-For a detailed example, you can check this [script](https://gitlab.com/cosmograil/PyCS3/-/blob/master/scripts/3c_optimise_copy_mocks.py)
+For a detailed example, you can check this `script <https://gitlab.com/cosmograil/PyCS3/-/blob/master/scripts/3c_optimise_copy_mocks.py>`_.
 
 Analysing the measurement results
 ---------------------------------
