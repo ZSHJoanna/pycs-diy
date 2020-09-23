@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import glob
 from tests import TEST_PATH
@@ -12,7 +13,7 @@ from pycs3.sim.draw import shareflux
 import pytest
 import unittest
 import numpy as np
-from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equal
+from numpy.testing import assert_allclose
 from tests import utils
 
 
@@ -49,6 +50,9 @@ class TestOpt(unittest.TestCase):
         mrg.colourise(self.lcs)
         for (l, c) in zip(self.lcs_WFI, ['orange','cyan','lightgreen']):
             l.plotcolour = c
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_opt_magshift(self):
 

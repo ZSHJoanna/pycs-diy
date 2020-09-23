@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import pytest
 import unittest
@@ -29,6 +30,9 @@ class TestSeason(unittest.TestCase):
                               telescopename="Trial")
         ]
         mrg.colourise(self.lcs)
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_season(self):
         lc_copy = [lc.copy() for lc in self.lcs]

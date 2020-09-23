@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import pytest
 import unittest
@@ -8,7 +9,7 @@ from tests import TEST_PATH
 import numpy as np
 import pycs3.tdcomb.comb
 import pycs3.tdcomb.plot
-from numpy.testing import assert_allclose, assert_almost_equal
+from numpy.testing import assert_allclose
 import pickle as pkl
 
 
@@ -30,6 +31,9 @@ class TestComb(unittest.TestCase):
         self.text = [
             (0.85, 0.90, r"Test" + "\n" + r"$\mathrm{PyCS\ estimates}$",
              {"fontsize": 26, "horizontalalignment": "center"})]
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_groups(self):
         groups = [pycs3.tdcomb.comb.getresults(self.CS_spline, useintrinsic=False),

@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import shutil
 import unittest
@@ -35,6 +36,9 @@ class TestCopies(unittest.TestCase):
                               telescopename="Trial")
         ]
         mrg.colourise(self.lcs)
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_draw_run_copies(self):
         self.clear_copies()

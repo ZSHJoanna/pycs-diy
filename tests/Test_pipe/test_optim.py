@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import pytest
 import unittest
@@ -9,7 +10,6 @@ import pycs3.gen.polyml
 import pycs3.gen.splml
 import pycs3.sim.draw
 import pycs3.pipe.optimiser
-import pycs3.gen.lc_func as lc_func
 
 
 def attachml(lcs, mlknotstep):
@@ -24,6 +24,9 @@ class TestOptim(unittest.TestCase):
         self.outpath = os.path.join(self.path, "output")
         self.datapath = os.path.join(self.path, "data")
         self.lcs, self.spline = pycs3.gen.util.readpickle(os.path.join(self.datapath, "optcurves.pkl"))
+
+    def tearDown(self):
+        plt.close('all')
 
     def testoptim_PS_residuals(self):
         pycs3.sim.draw.saveresiduals(self.lcs, self.spline)

@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import pytest
 import unittest
@@ -36,6 +37,9 @@ class TestMrg(unittest.TestCase):
         ]
         mrg.colourise(self.lcs_ECAM)
         mrg.colourise(self.lcs_WFI)
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_merge(self):
         lcs_ECAM_copy = [lc.copy() for lc in self.lcs_ECAM]

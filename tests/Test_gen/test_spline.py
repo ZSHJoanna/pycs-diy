@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import pytest
 import unittest
@@ -31,6 +32,9 @@ class TestDatapoints(unittest.TestCase):
         self.datapts =DataPoints(self.lcs[0].jds, self.lcs[0].mags, self.lcs[0].magerrs, splitup=False, sort=True,
                              stab=True, stabext=300.0, stabgap=30.0, stabstep=5.0, stabmagerr=-2.0, stabrampsize=5.0,
                              stabrampfact=1.0)
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_datapoints(self):
         datapts = copy.deepcopy(self.datapts)

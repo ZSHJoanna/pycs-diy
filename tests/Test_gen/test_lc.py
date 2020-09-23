@@ -54,6 +54,9 @@ class TestLightCurve(unittest.TestCase):
         self.true_delays = [-5.0, -20.0, -70., -15., -65., -50.]
         mrg.colourise(self.lcs)
 
+    def tearDown(self):
+        plt.close('all')
+
     def test_lc_infos(self):
         print(self.lcs[0])
         print(self.lcs[0].printinfo())  # call lc.longinfo()

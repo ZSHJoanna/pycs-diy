@@ -1,7 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
 import os
-import glob
 from tests import TEST_PATH
 
 import pycs3.gen.util
@@ -9,8 +8,6 @@ import pycs3.pipe.pipe_utils as piut
 import pytest
 import unittest
 import numpy as np
-from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equal
-from tests import utils
 
 NUM = np.nan # variable to be replaced when writing the function
 def function_trial(test_number=NUM):

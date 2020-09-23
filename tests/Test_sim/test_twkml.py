@@ -4,9 +4,8 @@ import os
 from tests import TEST_PATH
 import pycs3.gen.util
 import pycs3.sim.twk
-import pytest
 import unittest
-
+import pytest
 
 
 class TestSource(unittest.TestCase):
@@ -40,3 +39,5 @@ class TestSource(unittest.TestCase):
         print(noise)
 
 
+if __name__ == '__main__':
+    pytest.main()

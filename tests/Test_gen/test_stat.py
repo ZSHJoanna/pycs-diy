@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import pytest
 import unittest
@@ -39,6 +40,9 @@ class TestStat(unittest.TestCase):
         mrg.colourise(self.lcs_ECAM)
         mrg.colourise(self.lcs_WFI)
         self.lcs, self.spline = pycs3.gen.util.readpickle(os.path.join(self.path, "data", "optcurves.pkl"))
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_structure_function(self):
         stat.sf(self.lcs_WFI[0])

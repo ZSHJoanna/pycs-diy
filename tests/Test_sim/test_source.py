@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 from tests import TEST_PATH
 
@@ -9,7 +10,7 @@ from pycs3.sim.src import Source, sourceplot
 import pytest
 import unittest
 import numpy as np
-from numpy.testing import assert_allclose, assert_almost_equal, assert_array_equal
+from numpy.testing import assert_almost_equal
 
 
 class TestSource(unittest.TestCase):
@@ -18,6 +19,9 @@ class TestSource(unittest.TestCase):
         self.outpath = os.path.join(self.path, "output")
         self.rdbfile = os.path.join(self.path, "data", "trialcurves.txt")
         self.lcs, self.spline = pycs3.gen.util.readpickle(os.path.join(self.path, 'data', "optcurves.pkl"))
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_PS(self):
         spline =self.spline.copy()

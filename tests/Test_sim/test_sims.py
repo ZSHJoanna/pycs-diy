@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import os
 import pytest
 import unittest
@@ -38,6 +39,9 @@ class TestSims(unittest.TestCase):
             pycs3.gen.splml.addtolc(lc, knotstep=150)
         lc_func.settimeshifts(self.lcs, shifts=[0, -5, -20, -60], includefirst=True)  # intial guess
         self.spline = utils.spl(self.lcs)
+
+    def tearDown(self):
+        plt.close('all')
 
     def test_draw_run_sims(self):
         self.clear_sims()
