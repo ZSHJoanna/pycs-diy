@@ -51,7 +51,7 @@ Here is an example script running the two methods. We assume that you've defined
 	
 Parallel computing
 ------------------
-You will probably need more than 500 mock curves to have reliable estimates of the uncertainties. To speed up the computation, you can launch several identical "calls" to this multirun function (for instance simply by launching your script on several CPUs), and this will indeed process the pkl files in parallel. For this to work, the ``multirun`` function stores a temporary file in its results directory as soon as it starts working on a pickle file, so that other scripts know that they should not run on this same pkl file as well. You can see those temporary files, of course. If something goes wrong and they don't get deleted automatically as the script crashed, you might have to remove the ``.workingon`` files by hand, otherwise ``multirun`` will just skip those pkl files.
+You will probably need more than 500 mock curves to have reliable estimates of the uncertainties. To speed up the computation, you can launch several identical "calls" to this ``multirun`` function (for instance simply by launching your script on several CPUs), and this will indeed process the pkl files in parallel. For this to work, the ``multirun`` function stores a temporary file in its results directory as soon as it starts working on a pickle file, so that other scripts know that they should not run on this same pkl file as well. You can see those temporary files, of course. If something goes wrong and they don't get deleted automatically as the script crashed, you might have to remove the ``.workingon`` files by hand, otherwise ``multirun`` will just skip those pkl files.
 
 Here is an example on how you could perform parallel execution of the ``multirun`` function :
 
@@ -74,7 +74,7 @@ Here is an example on how you could perform parallel execution of the ``multirun
 
     nworkers = 8
     kwargs = {} # if your optimiser, i.e. myopt.spl, takes argument you can pass them here.
-    job_args = [(j, "copies", lcs, myopt.spl, kwargs, "spl1", 10.0, "./") for j in range(nworkers)]
+    job_args = [(j, "sim1tsr10", lcs, myopt.spl, kwargs, "spl1", 10.0, "./") for j in range(nworkers)]
     p = Pool(nworkers)
     success_list_copies = p.map(exec_worker_copie_aux, job_args)
 
