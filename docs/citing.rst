@@ -1,25 +1,26 @@
 Citing PyCS3 in a publication
 =============================
 
-To cite PyCS3, we suggest both of the following papers:
+If you want to acknowledge PyCS3 in a publication, we suggest you to cite both the original PyCS paper and the new version of the software presented in the Journal of Open Source Software (JOSS) :
 
 * Tewes et al. 2013
 
   - `COSMOGRAIL XI: Techniques for time delay measurement in presence of microlensing, A&A 553 A120 <http://dx.doi.org/10.1051/0004-6361/201220123>`_.
-  - This paper describes the curve-shifting algorithms of PyCS. 
+  - This paper describes the original curve-shifting algorithms of PyCS.
 
-* Bonvin et al. 2016
 
-  - `COSMOGRAIL XV: Assessing the achievability and precision of time-delay measurements, A&A 585 A88 <http://dx.doi.org/10.1051/0004-6361/201526704>`_.
-  - This paper demonstrates the performance of PyCS on synthetic data from the first Time Delay Challenge.
+* Millon et al. 2020b
 
-If you make use of the automated time-delay measurement pipeline, please cite :
+  - `PyCS3: A Python toolbox for time-delay measurements in lensed quasars, JOSS 5 53 2654 <https://doi.org/10.21105/joss.02654>`_.
+  - This paper briefly describes the functionality of the package
 
-* Millon et al. 2020
+
+If you make use of the automated time-delay measurement pipeline, please also cite :
+
+* Millon et al. 2020a
 
   - `COSMOGRAIL XIX: Time delays in 18 strongly lensed quasars from 15 years of optical monitoring <https://arxiv.org/abs/2002.05736>`_.
-  - This paper presents the automated version of PyCS and apply this technique on large monitoring data set.
-
+  - This paper presents the automated version of PyCS3 and apply this technique on large monitoring data set.
 
 
 

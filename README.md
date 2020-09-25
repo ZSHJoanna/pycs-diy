@@ -6,6 +6,7 @@
 [![coverage report](https://gitlab.com/cosmograil/PyCS3/badges/master/coverage.svg)](https://cosmograil.gitlab.io/PyCS3/coverage/)
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02654/status.svg)](https://doi.org/10.21105/joss.02654)
 
 
 PyCS3 is a software toolbox to estimate time delays between multiple images of gravitationally lensed quasars, developed within the [COSMOGRAIL](http://www.cosmograil.org) collaboration. This is an update of [PyCS](https://github.com/COSMOGRAIL/PyCS), which is no longer maintained. 
