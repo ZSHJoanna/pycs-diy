@@ -7,7 +7,7 @@ Four metrics were selected in the Time-Delay challenge to evaluate the performan
 * the accuracy 
 * the precision 
 * the $`\chi^2`$ 
-* X, the fraction of outliers (with a $`\chi^2`$ > 10). 
+* X, the fraction of estimates without outliers (with a $`\chi^2`$ < 10). 
 
 We recently ran this test pipeline on the first 200 curves of the rung 3 of the TDC1. Those data closely mimics the real Euler light curves in terms of cadence, photometric noise and microlensing. We reproduce here Figure 8 of [Liao et al. (2015)](https://arxiv.org/abs/1409.1254), which summarizes the 4 metrics in one plot : 
 
