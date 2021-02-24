@@ -2,11 +2,13 @@
 Wrapper around Sklearn GP module
 
 """
+import logging
+
 import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import ConstantKernel
 from sklearn.gaussian_process.kernels import RBF, Matern, WhiteKernel, RationalQuadratic
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,9 +26,9 @@ def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, er
     :type covkernel: str
     :param pow: exponent coefficient of the covariance function
     :type pow: float
-    :param amp: amplitude coefficient of the covariance function
+    :param amp: amplitude coefficient of the covariance function (initial value)
     :type amp: float
-    :param scale: characteristic time scale
+    :param scale: characteristic time scale (initial value)
     :type scale: float
     :param errscale: additional scaling of the photometric errors
     :type errscale: float
@@ -51,7 +53,7 @@ def regression(x, y, yerr, covkernel='matern', pow=1.5, amp=1.0, scale=200.0, er
     elif covkernel =="RBF": # RBF is mattern when nu --> inf
         kernel =  ConstantKernel() + amp*RBF(length_scale=scale) + WhiteKernel()
     elif covkernel == "RatQuad": #alpha is the scale mixture parameter
-        kernel = ConstantKernel() + amp*RationalQuadratic(length_scale=scale) + WhiteKernel()
+        kernel = ConstantKernel() + amp*RationalQuadratic(length_scale=scale, alpha=1.0) + WhiteKernel()
     else: # pragma: no cover
         raise RuntimeError("I do not know the covariance kernel you gave me ! %s" % covkernel)
     obs_v *= errscale

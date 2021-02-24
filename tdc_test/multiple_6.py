@@ -1,15 +1,17 @@
 # coding=utf-8
 
-import sys 
-import os
 import argparse as ap
+import os
 import pickle
+import re
+import sys
+
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
-import re
+
 
 def compute_SNR(number: int, name: str, name_type: str, work_dir: str):
 	"""
@@ -445,11 +447,11 @@ def plot_precision(sample_name: str, data: Data, figure_directory: str):
 	"""
 	fig, ax = plt.subplots()
 	precision=data.precision()*100
-	mu_prec, std_prec =np.mean(precision), np.std(precision)
+	mu_prec, std_prec =np.median(precision), np.std(precision)
 	ax.hist(precision, bins=50, label = 'Simulations')
 	p16=np.percentile(precision, 16)
 	p84=np.percentile(precision, 84)
-	ax.plot([mu_prec, mu_prec], ax.get_ylim(), 'r', linewidth=2, label = 'mean = %.2f' % mu_prec)
+	ax.plot([mu_prec, mu_prec], ax.get_ylim(), 'r', linewidth=2, label = 'median = %.2f' % mu_prec)
 	ax.autoscale(False)
 	ax.plot([p16, p16], ax.get_ylim(), '--k', linewidth=2, label = '16th percentile = %.2f' % p16)
 	ax.plot([p84, p84], ax.get_ylim(), '-.k', linewidth=2, label = '84th percentile = %.2f' % p84)
@@ -473,10 +475,10 @@ def plot_accuracy(sample_name: str, data: Data, figure_directory: str):
 	fig, ax = plt.subplots()
 	accuracy=data.accuracy()*100
 	ax.hist(accuracy, bins=50, label = 'Simulations')
-	mu_acc, std_acc =np.mean(accuracy), np.std(accuracy)
+	mu_acc, std_acc =np.median(accuracy), np.std(accuracy)
 	p16=np.percentile(accuracy, 16)
 	p84=np.percentile(accuracy, 84)
-	ax.plot([mu_acc, mu_acc], ax.get_ylim(), 'r', linewidth=2, label = 'mean = %.2f' % mu_acc)
+	ax.plot([mu_acc, mu_acc], ax.get_ylim(), 'r', linewidth=2, label = 'median = %.2f' % mu_acc)
 	ax.autoscale(False)
 	ax.plot([p16, p16], ax.get_ylim(), '--k', linewidth=2, label = '16th percentile = %.2f' % p16)
 	ax.plot([p84, p84], ax.get_ylim(), '-.k', linewidth=2, label = '84th percentile = %.2f' % p84)
@@ -500,10 +502,10 @@ def plot_chi2(sample_name: str, data: Data, figure_directory: str):
 	fig, ax = plt.subplots()
 	chi2=data.chi2()
 	ax.hist(chi2, bins=50, label = 'Simulations')
-	mu_chi2, std_chi2 =np.mean(chi2), np.std(chi2)
+	mu_chi2, std_chi2 =np.median(chi2), np.std(chi2)
 	p16=np.percentile(chi2, 16)
 	p84=np.percentile(chi2, 84)
-	ax.plot([mu_chi2, mu_chi2], ax.get_ylim(), 'r', linewidth=2, label = 'mean = %.2f' % mu_chi2)
+	ax.plot([mu_chi2, mu_chi2], ax.get_ylim(), 'r', linewidth=2, label = 'median = %.2f' % mu_chi2)
 	ax.autoscale(False)
 	ax.plot([p16, p16], ax.get_ylim(), '--k', linewidth=2, label = '16th percentile = %.2f' % p16)
 	ax.plot([p84, p84], ax.get_ylim(), '-.k', linewidth=2, label = '84th percentile = %.2f' % p84)
@@ -794,19 +796,20 @@ def plot_tdc1(Datalist: np.array, sample_name: str, figure_directory: str, compa
 
 def main(name, name_type, number_pair = 1, work_dir = './'): 
 	#load config file
-	sys.path.append("./config/multiple")
+	sys.path.append(os.path.join(work_dir, "config/multiple"))
 	config_multiple_name = __import__("config_multiple_%s"%name)
 	print(config_multiple_name.display_gold)
 	
-	config_directory = work_dir + "config/"
-	multiple_config_directory = config_directory + "multiple/"
-	data_directory = work_dir + "data/"
-	truth_directory = data_directory + "truth/"
-	Simulation_directory = work_dir + "Simulation/"
+	config_directory = os.path.join(work_dir,"config")
+	multiple_config_directory =  os.path.join(config_directory, "multiple")
+	data_directory =  os.path.join(".", "data")
+	truth_directory =  os.path.join(data_directory, "truth")
+	Simulation_directory =  os.path.join(work_dir, "Simulation")
 	dataname = 'ECAM'
-	Simulation_multiple_directory = Simulation_directory + "multiple/" + name + "_double/"
-	figure_directory = Simulation_multiple_directory + "figure/"
-	figure_FS_directory = figure_directory + "FS/"
+	Simulation_multiple_directory = os.path.join(Simulation_directory, "multiple", name + "_double")
+	figure_directory = os.path.join(Simulation_multiple_directory,"figure")
+	figure_FS_directory = os.path.join(figure_directory, "FS")
+
 	if not os.path.exists(Simulation_directory + "multiple/"):
 		print("I will create the multiple simulation directory for you ! ")
 		os.mkdir(Simulation_directory + "multiple/")
@@ -829,7 +832,7 @@ def main(name, name_type, number_pair = 1, work_dir = './'):
 
 	### Get the true time-delays and update it with the sign from the config file
 	truth = []
-	with open(truth_directory + 'truth_' + name + '.txt','r') as f:
+	with open(os.path.join(truth_directory, 'truth_' + name + '.txt'),'r') as f:
 		Lines=f.readlines()
 		i=0
 		for line in Lines :
