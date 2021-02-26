@@ -13,11 +13,10 @@ import sys
 import time
 
 import numpy as np
-from multiprocess import Pool, cpu_count
-
 import pycs3.gen.lc_func
 import pycs3.gen.util
 import pycs3.sim.run
+from multiprocess import Pool, cpu_count
 
 loggerformat='PID %(process)06d | %(asctime)s | %(levelname)s: %(name)s(%(funcName)s): %(message)s'
 logging.basicConfig(format=loggerformat,level=logging.WARNING)
@@ -120,6 +119,7 @@ def main(lensname, dataname, work_dir='./'):
                             in
                             range(nworkers)]
                         success_list_copies = p.map(exec_worker_copie_aux, job_args)
+                        p.join()
 
                     elif config.simoptfctkw == "regdiff":
                         if a == 0 and b == 0:  # for copies, run on only 1 (knstp,mlknstp) as it the same for others
@@ -149,6 +149,7 @@ def main(lensname, dataname, work_dir='./'):
                         success_list_simu = [success_list_simu]# p.map(exec_worker_copie_aux, job_args)
                     """
                     success_list_simu = p.map(exec_worker_mocks_aux, job_args)
+                    p.join()
                     f.write('SIMULATIONS, kn%i, %s%i, optimiseur %s : \n' % (kn, string_ML, ml, kwargs['name']))
                     write_report_optimisation(f, success_list_simu)
                     f.write('################### \n')
