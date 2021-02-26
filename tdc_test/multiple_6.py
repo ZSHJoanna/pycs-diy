@@ -858,7 +858,7 @@ def main(name, name_type, number_pair = 1, work_dir = './'):
 	print('####'.center(80,'#'))
 	print(" Loading the data for the full sample. ".center(80,'#'))
 	print('####'.center(80,'#'))
-	FS_Datalist = load_Datalist('FS', truth, FSlist, name, name_type, number_pair)
+	FS_Datalist = load_Datalist('FS', truth, FSlist, name, name_type, number_pair, work_dir=work_dir)
 	list_Datalist = [FS_Datalist]
 	if (config_multiple_name.display_delay == True):
 		for data in FS_Datalist : plot_delay("FS", data, figure_FS_directory)
@@ -885,7 +885,7 @@ def main(name, name_type, number_pair = 1, work_dir = './'):
 		print('####'.center(80,'#'))
 		print(" Loading the data for the silver sample. ".center(80,'#'))
 		print('####'.center(80,'#'))
-		SS_Datalist = load_Datalist('SS', truth, SSlist, name, name_type, number_pair)
+		SS_Datalist = load_Datalist('SS', truth, SSlist, name, name_type, number_pair, work_dir=work_dir)
 		list_Datalist.append(SS_Datalist)
 		if (config_multiple_name.display_delay == True):
 			for data in SS_Datalist : plot_delay("SS", data, figure_SS_directory)
@@ -910,7 +910,7 @@ def main(name, name_type, number_pair = 1, work_dir = './'):
 		print('####'.center(80,'#'))
 		print(" Loading the data for the golden sample. ".center(80,'#'))
 		print('####'.center(80,'#'))
-		GS_Datalist = load_Datalist('GS', truth, GSlist, name, name_type, number_pair)	
+		GS_Datalist = load_Datalist('GS', truth, GSlist, name, name_type, number_pair, work_dir=work_dir)
 		list_Datalist.append(SS_Datalist)
 		if (config_multiple_name.display_delay == True):
 			for data in GS_Datalist : plot_delay("GS", data, figure_GS_directory)
