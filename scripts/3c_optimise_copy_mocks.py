@@ -119,6 +119,7 @@ def main(lensname, dataname, work_dir='./'):
                             in
                             range(nworkers)]
                         success_list_copies = p.map(exec_worker_copie_aux, job_args)
+                        p.close()
                         p.join()
 
                     elif config.simoptfctkw == "regdiff":
@@ -149,6 +150,7 @@ def main(lensname, dataname, work_dir='./'):
                         success_list_simu = [success_list_simu]# p.map(exec_worker_copie_aux, job_args)
                     """
                     success_list_simu = p.map(exec_worker_mocks_aux, job_args)
+                    p.close()
                     p.join()
                     f.write('SIMULATIONS, kn%i, %s%i, optimiseur %s : \n' % (kn, string_ML, ml, kwargs['name']))
                     write_report_optimisation(f, success_list_simu)
