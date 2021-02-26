@@ -810,9 +810,9 @@ def main(name, name_type, number_pair = 1, work_dir = './'):
 	figure_directory = os.path.join(Simulation_multiple_directory,"figure")
 	figure_FS_directory = os.path.join(figure_directory, "FS")
 
-	if not os.path.exists(Simulation_directory + "multiple/"):
+	if not os.path.exists(os.path.join(Simulation_directory, "multiple")):
 		print("I will create the multiple simulation directory for you ! ")
-		os.mkdir(Simulation_directory + "multiple/")
+		os.mkdir(os.path.join(Simulation_directory, "multiple"))
 	if not os.path.exists(Simulation_multiple_directory):
 		os.mkdir(Simulation_multiple_directory)
 	if not os.path.exists(figure_directory):
