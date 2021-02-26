@@ -248,14 +248,14 @@ def create_Data(data_name: str, path: str, full_truth: np.array, sample: np.arra
     :type	work_dir: string
     :param	work_dir: directory you're currently working in
 	"""
-	Simulation_directory = work_dir + "Simulation/"
+	Simulation_directory = os.path.join(work_dir, "Simulation")
 	lens_name = []
 	median = []
 	error_up = []
 	error_down = []	
 	for i in sample:
 		lens_name.append(name + '_' + name_type + '_' + 'pair%i'%i)
-		tmp = pickle.load(open(Simulation_directory + lens_name[-1] + "_ECAM" + path,'rb'))
+		tmp = pickle.load(open(os.path.join(Simulation_directory, lens_name[-1] + "_ECAM" + path),'rb'))
 		median.append(tmp.medians[0])
 		error_up.append(tmp.errors_up[0])
 		error_down.append(tmp.errors_down[0])
@@ -292,8 +292,8 @@ def load_Datalist(sample_name: str, full_truth: np.array, samplelist: np.array, 
     :param	work_dir: directory you're currently working in
 	"""
 	#path of the different marginalisation
-	Simulation_directory = work_dir + "Simulation/"	
-	Simulation_multiple_directory = Simulation_directory + "multiple/" + name + "_double/"
+	Simulation_directory = os.path.join(work_dir, "Simulation")
+	Simulation_multiple_directory = os.path.join(Simulation_directory, "multiple", name + "_double")
 	path_spl_sigma_0 = "/marginalisation_spline/marginalisation_spline_sigma_0.00_combined.pkl"
 	path_spl_sigma_05 = "/marginalisation_spline/marginalisation_spline_sigma_0.50_combined.pkl"
 	path_spl_sigma_1000 = "/marginalisation_spline/marginalisation_spline_sigma_1000.00_combined.pkl"
@@ -306,17 +306,17 @@ def load_Datalist(sample_name: str, full_truth: np.array, samplelist: np.array, 
 	path_regdiff_sigma_1000 = "/marginalisation_regdiff/marginalisation_regdiff_sigma_1000.00_combined.pkl"
 	path_both_baseline = "/marginalisation_final/marginalisation_final_sigma_0.00_combined.pkl"
 	#create the data
-	spl_sigma_0 = create_Data("spline marg (sigma = 0)", path_spl_sigma_0, full_truth, samplelist[0], name, name_type)
-	spl_sigma_05 = create_Data("spline marg (sigma = 0.5)", path_spl_sigma_05, full_truth, samplelist[1], name, name_type)
-	spl_sigma_1000 = create_Data("spline marg (sigma = 1000)", path_spl_sigma_1000, full_truth, samplelist[2], name, name_type)
-	regdiff_set1 = create_Data("regdiff (set 1)", path_regdiff_set1, full_truth, samplelist[3], name, name_type)
-	regdiff_set2 = create_Data("regdiff (set 2)", path_regdiff_set2, full_truth, samplelist[4], name, name_type)
-	regdiff_set3 = create_Data("regdiff (set 3)", path_regdiff_set3, full_truth, samplelist[5], name, name_type)
-	regdiff_set4 = create_Data("regdiff (set 4)", path_regdiff_set4, full_truth, samplelist[6], name, name_type)
-	regdiff_sigma_0 = create_Data("regdiff marg (sigma = 0)", path_regdiff_sigma_0, full_truth, samplelist[7], name, name_type)
-	regdiff_sigma_05 = create_Data("regdiff marg (sigma = 0.5)", path_regdiff_sigma_05, full_truth, samplelist[8], name, name_type)
-	regdiff_sigma_1000 = create_Data("regdiff marg (sigma = 1000)", path_regdiff_sigma_1000, full_truth, samplelist[9], name, name_type)
-	both_baseline = create_Data("marg spline-regdiff (baseline)", path_both_baseline, full_truth, samplelist[10], name, name_type)
+	spl_sigma_0 = create_Data("spline marg (sigma = 0)", path_spl_sigma_0, full_truth, samplelist[0], name, name_type, work_dir=work_dir)
+	spl_sigma_05 = create_Data("spline marg (sigma = 0.5)", path_spl_sigma_05, full_truth, samplelist[1], name, name_type, work_dir=work_dir)
+	spl_sigma_1000 = create_Data("spline marg (sigma = 1000)", path_spl_sigma_1000, full_truth, samplelist[2], name, name_type, work_dir=work_dir)
+	regdiff_set1 = create_Data("regdiff (set 1)", path_regdiff_set1, full_truth, samplelist[3], name, name_type, work_dir=work_dir)
+	regdiff_set2 = create_Data("regdiff (set 2)", path_regdiff_set2, full_truth, samplelist[4], name, name_type, work_dir=work_dir)
+	regdiff_set3 = create_Data("regdiff (set 3)", path_regdiff_set3, full_truth, samplelist[5], name, name_type, work_dir=work_dir)
+	regdiff_set4 = create_Data("regdiff (set 4)", path_regdiff_set4, full_truth, samplelist[6], name, name_type, work_dir=work_dir)
+	regdiff_sigma_0 = create_Data("regdiff marg (sigma = 0)", path_regdiff_sigma_0, full_truth, samplelist[7], name, name_type, work_dir=work_dir)
+	regdiff_sigma_05 = create_Data("regdiff marg (sigma = 0.5)", path_regdiff_sigma_05, full_truth, samplelist[8], name, name_type, work_dir=work_dir)
+	regdiff_sigma_1000 = create_Data("regdiff marg (sigma = 1000)", path_regdiff_sigma_1000, full_truth, samplelist[9], name, name_type, work_dir=work_dir)
+	both_baseline = create_Data("marg spline-regdiff (baseline)", path_both_baseline, full_truth, samplelist[10], name, name_type, work_dir=work_dir)
 	
 	'''
 	# split the sample in 2 : high SNR and low SNR
