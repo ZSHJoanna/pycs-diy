@@ -10,6 +10,7 @@ import os
 import pickle as pkl
 import sys
 
+import matplotlib.style
 import numpy as np
 
 import pycs3.tdcomb.comb
@@ -17,6 +18,9 @@ import pycs3.tdcomb.plot
 
 loggerformat='%(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
+
+matplotlib.style.use('classic')
+matplotlib.rc('font', family="Times New Roman")
 
 
 def main(lensname, dataname, work_dir='./'):
@@ -153,19 +157,21 @@ def main(lensname, dataname, work_dir='./'):
 
     if ncurve > 2:
         auto_radius = True
+        figsize = (17,13)
     else:
         auto_radius = False
+        figsize = (15, 10)
 
     if config.display:
         pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text, hidedetails=True,
-                                  showbias=False, showran=False, showlegend=True, figsize=(15, 10),
+                                  showbias=False, showran=False, showlegend=True, figsize=figsize,
                                   horizontaldisplay=False, legendfromrefgroup=False, auto_radius=auto_radius,
                                   tick_step_auto=True)
 
     pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
                               autoobj=config.lcs_label,
                               hidedetails=True, showbias=False, showran=False, showlegend=True, auto_radius=auto_radius,
-                              figsize=(15, 10), horizontaldisplay=False, legendfromrefgroup=False, tick_step_auto=True,
+                              figsize=figsize, horizontaldisplay=False, legendfromrefgroup=False, tick_step_auto=True,
                               filename=indiv_marg_dir + config.name_marg_spline + "_sigma_%2.2f.png" % config.sigmathresh)
 
     pkl.dump(group_list,

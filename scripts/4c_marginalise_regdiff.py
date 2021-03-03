@@ -11,6 +11,7 @@ import os
 import pickle as pkl
 import sys
 
+import matplotlib.style
 import numpy as np
 
 import pycs3.pipe.pipe_utils as ut
@@ -19,6 +20,9 @@ import pycs3.tdcomb.plot
 
 loggerformat='%(message)s'
 logging.basicConfig(format=loggerformat,level=logging.INFO)
+
+matplotlib.style.use('classic')
+matplotlib.rc('font', family="Times New Roman")
 
 
 def main(lensname, dataname, work_dir='./'):
@@ -183,19 +187,21 @@ def main(lensname, dataname, work_dir='./'):
 
             if ncurve > 2:
                 auto_radius = True
+                figsize = (17, 13)
             else:
                 auto_radius = False
+                figsize = (15, 10)
 
             if config.display:
                 pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined,
                                           text=text, hidedetails=True, showbias=False, showran=False,
                                           tick_step_auto=True, autoobj=config.lcs_label,
-                                          showlegend=True, figsize=(15, 10), horizontaldisplay=False,
+                                          showlegend=True, figsize=figsize, horizontaldisplay=False,
                                           legendfromrefgroup=False, auto_radius=auto_radius)
 
             pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
                                       hidedetails=True, tick_step_auto=True, autoobj=config.lcs_label,
-                                      showbias=False, showran=False, showlegend=True, figsize=(15, 10),
+                                      showbias=False, showran=False, showlegend=True, figsize=figsize,
                                       horizontaldisplay=False, auto_radius=auto_radius,
                                       legendfromrefgroup=False,
                                       filename=indiv_marg_dir + config.name_marg_regdiff + "_%s_%s.png" % (

@@ -2,13 +2,14 @@
 Plot functions. Now replacing delayplot function of sim.plot module.
 """
 
+import logging
 import math
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MultipleLocator
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,7 +19,7 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
               wspace=0.10, hspace=0.15, txtstep=0.03, majorticksstep=2, filename=None, refgroup=None,
               legendfromrefgroup=False, centerdelays=None, ymin=0.2, hlines=None, blindness=False,
               horizontaldisplay=False, showxlabelhd=True, update_group_style=True, auto_radius=False,
-              tick_step_auto=True, legendx=0.85, legendy_offset=0.12, hide_technical_name=False, xlabelfontsize=25):
+              tick_step_auto=True, legendx=0.85, legendy_offset=0.12, hide_technical_name=False, xlabelfontsize=22):
     """
     Plots delay measurements from different methods, telescopes, sub-curves, etc in one single plot.
     For this I use only ``Group`` objects, i.e. I don't do any "computation" myself. I can of course handle asymmetric errors.
@@ -221,7 +222,7 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
 
             # General esthetics :
             if tick_step_auto:
-                majorticksstep = max(2.0, int(rplot / 5.0))
+                majorticksstep = max(3.0, int(rplot / 5.0))
             ax.get_yaxis().set_ticks([])
             minorlocator = MultipleLocator(1.0)
             majorlocator = MultipleLocator(majorticksstep)
