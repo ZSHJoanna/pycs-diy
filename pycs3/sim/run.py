@@ -475,9 +475,10 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
         # We remove the lock for this pkl file.
         # If the files does not exist we stop !
         if not os.path.exists(workingonfilepath):
-            logger.warning("WORKINGON FILE REMOVED !")
+            logger.warning("WORKINGON FILE : %s REMOVED !"%workingonfilepath)
             # raise RuntimeError('Workingon file has been removed during the optimisation.')
         else:
+            logger.info("REMOVING : %s !" %workingonfilepath)
             os.remove(workingonfilepath)
 
     return success_dic

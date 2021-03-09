@@ -27,7 +27,7 @@ def exec_worker_copie_aux(args):
 
 def exec_worker_copie(i, simset_copy, lcs, simoptfct, kwargs_optim, optset, tsrand, destpath):
     print("worker %i starting..." % i)
-    time.sleep(2*i)
+    time.sleep(i)
     sucess_dic = pycs3.sim.run.multirun(simset_copy, lcs, simoptfct, kwargs_optim=kwargs_optim,
                                        optset=optset, tsrand=tsrand, destpath=destpath)
     return sucess_dic
@@ -39,7 +39,7 @@ def exec_worker_mocks_aux(args):
 
 def exec_worker_mocks(i, simset_mock, lcs, simoptfct, kwargs_optim, optset, tsrand, destpath):
     print("worker %i starting..." % i)
-    time.sleep(2*i)
+    time.sleep(i)
     sucess_dic = pycs3.sim.run.multirun(simset_mock, lcs, simoptfct, kwargs_optim=kwargs_optim,
                                        optset=optset, tsrand=tsrand, keepopt=True, destpath=destpath)
     return sucess_dic
