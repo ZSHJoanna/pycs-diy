@@ -9,7 +9,6 @@ import time
 from glob import glob
 
 import numpy as np
-
 import pycs3.gen.lc
 import pycs3.gen.lc_func
 import pycs3.gen.util
@@ -476,8 +475,8 @@ def multirun(simset, lcs, optfct, kwargs_optim, optset="multirun", tsrand=10.0, 
         # We remove the lock for this pkl file.
         # If the files does not exist we stop !
         if not os.path.exists(workingonfilepath):
-            logger.error("WORKINGON FILE REMOVED -> I STOP HERE")
-            raise RuntimeError('Workingon file has been removed during the optimisation.')
+            logger.warning("WORKINGON FILE REMOVED !")
+            # raise RuntimeError('Workingon file has been removed during the optimisation.')
         else:
             os.remove(workingonfilepath)
 
