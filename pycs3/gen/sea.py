@@ -6,8 +6,11 @@ And as such lists of seasons are so common, there are a few functions below that
 
 
 """
-
 import logging
+
+import numpy as np
+from pycs3.gen.lc import LightCurve
+
 logger = logging.getLogger(__name__)
 
 class Season:
@@ -51,13 +54,13 @@ class Season:
 
         if type(self.indices).__name__ != "ndarray":
             raise RuntimeError("A seasons indices must be an array !")
-        if self.indices.dtype != dtype('int'):
+        if self.indices.dtype != np.dtype('int'):
             raise RuntimeError("A seasons indices must be an array of ints !")
 
         if len(self.indices) > 1:
             first = self.indices[:-1]
             second = self.indices[1:]
-            if not alltrue(less_equal(first, second)):  # this is very fast, better than a loop
+            if not np.alltrue(np.less_equal(first, second)):  # this is very fast, better than a loop
                 raise RuntimeError("A season must be sorted !")
             if self.indices[-1] - self.indices[0] + 1 != len(self.indices):
                 logger.warning("WARNING : your season has holes !?")
@@ -105,19 +108,19 @@ def autofactory(l, seasongap=60, tpe='seas'):
     :return: list of season objects.
 
     """
-    # if not isinstance(l, LightCurve): # pragma: no cover
-    #     raise RuntimeError("Please give me a lightcurve, not something else.", type(l))
+    if not isinstance(l, LightCurve): # pragma: no cover
+        raise RuntimeError("Please give me a lightcurve, not something else.", type(l))
 
     # we find the indices just before season gaps
     tempjds = l.getjds()
     first = tempjds[:-1]
     second = tempjds[1:]
-    gapindices = where(second - first > seasongap)[0] + 1
+    gapindices = np.where(second - first > seasongap)[0] + 1
 
     # make one big vector of all the indices :
-    indices = arange(len(tempjds))
+    indices = np.arange(len(tempjds))
     # split it according to the gaps :
-    indexlist = hsplit(indices, gapindices)
+    indexlist = np.hsplit(indices, gapindices)
     seasons = [Season(ind, "a%i" % (i + 1)) for (i, ind) in enumerate(indexlist)]
 
     # seasonlengths = [len(season) for season in returnlist]
@@ -147,11 +150,11 @@ def autofactory(l, seasongap=60, tpe='seas'):
             beg.append(sea.getjdlims(l)[0])
             end.append(sea.getjdlims(l)[1])
 
-        for ind in arange(len(seasons) - 1):
+        for ind in np.arange(len(seasons) - 1):
             begint.append(end[ind])
             endint.append(beg[ind + 1])
 
-        for ind in arange(len(seasons) - 1):
+        for ind in np.arange(len(seasons) - 1):
             intsea.append((begint[ind], endint[ind]))
 
         return intsea
@@ -175,10 +178,10 @@ def manfactory(lc, jdranges):
     """
 
     returnlist = []
-    indices = arange(len(lc.jds))
+    indices = np.arange(len(lc.jds))
     tempjds = lc.getjds()
     for i, jdrange in enumerate(jdranges):
-        seasindices = indices[logical_and(tempjds > jdrange[0], tempjds < jdrange[1])]
+        seasindices = indices[np.logical_and(tempjds > jdrange[0], tempjds < jdrange[1])]
         if len(seasindices) == 0: # pragma: no cover
             raise RuntimeError("Empty seasons, check your ranges !")
         newseas = Season(seasindices, "m%i" % (i + 1))
@@ -211,7 +214,7 @@ def validateseasons(seasons):
 
     # Now some higher level properties :
 
-    allindices = concatenate([s.indices for s in seasons])
+    allindices = np.concatenate([s.indices for s in seasons])
     if len(allindices) != len(list(set(list(allindices)))): # pragma: no cover
         raise RuntimeError("No overlapping seasons please !")
 
