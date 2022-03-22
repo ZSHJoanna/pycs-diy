@@ -211,12 +211,18 @@ def runstest(residuals, autolevel=False, verbose=True):
     return {"zruns": zruns, "pruns": pruns, "nruns": nruns}
 
 
-def subtract(lcs, spline):
+def subtract(lcs, model):
     """
+
     I return a list of residual light curves ("lcs - spline").
     Technically, "residual" light curves are nothing but normal lightcurves objects.
     Of course, I take into account any shifts or microlensing of your lcs.
     I do not modify my input arguments.
+
+    :param lcs: grid to interpolate
+    :param model: a Spline or a Rslc object, that have a eval() method
+    :return: array, containing the interpolated values
+
     """
 
     rls = []
@@ -233,7 +239,7 @@ def subtract(lcs, spline):
         if lp.ml is not None:
             lp.applyml()
 
-        lp.mags -= spline.eval(lp.getjds())
+        lp.mags -= model.eval(lp.getjds())
 
         rls.append(lp)
 

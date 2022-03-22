@@ -2,6 +2,7 @@
 Module containing the function related to LightCurve operation
 It contains light curves plotting routine, and all function that operate on a *list* of LightCurve
 """
+import copy
 import logging
 import operator
 import os
@@ -10,7 +11,6 @@ import random
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from pycs3.gen.lc import LightCurve
 from pycs3.gen.util import datetimefromjd
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 # Factory functions : give me some stuff and I make a lightcurve object from this.
-def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", verbose=False):
+def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", properties=None, verbose=False):
     """Returns a valid lightcurve object from the provided arrays.
     The numpy arrays jds and mags are mandatory. If you do not specify a third array containing the magerrs,
     we will calculate them "automatically" (all the same value), to avoid having 0.0 errors.
@@ -35,6 +35,8 @@ def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", 
     :param object: name of the astronomical object
     :type verbose: bool
     :param verbose: verbosity of the function
+    :type properties: list of dictionnary
+    :param properties: list of dictionnary containing the properties of the light curves (airmass, instrument, ect...)
 
     :return: LightCurve
     :rtype: :class:`pycs3.gen.lc.LightCurve`
@@ -58,7 +60,10 @@ def factory(jds, mags, magerrs=None, telescopename="Unknown", object="Unknown", 
 
     newlc.mask = newlc.magerrs >= 0.0  # This should be true for all !
 
-    newlc.properties = [{}] * len(newlc.jds)
+    if properties is None :
+        newlc.properties = [{}] * len(newlc.jds)
+    else :
+        newlc.properties = properties
 
     newlc.telescopename = telescopename
     newlc.object = object
@@ -1203,3 +1208,44 @@ def find_closest(a, x):
     """
 
     return np.min(np.abs(x - a)), np.argmin(np.abs(x - a))
+
+def cut_lcs(lc_in, min_date, max_date):
+    """
+    Return a copy of the truncated light curve
+
+    :param lc: input LightCurve object
+    :param min_date: float
+    :param max_date: float
+    :return:
+    """
+
+    lc_out = copy.deepcopy(lc_in)
+    lc_out.mags = lc_out.mags[np.logical_and(lc_out.jds < max_date, min_date < lc_out.jds)]
+    lc_out.magerrs = lc_out.magerrs[np.logical_and(lc_out.jds < max_date, min_date < lc_out.jds)]
+    lc_out.mask= lc_out.mask[np.logical_and(lc_out.jds < max_date, min_date < lc_out.jds)]
+    #properties is a list and not a numpy array :
+    lc_out.properties=[lc_out.properties[i] for i,x in enumerate(lc_out.jds) if x > min_date and  x < max_date]
+    lc_out.labels =[lc_out.labels[i] for i,x in enumerate(lc_out.jds) if x > min_date and  x < max_date]
+    lc_out.jds = lc_out.jds[np.logical_and(lc_out.jds < max_date, min_date < lc_out.jds)]
+
+    return lc_out
+
+def select_epochs(lc_in, array_index):
+    """
+    Select only certain epoch given in the array_index
+
+    :param lc: LightCurve object
+    :param array_index: numpy array containing the indices of the selected points
+    :return:
+    """
+
+    lc_out = copy.deepcopy(lc_in)
+    lc_out.mags = lc_out.mags[array_index]
+    lc_out.magerrs = lc_out.magerrs[array_index]
+    lc_out.mask= lc_out.mask[array_index]
+    #properties is a list and not a numpy array :
+    lc_out.properties=[lc_out.properties[i] for i,x in enumerate(lc_out.jds) if i in array_index]
+    lc_out.labels =[lc_out.labels[i] for i,x in enumerate(lc_out.jds) if i in array_index]
+    lc_out.jds = lc_out.jds[array_index]
+
+    return lc_out

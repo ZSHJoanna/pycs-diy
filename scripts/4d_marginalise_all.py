@@ -9,7 +9,6 @@ import pickle as pkl
 import sys
 
 import matplotlib.style
-
 import pycs3.tdcomb.comb
 import pycs3.tdcomb.plot
 
@@ -68,6 +67,7 @@ def main(lensname, dataname, work_dir='./'):
         bottom = 0.08
         legendy_offset = 0.14
         for g in group_list + [combined]:
+            g.markersize = 8
             g.labelfontsize = 18
             g.legendfontsize = 16
         txtstep = 0.03
@@ -78,6 +78,7 @@ def main(lensname, dataname, work_dir='./'):
         figsize = (12, 9)
         bottom = 0.15
         for g in group_list + [combined]:
+            g.markersize = 8
             g.labelfontsize = 26
             g.legendfontsize = 20
         legendy_offset = 0.15

@@ -7,8 +7,6 @@ And as such lists of seasons are so common, there are a few functions below that
 
 """
 
-from numpy import *
-from pycs3.gen.lc import LightCurve
 import logging
 logger = logging.getLogger(__name__)
 
@@ -107,8 +105,8 @@ def autofactory(l, seasongap=60, tpe='seas'):
     :return: list of season objects.
 
     """
-    if not isinstance(l, LightCurve): # pragma: no cover
-        raise RuntimeError("Please give me a lightcurve, not something else.")
+    # if not isinstance(l, LightCurve): # pragma: no cover
+    #     raise RuntimeError("Please give me a lightcurve, not something else.", type(l))
 
     # we find the indices just before season gaps
     tempjds = l.getjds()

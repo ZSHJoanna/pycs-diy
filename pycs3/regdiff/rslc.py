@@ -6,9 +6,9 @@ import copy as pythoncopy
 import logging
 
 import numpy as np
-import scipy.optimize as spopt
-
 import pycs3.regdiff.scikitgp as scikitgp
+import scipy.interpolate as si
+import scipy.optimize as spopt
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class Rslc:
     There is no "microlensing" or similar stuff -- only time shifts.
     """
 
-    def __init__(self, jds, mags, magerrs, pad, pd, timeshift=0.0, name="Name", plotcolour="black"):
+    def __init__(self, jds, mags, magerrs, pad, pd, timeshift=0.0, magshift = 0.0, name="Name", plotcolour="black"):
 
         self.jds = jds
         self.mags = mags
@@ -29,6 +29,7 @@ class Rslc:
         self.plotcolour = plotcolour
         self.name = name
         self.timeshift = timeshift
+        self.magshift = magshift
         self.pad = pad
         self.pd = pd
 
@@ -91,6 +92,34 @@ class Rslc:
 
         return out
 
+    def eval(self, jds):
+        """
+        Linear interpolation of the magnitude of Rlsc object
+
+        :param jds: grid to interpolate
+        :return: array, containing the interpolated values
+        """
+
+        if np.min(jds) < np.min(self.jds) or np.max(jds) > np.max(self.jds):
+            raise RuntimeError("Sorry, your jds are out of bound !")
+
+        f = si.interp1d(self.jds, self.mags, kind="linear", bounds_error=True)
+        return f(jds)
+
+    def eval_magerrs(self, jds):
+        """
+        Linear interpolation of the magnitude errors  Rlsc object
+
+        :param jds: grid to interpolate
+        :return: array, containing the interpolated magerrs values
+        """
+
+        if np.min(jds) < np.min(self.jds) or np.max(jds) > np.max(self.jds):
+            raise RuntimeError("Sorry, your jds are out of bound !")
+
+        f = si.interp1d(self.jds, self.magerrs, kind="linear", bounds_error=True)
+        return f(jds)
+
 
 def factory(l, pad=300., pd=2., plotcolour=None, covkernel="matern", pow=1.5, amp=1.0, scale=200.0, errscale=1.0):
     """
@@ -151,7 +180,7 @@ def factory(l, pad=300., pd=2., plotcolour=None, covkernel="matern", pow=1.5, am
                                              amp=amp, scale=scale,errscale=errscale)
     """
 
-    (rsmags, rsmagerrs) = regfct(rsjds)  # that fucker does not want to be executed in a multiprocessing loop. Why ?
+    (rsmags, rsmagerrs) = regfct(rsjds)
 
     return Rslc(rsjds, rsmags, rsmagerrs, pad, pd, timeshift=timeshift, name=name, plotcolour=plotcolour)
 
@@ -196,7 +225,6 @@ def subtract(rs1, rs2):
     newmagerrs = newmagerrs[nanmask == False]
 
     return Rslc(newjds, newmags, newmagerrs, newpad, newpd, timeshift=0.0, name=newname, plotcolour="black")
-
 
 def wtvdiff(rs1, rs2, method):
     """

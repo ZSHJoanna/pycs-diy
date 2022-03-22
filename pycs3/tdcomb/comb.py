@@ -10,7 +10,6 @@ import os
 import pickle as pkl
 
 import numpy as np
-
 import pycs3.gen.util
 
 logger = logging.getLogger(__name__)
@@ -670,7 +669,7 @@ def group_estimate(path_list, name_list = None, colors=None, sigma_thresh=0, new
     combined.linearize(testmode=testmode)
     combined.name = 'Combined ($\\tau_{thresh} = %2.1f$)' % sigma_thresh
     combined.plotcolor = 'black'
-    logger.info("Final combination for marginalisation ", new_name_marg)
+    logger.info("Final combination for marginalisation %s"%new_name_marg)
     combined.niceprint()
 
     return group_list, combined

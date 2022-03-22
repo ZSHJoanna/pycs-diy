@@ -200,4 +200,4 @@ if __name__ == '__main__':
                         metavar='', action='store', default='./',
                         help=help_work_dir)
     args = parser.parse_args()
-    main(args.lensname, args.dataname, work_dir=args.work_dir)
+    main(args.lensname, args.dataname, work_dir = args.work_dir)

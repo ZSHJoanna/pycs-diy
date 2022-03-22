@@ -2,11 +2,12 @@
 Module containing all we need to manipulate lightcurves. Could ideally be used by all our curve-shifting algorithms.
 """
 import copy as pythoncopy
+import logging
 from functools import reduce
 
 import numpy as np
 from pycs3.gen.util import readidlist
-import logging
+
 logger = logging.getLogger(__name__)
 
 class LightCurve:
@@ -434,6 +435,20 @@ class LightCurve:
         self.commentlist.append("CAUTION : magshift of %f APPLIED" % self.magshift)
         self.magshift = 0.0  # as this is now applied.
 
+    def applytimeshift(self):
+        """
+        It adds the timeshift-float to the present jds, then puts this timeshift-float to 0. So that "nothing" changes as seen from
+        the outside.
+        Needless to say, use this CAREFULLY, only if it really makes sense for what you want to do.
+
+        Note that we do not touch microlensing here, it remains in place and does not change its meaning in any way.
+        you will probably need to refit the microlensing after shifting the curves
+        """
+
+        self.jds += self.timeshift
+        self.commentlist.append("CAUTION : timeshift of %f APPLIED" % self.timeshift)
+        self.timeshift = 0.0  # as this is now applied.
+
     def applyml(self):
         """
         We "add" the microlensing to the actual mags, then remove the microlensing object.
@@ -841,7 +856,7 @@ class LightCurve:
         """
         import csv
 
-        self.validate()  # Good idea to keep this here, as the code below is so ugly ...
+        self.validate() 
 
         if filename is None:  # pragma: no cover
             filename = "%s_%s.rdb" % (self.telescopename, self.object)

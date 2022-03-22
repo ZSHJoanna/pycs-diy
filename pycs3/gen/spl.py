@@ -7,12 +7,13 @@ Some rules of splrep (k = 3)
 """
 
 import copy as pythoncopy
+import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate as si
 import scipy.optimize as spopt
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -683,7 +684,7 @@ class Spline:
 
     # This last line also updates self.lastr2 ...
 
-    def eval(self, jds=None, nostab=True):
+    def eval(self, jds=None, nostab=True, influx = False):
         """
         Evaluates the spline at jds, and returns the corresponding mags-like vector.
         By default, we exclude the stabilization points !
@@ -700,7 +701,10 @@ class Spline:
 
         fitmags = si.splev(jds, (self.t, self.c, self.k))
         # By default ext=0 : we do return extrapolated values
-        return fitmags
+        if influx :
+            return 10**(-fitmags/2.5)
+        else :
+            return fitmags
 
     def display(self, showbounds=True, showdatapoints=True, showerrorbars=True, figsize=(16, 8), filename=None):
         """
