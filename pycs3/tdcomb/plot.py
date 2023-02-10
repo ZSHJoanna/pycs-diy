@@ -316,7 +316,7 @@ def write_delays(group, write_dir=None, mode="GLEE"):
         # rebase bins into a new vector whose values are the middle of the bins
         xs = [(bins[i] + bins[i + 1]) / 2. for i, _ in enumerate(bins[:-1])]
 
-        if mode is "GLEE":
+        if mode == "GLEE":
             # force a positively increasing delays values
             if xs[1] < xs[0]:
                 xs = xs[::-1]
@@ -332,7 +332,7 @@ def write_delays(group, write_dir=None, mode="GLEE"):
 
         # save the data in a txt file for easier use
         f = open(os.path.join(_wd, "%s_%s.txt" % (group.name, label)), "w")
-        if mode is not "GLEE":
+        if mode != "GLEE":
             f.write("Dt\tprob\n")
             f.write("==\t====\n")
         for x, val in zip(xs, vals):
@@ -348,14 +348,14 @@ def write_delays(group, write_dir=None, mode="GLEE"):
         elif len(label) == 4:
             newlabel = label[2:] + label[:2]
 
-        if mode is "GLEE":
+        if mode == "GLEE":
             # force a positively increasing delays values
             if _reverted_xs[1] < _reverted_xs[0]:
                 _reverted_xs = _reverted_xs[::-1]
                 vals = vals[::-1]
 
         f = open(os.path.join(_wd, "%s_%s.txt" % (group.name, newlabel)), "w")
-        if mode is not "GLEE":
+        if mode != "GLEE":
             f.write("Dt\tprob\n")
             f.write("==\t====\n")
         for x, val in zip(_reverted_xs, vals):
