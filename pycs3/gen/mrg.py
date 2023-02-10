@@ -61,12 +61,12 @@ def matchtels(lcsref, lcsmatch, dispersionmethod, fluxshifts=True):
             fluxes = [l.fluxshift for l in lcsmatch]
             fluxpars = 0.01 * np.array(fluxes)
             pars = np.concatenate([np.array([magpar]), fluxpars])
-            logger.info(f"Initial pars : {pars}")
+            logger.info(f"Initial pars : {np.array2string(pars)}")
             return pars
 
         else:
             pars = np.array([magpar])
-            logger.info(f"Initial pars : {pars}")
+            logger.info(f"Initial pars : {np.array2string(pars)}")
             return pars
 
     def errorfct(p):
@@ -94,7 +94,7 @@ def matchtels(lcsref, lcsmatch, dispersionmethod, fluxshifts=True):
     popt = minout[0]  # This might be an array, or a 0-d array. We want an array :
     if popt.shape == ():
         popt = np.array([popt])
-    logger.info(f"Optimal pars : {popt}")
+    logger.info(f"Optimal pars : {np.array2string(popt)}")
     setp(popt, lcsmatch)
 
 

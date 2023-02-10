@@ -145,12 +145,12 @@ def tweakml_PS(lcs, spline, B, f_min = 1/300.0,psplot=False, save_figure_folder 
 
         if verbose :
             logger.info("#############################################")
-            logger.info(f"Light curve {l.object}")
+            logger.info(f"Light curve {str(l.object)}")
             logger.info(f"Time Span of your lightcurve : {span} days")
             logger.info(f"Average sampling of the curve [day] : {sampling}")
             logger.info(f"Nymquist frequency [1/day]: {1 / (sampling * 2.0)}")
-            logger.info(f"min max, lenght frequency of noise: {np.min(freqs_noise), np.max(freqs_noise), len(freqs_noise)}")
-            logger.info(f"min max, lenght frequency of data: {np.min(freqs_data), np.max(freqs_data), len(freqs_data)}")
+            logger.info(f"min max, lenght frequency of noise: {np.min(freqs_noise)}, {np.max(freqs_noise)}, {len(freqs_noise)}")
+            logger.info(f"min max, lenght frequency of data: {np.min(freqs_data)}, {np.max(freqs_data)}, {len(freqs_data)}")
             logger.info(f"Number of samples generated : {samples}")
 
         #generate noise with not the good scaling

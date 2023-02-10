@@ -677,7 +677,7 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
             if verbose:
                 logger.info("-" * 15)
                 logger.info(f"{i} , {j}")
-                logger.info(f"{covdep}, {covindep}")
+                logger.info(f"{np.array2string(covdep)}, {np.array2string(covindep)}")
 
     axinv = bincovplot.add_subplot(ncouples, ncouples, 2, frameon=False)
     axinv.set_xticklabels([])
