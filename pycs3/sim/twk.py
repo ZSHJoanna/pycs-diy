@@ -3,15 +3,18 @@ Top level functions that use the src module to tweak microlensing and source spl
 These are the function to pass them to draw.draw or draw.multidraw.
 """
 
+import logging
+
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.signal as sc
+
 import pycs3.gen.lc
 import pycs3.gen.lc_func
 import pycs3.gen.stat
 import pycs3.sim.power_spec
 import pycs3.sim.src
-import scipy.signal as sc
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -142,13 +145,13 @@ def tweakml_PS(lcs, spline, B, f_min = 1/300.0,psplot=False, save_figure_folder 
 
         if verbose :
             logger.info("#############################################")
-            logger.info("Light curve ", l.object)
-            logger.info("Time Span of your lightcurve : %i days"%span)
-            logger.info("Average sampling of the curve [day] :", sampling)
-            logger.info("Nymquist frequency [1/day]:", 1 / (sampling * 2.0))
-            logger.info("min max, lenght frequency of noise: ", np.min(freqs_noise), np.max(freqs_noise), len(freqs_noise))
-            logger.info("min max, lenght frequency of data: ", np.min(freqs_data), np.max(freqs_data), len(freqs_data))
-            logger.info("Number of samples generated :",samples)
+            logger.info(f"Light curve {l.object}")
+            logger.info(f"Time Span of your lightcurve : {span} days")
+            logger.info(f"Average sampling of the curve [day] : {sampling}")
+            logger.info(f"Nymquist frequency [1/day]: {1 / (sampling * 2.0)}")
+            logger.info(f"min max, lenght frequency of noise: {np.min(freqs_noise), np.max(freqs_noise), len(freqs_noise)}")
+            logger.info(f"min max, lenght frequency of data: {np.min(freqs_data), np.max(freqs_data), len(freqs_data)}")
+            logger.info(f"Number of samples generated : {samples}")
 
         #generate noise with not the good scaling
         band_noise = band_limited_noise_withPS(freqs_data, len(freqs_data)*pgram, samples=samples, samplerate=samplerate) #generate the noie with a PS from the data
@@ -162,8 +165,8 @@ def tweakml_PS(lcs, spline, B, f_min = 1/300.0,psplot=False, save_figure_folder 
         generated_std = pycs3.gen.stat.resistats(noise_lcs_band)['std']
         Amp = target_std / generated_std
         if verbose :
-            logger.info("required amplification :", Amp)
-            logger.info("Additionnal A correction :", A_correction)
+            logger.info(f"required amplification : {Amp}")
+            logger.info(f"Additionnal A correction : {A_correction}")
         band_noise_rescaled = band_limited_noise_withPS(freqs_data, len(freqs_data)* Amp * pgram * A_correction, samples=samples, samplerate=samplerate)
         noise_lcs_rescaled = pycs3.gen.lc.LightCurve()
         noise_lcs_rescaled.jds = x_sample
@@ -172,8 +175,8 @@ def tweakml_PS(lcs, spline, B, f_min = 1/300.0,psplot=False, save_figure_folder 
         #resampling of the generated noise :
         noise_lcs_resampled = pycs3.gen.lc_func.interpolate(rls, noise_lcs_rescaled, interpolate=interpolation)
         if verbose :
-            logger.info("resampled :", pycs3.gen.stat.resistats(noise_lcs_resampled))
-            logger.info("target : ", pycs3.gen.stat.resistats(rls))
+            logger.info(f"resampled : {pycs3.gen.stat.resistats(noise_lcs_resampled)}")
+            logger.info(f"target : {pycs3.gen.stat.resistats(rls)}")
 
 
         source = pycs3.sim.src.Source(ml_spline, name=name, sampling=span/float(samples))

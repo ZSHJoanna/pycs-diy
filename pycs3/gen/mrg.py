@@ -5,9 +5,11 @@ the same curves from telescope Y, without touching the time axis.
 Of course we need overlapping curves to do this.
 """
 
+import logging
+
 import numpy as np
 from scipy.optimize import fmin_powell
-import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -59,12 +61,12 @@ def matchtels(lcsref, lcsmatch, dispersionmethod, fluxshifts=True):
             fluxes = [l.fluxshift for l in lcsmatch]
             fluxpars = 0.01 * np.array(fluxes)
             pars = np.concatenate([np.array([magpar]), fluxpars])
-            logger.info("Initial pars : ", pars)
+            logger.info(f"Initial pars : {pars}")
             return pars
 
         else:
             pars = np.array([magpar])
-            logger.info("Initial pars : ", pars)
+            logger.info(f"Initial pars : {pars}")
             return pars
 
     def errorfct(p):
@@ -92,7 +94,7 @@ def matchtels(lcsref, lcsmatch, dispersionmethod, fluxshifts=True):
     popt = minout[0]  # This might be an array, or a 0-d array. We want an array :
     if popt.shape == ():
         popt = np.array([popt])
-    logger.info("Optimal pars : ", popt)
+    logger.info(f"Optimal pars : {popt}")
     setp(popt, lcsmatch)
 
 

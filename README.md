@@ -4,7 +4,7 @@
 [![Documentation Status](https://cosmograil.gitlab.io/PyCS3/doc_status.svg)](https://cosmograil.gitlab.io/PyCS3/)
 [![pipeline status](https://gitlab.com/cosmograil/PyCS3/badges/master/pipeline.svg)](https://gitlab.com/cosmograil/PyCS3/commits/master)
 [![coverage report](https://gitlab.com/cosmograil/PyCS3/badges/master/coverage.svg)](https://cosmograil.gitlab.io/PyCS3/coverage/)
-[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.02654/status.svg)](https://doi.org/10.21105/joss.02654)
 

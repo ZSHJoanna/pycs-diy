@@ -675,10 +675,9 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
                 covmat[jj][ii] = covindep
 
             if verbose:
-                # I shoud definitely improve that display part...
                 logger.info("-" * 15)
-                logger.info(i, j)
-                logger.info(covdep, covindep)
+                logger.info(f"{i} , {j}")
+                logger.info(f"{covdep}, {covindep}")
 
     axinv = bincovplot.add_subplot(ncouples, ncouples, 2, frameon=False)
     axinv.set_xticklabels([])
@@ -746,7 +745,7 @@ def newcovplot(rrlist, r=6, rerr=3, nbins=10, nbins2d=3, binclip=True, binclipr=
         logger.info("-" * 35)
         logger.info("nbins = %i" % nbins)
         logger.info("indepbins - r = %.1f" % r)
-        logger.info("depbins - r(max-min) =", np.mean(rranges))
+        logger.info("depbins - r(max-min) = %.1f"%np.mean(rranges))
         logger.info("-" * 35)
         logger.info("pair - indepbins - depbins - diff")
         logger.info("-" * 35)
