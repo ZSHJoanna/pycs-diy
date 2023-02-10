@@ -92,21 +92,21 @@ def main(lensname, work_dir='./'):
 
     groups_extra = []
     for i, p in enumerate(path_list_extra):
-        with open(p, 'r') as q:
+        with open(p, 'rb') as q:
             g = pkl.load(q)
             g.name = config.extra_data_sets[i] + "$^*$"
             g.plotcolor = 'green'
             groups_extra.append(g)
     groups_extra_spline = []
     for i, p in enumerate(path_list_extra_spline):
-        with open(p, 'r') as q:
+        with open(p, 'rb') as q:
             g = pkl.load(q)
             g.name = "Spline " + config.extra_data_sets[i] + "$^*$"
             g.plotcolor = 'silver'
             groups_extra_spline.append(g)
     groups_extra_regdiff = []
     for i, p in enumerate(path_list_extra_regdiff):
-        with open(p, 'r') as q:
+        with open(p, 'rb') as q:
             g = pkl.load(q)
             g.name = "Regdiff " + config.extra_data_sets[i] + "$^*$"
             g.plotcolor = 'darkgrey'
@@ -125,12 +125,12 @@ def main(lensname, work_dir='./'):
         legendy_offset = 0.14
     else:
         auto_radius = False
-        xlabelfontsize = 32
+        xlabelfontsize = 28
         figsize = (12, 9)
         bottom = 0.15
         for g in toplot:
-            g.labelfontsize = 24
-            g.legendfontsize = 20
+            g.labelfontsize = 22
+            g.legendfontsize = 14
         legendy_offset = 0.15
         txtstep = 0.035
 
@@ -218,9 +218,8 @@ def main(lensname, work_dir='./'):
     for i, p in enumerate(path_list_spline):
         name_list_all.append("Spline %s" % config.data_sets[i])
 
-    groups_all, sum_all = pycs3.tdcomb.comb.group_estimate(path_list_regdiff + path_list_spline, name_list_all,
-                                                         config.delay_labels,
-                                                         colors, config.sigma_thresh, "Sum", testmode=config.testmode)
+    groups_all, sum_all = pycs3.tdcomb.comb.group_estimate(path_list_regdiff + path_list_spline, name_list =name_list_all,
+                                                         colors=colors, sigma_thresh=config.sigma_thresh, new_name_marg ="Sum", testmode=config.testmode)
     sum_all.name = "Sum"
     sum_all.plotcolor = "black"
     text = [

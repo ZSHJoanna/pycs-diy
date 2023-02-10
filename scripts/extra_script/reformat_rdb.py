@@ -1,7 +1,8 @@
-import os
 import argparse as ap
-import pycs3.gen.util
+import os
+
 import pycs3.gen.lc_func
+import pycs3.gen.util
 
 
 def main(lensname, dataname, magerr, data_dir='../data/'):
@@ -14,15 +15,24 @@ def main(lensname, dataname, magerr, data_dir='../data/'):
     header = header.split('\t')
     lcs = []
 
-    if "mag_A" in header:
-        lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'A', 'mag_A', 'magerr_A_%i' % magerr, dataname))
-    if "mag_B" in header:
-        lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'B', 'mag_B', 'magerr_B_%i' % magerr, dataname))
-    if "mag_C" in header:
-        lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'C', 'mag_C', 'magerr_C_%i' % magerr, dataname))
-    if "mag_D" in header:
-        lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'D', 'mag_D', 'magerr_D_%i' % magerr, dataname))
-
+    try :
+        if "mag_A" in header:
+            lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'A', 'mag_A', 'magerr_A_%i' % magerr, dataname))
+        if "mag_B" in header:
+            lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'B', 'mag_B', 'magerr_B_%i' % magerr, dataname))
+        if "mag_C" in header:
+            lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'C', 'mag_C', 'magerr_C_%i' % magerr, dataname))
+        if "mag_D" in header:
+            lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'D', 'mag_D', 'magerr_D_%i' % magerr, dataname))
+    except Exception as e :
+        if "mag_A" in header:
+            lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'A', 'mag_A', 'magerr_A', dataname))
+        if "mag_B" in header:
+            lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'B', 'mag_B', 'magerr_B', dataname))
+        if "mag_C" in header:
+            lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'C', 'mag_C', 'magerr_C', dataname))
+        if "mag_D" in header:
+            lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, 'D', 'mag_D', 'magerr_D', dataname))
     pycs3.gen.util.multilcsexport(lcs, data_dir + lensname + '_' + dataname + '_reformated.rdb')
 
 

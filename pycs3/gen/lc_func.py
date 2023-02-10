@@ -11,6 +11,8 @@ import random
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+import pycs3.gen.sea
 from pycs3.gen.lc import LightCurve
 from pycs3.gen.util import datetimefromjd
 
@@ -264,7 +266,7 @@ def display(lclist=[], splist=[],
             showdelays=False, nicefont=False, text=None, keeponlygrid=False,
             jdrange=None, magrange=None, figsize=None, plotsize=(0.08, 0.96, 0.09, 0.95), showgrid=False,
             markersize=6, showerrorbars=True, showdatapoints=True, errorbarcolour="#BBBBBB", capsize=3,
-            knotsize=0.015,
+            knotsize=0.015, showmasked = True,
             legendloc="best", showspldp=False, colourprop=None, hidecolourbar=False, transparent=False,
             show_ylabel=True,
             collapseref=False, hidecollapseref=False, jdmintickstep=100, magmintickstep=0.2, filename="screen",
@@ -350,6 +352,9 @@ def display(lclist=[], splist=[],
 
     :param showdatapoints: If False, no data points are shown. Useful if you want e.g. to plot only the microlensing
     :type showerrorbars: bool
+
+    :param showmasked: display the masked point
+    :type showmasked: bool
 
     :param keeponlygrid: If True, keeps the yearly grid from showdates but do not display the dates above the plot.
     :type keeponlygrid: bool
@@ -594,6 +599,12 @@ def display(lclist=[], splist=[],
 
             tmpjds = curve.getjds()
             tmpmags = curve.getmags()  # to avoid calculating the microlensing each time we need it
+            tmpmagerrs = curve.getmagerrs()  # to avoid calculating the microlensing each time we need it
+
+            if not showmasked:
+                tmpjds = tmpjds[curve.mask==True]
+                tmpmags = tmpmags[curve.mask==True]
+                tmpmagerrs = tmpmagerrs[curve.mask==True]
 
             if colourprop is not None:
                 scattervalues = np.array([float(propertydict[colourpropname]) for propertydict in curve.properties])
@@ -602,7 +613,7 @@ def display(lclist=[], splist=[],
                                         edgecolors="None")
             else:
                 if curve.ploterrorbars and showerrorbars:
-                    axes.errorbar(tmpjds, tmpmags, curve.magerrs, fmt=".", markersize=markersize,
+                    axes.errorbar(tmpjds, tmpmags, tmpmagerrs, fmt=".", markersize=markersize,
                                   markeredgecolor=curve.plotcolour, color=curve.plotcolour, ecolor=errorbarcolour,
                                   capsize=capsize, label=str(curve), elinewidth=0.5)
                 else:
@@ -610,7 +621,8 @@ def display(lclist=[], splist=[],
                               markeredgecolor=curve.plotcolour, color=curve.plotcolour, label=str(curve))
 
             # We plot little round circles around masked points.
-            axes.plot(tmpjds[curve.mask == False], tmpmags[curve.mask == False], linestyle="None", marker="o",
+            if showmasked:
+                axes.plot(tmpjds[curve.mask == False], tmpmags[curve.mask == False], linestyle="None", marker="o",
                       markersize=8., markeredgecolor="black", markerfacecolor="None", color="black")
 
         # And now we want to graphically display the microlensing in a nice way. This costs some cpu but anyway
@@ -1248,4 +1260,40 @@ def select_epochs(lc_in, array_index):
     lc_out.labels =[lc_out.labels[i] for i,x in enumerate(lc_out.jds) if i in array_index]
     lc_out.jds = lc_out.jds[array_index]
 
+    return lc_out
+
+def rebin_lcs(lc_in, bin=10):
+    """
+    Rebin a light curve by taking the weighted average of all epochs within a bin. Each bin start on the first day of each season.
+
+    :param lc: LightCurve object
+    :param bin: float, bin size in days
+    :return:
+    """
+
+    new_jds = []
+    new_mags = []
+    new_magerrs = []
+
+    seasons = pycs3.gen.sea.autofactory(lc_in)
+
+    for season in seasons:
+        start, stop = season.getjdlims(lc_in)
+        ra = stop - start
+        for i in range(int(ra/bin) + 1) :
+            st,sp = start + i*bin, start + (i+1)*bin
+            jds = lc_in.jds[np.logical_and(lc_in.jds <= sp, st <= lc_in.jds)]
+            mags = lc_in.mags[np.logical_and(lc_in.jds <= sp, st <= lc_in.jds)]
+            magerrs = lc_in.magerrs[np.logical_and(lc_in.jds <= sp, st <= lc_in.jds)]
+
+            if len(jds) > 0 :
+                mean_jds = np.average(jds, weights = 1. / magerrs**2)
+                mean_mags = np.average(mags, weights = 1. / magerrs**2)
+                mean_magerrs = np.sqrt(1/np.sum(1./magerrs**2))
+
+                new_jds.append(mean_jds)
+                new_mags.append(mean_mags)
+                new_magerrs.append(mean_magerrs)
+
+    lc_out = factory(new_jds, new_mags, new_magerrs, object=lc_in.object, telescopename=lc_in.telescopename)
     return lc_out

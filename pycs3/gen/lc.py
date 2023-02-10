@@ -6,6 +6,7 @@ import logging
 from functools import reduce
 
 import numpy as np
+
 from pycs3.gen.util import readidlist
 
 logger = logging.getLogger(__name__)
@@ -635,7 +636,7 @@ class LightCurve:
         """
         Sets all the mask to True.
         """
-        self.mask = np.ones(len(self), dtype=np.bool)
+        self.mask = np.ones(len(self), dtype=bool)
 
     def validate(self, verbose=False):
         """
@@ -766,7 +767,7 @@ class LightCurve:
         # uniquedraws = np.array(sorted(list(set(list(draws)))))
 
         # Faster and easier :
-        newmask = np.zeros(len(self), dtype=np.bool)  # an array of False, as long as the full curve
+        newmask = np.zeros(len(self), dtype=bool)  # an array of False, as long as the full curve
         newmask[indices[draws]] = True  # drawn points are set True
         self.mask = newmask
 

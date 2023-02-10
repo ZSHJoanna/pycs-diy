@@ -6,13 +6,15 @@ import csv
 import datetime
 import glob
 import gzip
+import logging
 import math
 import os
 import pickle as pickle
 
 import numpy as np
+
 import pycs3
-import logging
+
 logger = logging.getLogger(__name__)
 
 tracei = 1  # global variable, filename to write trace pkl.
@@ -132,7 +134,7 @@ def plottrace(tracedir="trace", reset=False, showspl=True, **kwargs):
     map(plot, tracepkls)
 
 
-def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=True, properties=None):
+def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=True, properties=None, keep_masks=False):
     """
     Writes the a list of lightcurves as flat acscii files into one single file.
     Normally you should prefer writing each lightcurve into a single file, using
@@ -152,6 +154,8 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
     :type properties: list of strings
     :param verbose: verbosity
     :type verbose: bool
+    :param keep_masks: do you want to add the flags in the output file
+    :type keep_masks: bool
     """
 
     # We start with a few tests to see if it is possible to write these lcs into a single file ...
@@ -201,6 +205,13 @@ def multilcsexport(lclist, filepath, separator="\t", rdbunderline=True, verbose=
         values = [p[property] for p in lclist[0].properties]
         colnames.append(property)
         data.append(values)
+
+    if keep_masks:
+        colnames.append('flag')
+        flags = lclist[0].mask
+        for thislc in lclist:
+            assert np.all(thislc.mask == flags), 'The mask of your light curves does not match'
+        data.append(flags)
 
     # We put all this together :
     datatransposed = list(zip(*data))  # Yep !

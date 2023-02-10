@@ -1,8 +1,10 @@
 """
 Module to define Datapoints class which is a minimal version of a LightCurve made for fast computation
 """
-import numpy as np
 import logging
+
+import numpy as np
+
 logger = logging.getLogger(__name__)
 
 class DataPoints:
@@ -56,7 +58,7 @@ class DataPoints:
         self.stabrampsize = stabrampsize
         self.stabrampfact = stabrampfact
 
-        self.mask = np.ones(len(self.jds), dtype=np.bool)  # an array of True
+        self.mask = np.ones(len(self.jds), dtype=bool)  # an array of True
 
         self.deltat = deltat
         if splitup:
@@ -102,7 +104,7 @@ class DataPoints:
         self.jds = self.jds[self.mask]
         self.mags = self.mags[self.mask]
         self.magerrs = self.magerrs[self.mask]
-        self.mask = np.ones(len(self.jds), dtype=np.bool)
+        self.mask = np.ones(len(self.jds), dtype=bool)
 
     def putstab(self):
         """
@@ -152,7 +154,7 @@ class DataPoints:
             newgapindices = i + 1 + np.zeros(len(newgapjds),dtype = int)
             newgapmags = np.interp(newgapjds, [a, b], [self.mags[i], self.mags[i + 1]])
             newgapmagerrs = absstabmagerr * np.ones(newgapmags.shape)
-            newgapmask = np.zeros(len(newgapjds), dtype=np.bool)
+            newgapmask = np.zeros(len(newgapjds), dtype=bool)
 
             self.jds = np.insert(self.jds, newgapindices, newgapjds)
             self.mags = np.insert(self.mags, newgapindices, newgapmags)
@@ -179,7 +181,7 @@ class DataPoints:
         for i in range(1, int(self.stabrampsize) + 1):
             extmagerrs[-i] += (self.stabrampsize + 1 - i) * absstabmagerr * self.stabrampfact
         extindices = np.zeros(extjds.shape, dtype=int)
-        mask = np.zeros(len(extjds), dtype=np.bool)
+        mask = np.zeros(len(extjds), dtype=bool)
         self.jds = np.insert(self.jds, extindices, extjds)
         self.mags = np.insert(self.mags, extindices, extmags)
         self.magerrs = np.insert(self.magerrs, extindices, extmagerrs)
@@ -193,7 +195,7 @@ class DataPoints:
         for i in range(0, int(self.stabrampsize)):
             extmagerrs[i] += (self.stabrampsize - i) * absstabmagerr * self.stabrampfact
         extindices = len(self.jds) + np.zeros(extjds.shape, dtype=int)
-        mask = np.zeros(len(extjds), dtype=np.bool)
+        mask = np.zeros(len(extjds), dtype=bool)
         self.jds = np.insert(self.jds, extindices, extjds)
         self.mags = np.insert(self.mags, extindices, extmags)
         self.magerrs = np.insert(self.magerrs, extindices, extmagerrs)

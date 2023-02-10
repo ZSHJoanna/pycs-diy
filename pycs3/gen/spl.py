@@ -185,7 +185,7 @@ class Spline:
             # if True: # works as well, but maybe faster to test first :
             if (self.datapoints.jds[0] >= intknots[0]) or (self.datapoints.jds[-1] <= intknots[-1]):
 
-                keepmask = np.ones(intknots.shape, dtype=np.bool)
+                keepmask = np.ones(intknots.shape, dtype=bool)
                 for i in range(len(intknots)):  # Starting from the left ...
                     if intknots[i] <= self.datapoints.jds[0]:
                         keepmask[i] = False
