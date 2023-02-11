@@ -159,9 +159,9 @@ class Optimiser(object):
             std_sigmas.append(np.std(sigmas[:, i]))
             if self.verbose:
                 logger.info('Curve %i :' % (i + 1))
-                logger.info('Mean zruns (simu): ', np.mean(zruns[:, i]), '+/-', np.std(zruns[:, i]))
-                logger.info('Mean sigmas (simu): ', np.mean(sigmas[:, i]), '+/-', np.std(sigmas[:, i]))
-                logger.info('Mean nruns (simu): ', np.mean(nruns[:, i]), '+/-', np.std(nruns[:, i]))
+                logger.info(f'Mean zruns (simu):  {np.mean(zruns[:, i])} +/-  {np.std(zruns[:, i])}')
+                logger.info(f'Mean sigmas (simu): {np.mean(sigmas[:, i])} +/-  {np.std(sigmas[:, i])}')
+                logger.info(f'Mean nruns (simu):  {np.mean(nruns[:, i])} +/-  {np.std(nruns[:, i])}')
 
         return mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas
 
@@ -325,9 +325,9 @@ class Optimiser(object):
             std_sigmas.append(np.std(sigmas[:, i]))
             if self.verbose:
                 logger.info('Curve %s :' % self.lcs[i].object)
-                logger.info('Mean zruns (simu): ', np.mean(zruns[:, i]), '+/-', np.std(zruns[:, i]))
-                logger.info('Mean sigmas (simu): ', np.mean(sigmas[:, i]), '+/-', np.std(sigmas[:, i]))
-                logger.info('Mean nruns (simu): ', np.mean(nruns[:, i]), '+/-', np.std(nruns[:, i]))
+                logger.info(f'Mean zruns (simu):  {np.mean(zruns[:, i])} +/-  {np.std(zruns[:, i])}')
+                logger.info(f'Mean sigmas (simu): {np.mean(sigmas[:, i])} +/-  {np.std(sigmas[:, i])}')
+                logger.info(f'Mean nruns (simu):  {np.mean(nruns[:, i])} +/-  {np.std(nruns[:, i])}')
 
         return mean_zruns, mean_sigmas, std_zruns, std_sigmas, zruns, sigmas
 
@@ -462,7 +462,7 @@ class DicOptimiser(Optimiser):
 
         if self.correction_PS_residuals:
             self.A_correction, _, _, _, _ = self.compute_set_A_correction(B)
-            logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :" + np.array2string(np.asarray(self.A_correction)))
+            logger.info(f"I will slightly correct the amplitude of the Power Spectrum by a factor : {np.array2string(np.asarray(self.A_correction))}")
 
         while True:
             self.iteration += 1
@@ -517,7 +517,7 @@ class DicOptimiser(Optimiser):
             if self.iteration % 5 == 0:
                 self.A_correction, _, _, _, _ = self.compute_set_A_correction(
                     B)  # recompute A correction every 5 iterations.
-                logger.info("I will slightly correct the amplitude of the Power Spectrum by a factor :" + np.array2string(np.asarray(self.A_correction)))
+                logger.info(f"I will slightly correct the amplitude of the Power Spectrum by a factor : {np.array2string(np.asarray(self.A_correction))}")
 
         self.chain_list = [self.explored_param, chi2, zruns, sigma, zruns_std,
                            sigma_std]  # explored param has dimension(n_iter,ncurve,1)
