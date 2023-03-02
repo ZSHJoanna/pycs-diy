@@ -77,7 +77,7 @@ pages:
   script:
     - mv htmldoc/ public/
     - mv htmlcov public/coverage
-    - mv doc_status.svg public/
+#    - mv doc_status.svg public/
   when: always
   artifacts:
     paths:

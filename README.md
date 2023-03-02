@@ -1,7 +1,6 @@
 # PyCS3
 
 
-[![Documentation Status](https://cosmograil.gitlab.io/PyCS3/doc_status.svg)](https://cosmograil.gitlab.io/PyCS3/)
 [![pipeline status](https://gitlab.com/cosmograil/PyCS3/badges/master/pipeline.svg)](https://gitlab.com/cosmograil/PyCS3/commits/master)
 [![coverage report](https://gitlab.com/cosmograil/PyCS3/badges/master/coverage.svg)](https://cosmograil.gitlab.io/PyCS3/coverage/)
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-380/)
