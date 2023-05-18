@@ -12,14 +12,16 @@ from matplotlib.ticker import MultipleLocator
 
 logger = logging.getLogger(__name__)
 
+plt.rc('font',family='Times New Roman')
 
 
-def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=False, showbias=True, showran=True,
+
+def delayplot(plotlist, true_td=False, rplot=7.0, autoobj=None, displaytext=True, hidedetails=False, showbias=True, showran=True,
               showerr=True, showlegend=True, text=None, figsize=(10, 8), left=0.06, right=0.97, top=0.99, bottom=0.12,
               wspace=0.10, hspace=0.15, txtstep=0.03, majorticksstep=2, filename=None, refgroup=None,
               legendfromrefgroup=False, centerdelays=None, ymin=0.2, hlines=None, blindness=False,
               horizontaldisplay=False, showxlabelhd=True, update_group_style=True, auto_radius=False,
-              tick_step_auto=True, legendx=0.85, legendy_offset=0.12, hide_technical_name=False, xlabelfontsize=22):
+              tick_step_auto=True, legendx=0.85, legendy_offset=0.12, hide_technical_name=False, xlabelfontsize=22, plot_truetd=False, skip=False):
     """
     Plots delay measurements from different methods, telescopes, sub-curves, etc in one single plot.
     For this I use only ``Group`` objects, i.e. I don't do any "computation" myself. I can of course handle asymmetric errors.
@@ -186,12 +188,12 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
                              markeredgecolor=group.plotcolor, color=group.plotcolor)
 
                 if hidedetails :
-                    delaytext = r"$%+.1f^{+%.1f}_{-%.1f}$" % (median, error_up, error_down)
+                    delaytext = r"$%+.2f^{+%.2f}_{-%.2f}$" % (median, error_up, error_down)
                 else:
                     if group.ran_errors is None or  group.sys_errors is None :
-                        delaytext = r"$%+.1f^{+%.1f}_{-%.1f}$" % (median, error_up, error_down)
+                        delaytext = r"$%+.2f^{+%.2f}_{-%.2f}$" % (median, error_up, error_down)
                     else :
-                        delaytext = r"$%+.1f^{+%.1f}_{-%.1f}\,(%.1f, %.1f)$" % (
+                        delaytext = r"$%+.2f^{+%.2f}_{-%.2f}\,(%.2f, %.2f)$" % (
                             median, error_up, error_down, group.ran_errors[labelindex], group.sys_errors[labelindex])
 
                 # if you want to hide the error...
@@ -217,7 +219,8 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
 
             if auto_radius:
                 rplot = (np.max(errors_up_list) + np.max(errors_down_list)) / 2.0 * 2.5
-            plt.xlim((centerdelay - rplot, centerdelay + rplot))
+            plt.xlim((centerdelay - 0.65*rplot, centerdelay + 0.65*rplot))
+            xtik = np.linspace(centerdelay - 0.65*rplot, centerdelay + 0.6*rplot, 4)
             plt.ylim((ymin, nmeas + 1.5))
 
             # General esthetics :
@@ -235,7 +238,8 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
             else:
                 xlabel = r"$\mathrm{Delay [day]}$"
 
-            plt.xticks(fontsize=xlabelfontsize - 5)
+            plt.xticks(np.around(xtik,1),fontsize=xlabelfontsize - 5)
+
 
             if i == n - 1 and not horizontaldisplay:
                 plt.xlabel(xlabel, fontsize=xlabelfontsize)
@@ -260,6 +264,16 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
                             zorder=-20, edgecolor="none", linewidth=0)
 
                 plt.axvline(refmedian, color="grey", linestyle="--", dashes=(5, 5), lw=1.0, zorder=-20)
+                
+                if n != 2: 
+                    refdelaytext = r"$%+.2f^{+%.2f}_{-%.2f}$" % (refmedian, referror_up, referror_down)
+                    plt.annotate(refdelaytext, xy=(0.03, 0.88 - 5*txtstep), xycoords='axes fraction', fontsize=16,
+                             color="black")
+            
+            if plot_truetd:
+                print('labelindex=', labelindex)
+                print(true_td[labelindex])
+                plt.axvline(x=true_td[labelindex], c="dimgray", ls="--", lw=2)
 
             if hlines is not None:
                 for hline in hlines:
@@ -267,12 +281,35 @@ def delayplot(plotlist, rplot=7.0, autoobj=None, displaytext=True, hidedetails=F
 
     # The "legend" :
     if showlegend:
+        legendy = [] 
         for ipl, group in enumerate(plotlist):
             line = "%s" % group.name
-
-            plt.figtext(x=legendx, y=top - txtstep * ipl - legendy_offset, s=line, verticalalignment="top",
+            
+            if skip is True:
+                plt.figtext(x=legendx, y=top - txtstep * ipl - legendy_offset, s=line, verticalalignment="top",
                         horizontalalignment="center", color=group.plotcolor,
                         fontsize=group.legendfontsize)  # for 3-delay plots
+            else:            
+                if ipl in range(int((nmeas-1)/2)):
+                    print(ipl)
+                    print(line)
+                    legendy_1 = top - 0.036 * ipl - legendy_offset
+                    plt.figtext(x=0.79, y=legendy_1, s=line, verticalalignment="top",
+                        horizontalalignment="center", color=group.plotcolor,
+                        fontsize=18) 
+                    legendy.append(legendy_1)
+                    print(legendy)
+                elif ipl in range(int((nmeas-1)/2),nmeas-1):
+                    print('elif',ipl)
+                    print(line)
+                    plt.figtext(x=0.91, y=legendy[ipl-int((nmeas-1)/2)], s=line, verticalalignment="top",
+                        horizontalalignment="center", color=group.plotcolor,
+                        fontsize=18) 
+                else:
+                    print('else',ipl)
+                    print(line)
+                    plt.figtext(x=legendx, y=top - 0.036 * (nmeas-1)/2 - legendy_offset, s=line, verticalalignment="top",
+                        horizontalalignment="center", color=group.plotcolor, fontsize=18)
         if legendfromrefgroup and refgroup is not None:
             if not hasattr(refgroup, 'legendfontsize'):
                 refgroup.legendfontsize = 16

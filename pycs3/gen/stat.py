@@ -535,7 +535,9 @@ def plotresiduals(rlslist, jdrange=None, magrad=0.1, errorbarcolour="#BBBBBB",
 
         # ax.set_ylabel("Residual [mag]")
 
-        ax.set_xlabel("HJD - 2400000.5 [day]", fontsize=18)
+        # ax.set_xlabel("HJD - 2400000.5 [day]", fontsize=18)
+        ax.set_xlabel("Observed Date [day]", fontsize=18)
+        ax.set_yticks([-0.05,0,0.05])
 
         if i != npanels - 1:
             plt.setp(ax.get_xticklabels(), visible=False)

@@ -100,15 +100,25 @@ def main(lensname, dataname, work_dir='./'):
                                              kn, ml, config.simset_copy, opt),
                                          outdir=config.lens_directory + config.combkw[a, b] + '/sims_%s_opt_%s/' % (
                                              config.simset_copy, opt))
-                    pycs3.sim.plot.measvstrue(simres, r=2 * config.truetsr, nbins=1, plotpoints=True,
+                    # 修改了作图模式
+                    pycs3.sim.plot.measvstrue(simres, r=config.truetsr, nbins=1, plotpoints=True,
                                               ploterrorbars=True, sidebyside=True,
-                                              errorrange=10., binclip=binclip, binclipr=binclipr, dataout=True,
+                                              errorrange=None, binclip=binclip, binclipr=binclipr, dataout=True,
                                               figsize=(12, 9),
                                               filename=figure_directory + 'deviation_hist_%i-%i_sims_%s_opt_%s.png' % (
                                                   kn, ml, config.simset_copy, opt),
                                               outdir=config.lens_directory + config.combkw[
                                                   a, b] + '/sims_%s_opt_%s/' % (
-                                                         config.simset_copy, opt))
+                                                         config.simset_copy, opt))     
+                    # pycs3.sim.plot.measvstrue(simres, r=2 * config.truetsr, nbins=1, plotpoints=True,
+                    #                           ploterrorbars=True, sidebyside=True,
+                    #                           errorrange=10., binclip=binclip, binclipr=binclipr, dataout=True,
+                    #                           figsize=(12, 9),
+                    #                           filename=figure_directory + 'deviation_hist_%i-%i_sims_%s_opt_%s.png' % (
+                    #                               kn, ml, config.simset_copy, opt),
+                    #                           outdir=config.lens_directory + config.combkw[
+                    #                               a, b] + '/sims_%s_opt_%s/' % (
+                    #                                      config.simset_copy, opt))
 
                     cscontainer = pycs3.tdcomb.comb.CScontainer("Spline kn%s %s%s"%(kn, string_ML,ml), knots=str(kn), ml=str(ml),
                                                               result_file_delays=os.path.join(

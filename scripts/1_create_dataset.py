@@ -105,8 +105,18 @@ def main(lensname, dataname, work_dir='./'):
     rdbfile = data_directory + lensname + "_" + dataname + '.rdb'
 
     lcs = []
-    for i, a in enumerate(config.lcs_label):
-        lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, a, 'mag_' + a, 'magerr_' + a, dataname))
+    # for i, a in enumerate(config.lcs_label):
+    #     lcs.append(pycs3.gen.lc_func.rdbimport(rdbfile, a, 'mag_' + a, 'magerr_' + a, dataname))
+    
+    # cannot understand what 'lcs_label' mean, so I read rdb as this method
+    # 这是我的rdb文件结构，如有不同需要修改一些
+    # 后两行在读双像时候要注释掉
+    lcs = [
+        pycs3.gen.lc_func.flexibleimport(rdbfile, jdcol=1, magcol=2, errcol=3, startline=3,object='A',telescopename="Trial"),
+        pycs3.gen.lc_func.flexibleimport(rdbfile, jdcol=1, magcol=4, errcol=5, startline=3, object='B', telescopename="Trial"),
+        pycs3.gen.lc_func.flexibleimport(rdbfile, jdcol=1, magcol=6, errcol=7, startline=3,object='C',telescopename="Trial"),
+        pycs3.gen.lc_func.flexibleimport(rdbfile, jdcol=1, magcol=8, errcol=9, startline=3,object='D',telescopename="Trial")
+        ]
 
     if config.display:
         pycs3.gen.mrg.colourise(lcs)

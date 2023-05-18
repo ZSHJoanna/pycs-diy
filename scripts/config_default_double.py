@@ -9,6 +9,12 @@ import pycs3.gen.splml
 import numpy as np
 import pycs3.pipe.pipe_utils as ut
 
+# true time delay :
+true_td = [0.]
+
+# skip spl paras 
+skip = [] #用,隔开参数对(eta, eta_ml)
+
 #info about the lens :
 full_lensname =''
 lcs_label = ['A','B']
@@ -132,7 +138,7 @@ sigmathresh_final = 0.0 #sigma used in the final marginalisation
 
 ### Functions definition
 def spl1(lcs, **kwargs):
-	# spline = pycs.spl.topopt.opt_rough(lcs, nit=5)
+	spline = pycs.spl.topopt.opt_rough(lcs, nit=5)
 	spline = pycs3.spl.topopt.opt_fine(lcs, knotstep=kwargs['kn'], bokeps=kwargs['kn']/3.0, nit=5, stabext=100)
 	return spline
 

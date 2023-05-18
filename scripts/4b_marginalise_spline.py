@@ -78,6 +78,12 @@ def main(lensname, dataname, work_dir='./'):
         config.optfctkw, config.knotstep_marg[i], config.mlname, string_ML, config.mlknotsteps_marg[j])
                     for j in range(len(config.mlknotsteps_marg))] for i in range(len(config.knotstep_marg))]
     combkw_marg = np.asarray(combkw_marg)
+    
+    if len(config.skip) != 0:
+        ifskip = True
+        print('Skip', config.skip)
+    else :
+        ifskip = False
 
     for a, kn in enumerate(config.knotstep_marg):
         for b, ml in enumerate(config.mlknotsteps_marg):
@@ -96,25 +102,31 @@ def main(lensname, dataname, work_dir='./'):
                     f.write('Error I cannot find the files %s or %s. \n' % (result_file_delay, result_file_errorbars))
                     continue
 
-                name = "%s_ks%i_%s_%s_%s" % (dataname, kn, string_ML, ml, noise)
-                group_list.append(pycs3.tdcomb.comb.getresults(
+                # name = "%s_ks%i_%s_%s_%s" % (dataname, kn, string_ML, ml, noise)
+                name = r"$\eta=$" + str(kn) + "$,\eta_{ml}$=" + str(ml) # 修改为更形象的名字
+
+                # 跳过的参数对不参加边缘化
+                if (kn,ml) not in config.skip:
+                    group_list.append(pycs3.tdcomb.comb.getresults(
                     pycs3.tdcomb.comb.CScontainer(data=dataname, knots=kn, ml=ml, name=name,
                                                 drawopt=config.optfctkw, runopt=opt,
                                                 ncopy=config.ncopy * config.ncopypkls,
                                                 nmocks=config.nsim * config.nsimpkls, truetsr=config.truetsr,
                                                 colour=colors[color_id], result_file_delays=result_file_delay,
                                                 result_file_errorbars=result_file_errorbars)))
-                medians_list.append(group_list[-1].medians)
-                errors_up_list.append(group_list[-1].errors_up)
-                errors_down_list.append(group_list[-1].errors_down)
-                color_id += 1
-                if color_id >= len(colors):
-                    print("Warning : I don't have enough colors in my list, I'll restart from the beginning.")
-                    color_id = 0  # reset the color form the beginning
+                    medians_list.append(group_list[-1].medians)
+                    errors_up_list.append(group_list[-1].errors_up)
+                    errors_down_list.append(group_list[-1].errors_down)
+                    color_id += 1
+                    if color_id >= len(colors):
+                        print("Warning : I don't have enough colors in my list, I'll restart from the beginning.")
+                        color_id = 0  # reset the color form the beginning
 
-                f.write('Set %s, knotstep : %2.2f, %s : %2.2f \n' % (name, kn, string_ML, ml))
-                f.write('Tweak ml name : %s \n' % noise)
-                f.write('------------------------------------------------ \n')
+                    f.write('Set %s, knotstep : %2.2f, %s : %2.2f \n' % (name, kn, string_ML, ml))
+                    f.write('Tweak ml name : %s \n' % noise)
+                    f.write('------------------------------------------------ \n')
+                
+                ##-------------------modified by ZSH------------------##
 
     # build the bin list :
     medians_list = np.asarray(medians_list)
@@ -161,18 +173,22 @@ def main(lensname, dataname, work_dir='./'):
     else:
         auto_radius = False
         figsize = (15, 10)
+        
+    true_td=config.true_td
+
 
     if config.display:
         pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text, hidedetails=True,
-                                  showbias=False, showran=False, showlegend=True, figsize=figsize,
+                                  showbias=True, showran=False, showlegend=True, figsize=figsize,
                                   horizontaldisplay=False, legendfromrefgroup=False, auto_radius=auto_radius,
-                                  tick_step_auto=True)
+                                  tick_step_auto=True,hide_technical_name=True)
 
-    pycs3.tdcomb.plot.delayplot(group_list + [combined], rplot=radius, refgroup=combined, text=text,
-                              autoobj=config.lcs_label,
-                              hidedetails=True, showbias=False, showran=False, showlegend=True, auto_radius=auto_radius,
-                              figsize=figsize, horizontaldisplay=False, legendfromrefgroup=False, tick_step_auto=True,
-                              filename=indiv_marg_dir + config.name_marg_spline + "_sigma_%2.2f.png" % config.sigmathresh)
+    pycs3.tdcomb.plot.delayplot(group_list + [combined], true_td,rplot=radius, refgroup=combined, text=text,
+                              autoobj=config.lcs_label,hide_technical_name=True,displaytext=displaytext,
+                              hidedetails=True, showbias=False, showran=False, showlegend=True, auto_radius=False,
+                              figsize=figsize, horizontaldisplay=False, legendfromrefgroup=False, tick_step_auto=True,update_group_style=True,
+                              filename=indiv_marg_dir + config.name_marg_spline + "_sigma_%2.2f.pdf" % config.sigmathresh,plot_truetd=True,skip=ifskip)
+              
 
     pkl.dump(group_list,
              open(marginalisation_dir + config.name_marg_spline + "_sigma_%2.2f" % config.sigmathresh + '_groups.pkl',

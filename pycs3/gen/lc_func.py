@@ -764,7 +764,8 @@ def display(lclist=[], splist=[],
     if jdrange is not None:
         axes.set_xlim(jdrange[0], jdrange[1])
 
-    axes.set_xlabel("HJD - 2400000.5 (day)", fontsize=labelfontsize)
+    axes.set_xlabel("Observed Date [day]", fontsize=labelfontsize)
+    # axes.set_xlabel("HJD - 2400000.5 (day)", fontsize=labelfontsize)
     if show_ylabel:
         axes.set_ylabel("Magnitude (relative)", fontsize=labelfontsize)
 

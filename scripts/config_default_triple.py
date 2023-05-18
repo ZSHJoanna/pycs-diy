@@ -132,7 +132,7 @@ sigmathresh_final = 0.0 #sigma used in the final marginalisation
 
 ### Functions definition
 def spl1(lcs, **kwargs):
-	# spline = pycs3.spl.topopt.opt_rough(lcs, nit=5)
+	spline = pycs3.spl.topopt.opt_rough(lcs, nit=5) # 增加一次拟合
 	spline = pycs3.spl.topopt.opt_fine(lcs, knotstep=kwargs['kn'], bokeps=kwargs['kn']/3.0, nit=5, stabext=100)
 	return spline
 
